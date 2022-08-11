@@ -15,10 +15,12 @@ const config_d = {
     loader: "moanerLoader.user.js",
 }
 
+const relative_dir = path.relative(".", __dirname).replace(/\\/g, "/");
+
 const config = {
-    input: `${path.relative(".", __dirname)}\\${config_d.input}`.replace(/\\/g, "/"),
+    input: `${relative_dir}/${config_d.input}`,
     output: {
-        file: `public\\${config_d.output}`.replace(/\\/g, "/"),
+        file: `public/${config_d.output}`,
         format: "iife",
         sourcemap: false,
         banner: ``,
@@ -27,7 +29,7 @@ const config = {
     plugins: [
         copy({
             targets: [
-                { src: `${path.relative(".", __dirname)}\\${config_d.loader}`.replace(/\\/g, "/"), dest: "public" }
+                { src: `${relative_dir}/${config_d.loader}`, dest: "public" }
             ]
         }),
         progress({ clearLine: true }),
