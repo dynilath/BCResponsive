@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A Moaner script for bondage-club",
   "scripts": {
-    "build": "rollup -c src/Moaner/rollup.config.js"
+    "build": "rollup -c src/rollup.config.js"
   },
   "repository": {
     "type": "git",

@@ -1,5 +1,5 @@
 import bcMod from 'bondage-club-mod-sdk'
-import { ActivityDeconstruct } from '../utils/ChatMessages';
+import { ActivityDeconstruct } from './ChatMessages';
 
 (function () {
 
