@@ -10,9 +10,10 @@ import path from 'path'
 
 
 const config_d = {
+    folder: "Moaner",
     input: "Moaner.ts",
-    output: "Moaner.js",
-    loader: "moanerLoader.user.js",
+    output: "main.js",
+    loader: "loader.user.js",
 }
 
 const relative_dir = path.relative(".", __dirname).replace(/\\/g, "/");
@@ -20,7 +21,7 @@ const relative_dir = path.relative(".", __dirname).replace(/\\/g, "/");
 const config = {
     input: `${relative_dir}/${config_d.input}`,
     output: {
-        file: `public/${config_d.output}`,
+        file: `public/${config_d.folder}/${config_d.output}`,
         format: "iife",
         sourcemap: false,
         banner: ``,
@@ -29,7 +30,7 @@ const config = {
     plugins: [
         copy({
             targets: [
-                { src: `${relative_dir}/${config_d.loader}`, dest: "public" }
+                { src: `${relative_dir}/${config_d.loader}`, dest: `public/${config_d.folder}` }
             ]
         }),
         progress({ clearLine: true }),

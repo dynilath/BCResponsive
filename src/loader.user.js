@@ -50,7 +50,7 @@ const MoanerValue = {
         let n = document.createElement("script");
         n.setAttribute("language", "JavaScript");
         n.setAttribute("crossorigin", "anonymous");
-        n.setAttribute("src", "https://dynilath.gitlab.io/SaotomeToyStore/Moaner.js?_=" + Date.now());
+        n.setAttribute("src", "https://dynilath.gitlab.io/SaotomeToyStore/Moaner/main.js?_=" + Date.now());
         n.onload = () => {
             if (BCMoanerReloaded !== undefined) {
                 BCMoanerReloaded(MoanerOn, MoanerValue);
