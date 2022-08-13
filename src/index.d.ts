@@ -10,12 +10,6 @@ interface SolidSetting {
 
 type MoanSetting = Partial<SolidSetting>;
 
-enum MoanType {
-    Orgasm,
-    Pain,
-    Tickle
-}
-
 interface Window {
     BCMoanerReloaded_Loaded?: boolean;
     BCMoanerReloaded?: (enable: boolean, source: MoanSetting) => void;

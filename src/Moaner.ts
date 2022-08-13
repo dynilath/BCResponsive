@@ -1,6 +1,12 @@
 import bcMod from 'bondage-club-mod-sdk'
 import { ActivityDeconstruct } from './ChatMessages';
 
+enum MoanType {
+    Orgasm,
+    Pain,
+    Tickle
+}
+
 (function () {
 
     let SolidSettingValue: SolidSetting = {
