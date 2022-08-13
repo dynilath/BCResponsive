@@ -37,6 +37,7 @@ enum MoanType {
     function ChatRoomNormalMessage(msg: string) {
         if (!msg) return;
         let backupChatRoomTargetMemberNumber = ChatRoomTargetMemberNumber;
+        ChatRoomTargetMemberNumber = null;
         let oldmsg = ElementValue("InputChat");
         ElementValue("InputChat", msg);
         ChatRoomSendChat();
