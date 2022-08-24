@@ -39,7 +39,7 @@ const MoanerValue = {
         GM_setValue('BCTampermonkeyMoanerOn', newMoanerOn);
         GM_unregisterMenuCommand(mid);
         mid = GM_registerMenuCommand(MenuText[newMoanerOn ? 0 : 1], f, "switch_key");
-        if (BCMoanerReloaded !== undefined) {
+        if (typeof BCMoanerReloaded !== "undefined") {
             BCMoanerReloaded(newMoanerOn, MoanerValue);
         }
     }
@@ -50,9 +50,9 @@ const MoanerValue = {
         let n = document.createElement("script");
         n.setAttribute("language", "JavaScript");
         n.setAttribute("crossorigin", "anonymous");
-        n.setAttribute("src", "https://dynilath.gitlab.io/SaotomeToyStore/Moaner/main.js?_=" + Date.now());
+        n.setAttribute("src", "https://dynilath.gitlab.io/SaotomeToyStoreVendor/Moaner/main.js?_=" + Date.now());
         n.onload = () => {
-            if (BCMoanerReloaded !== undefined) {
+            if (typeof BCMoanerReloaded !== "undefined") {
                 BCMoanerReloaded(MoanerOn, MoanerValue);
             }
             n.remove()
