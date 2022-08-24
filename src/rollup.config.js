@@ -37,13 +37,8 @@ const config = {
         resolve({ browser: true }),
         typescript({ tsconfig: "src/tsconfig.json", inlineSources: true }),
         commonjs(),
-        babel({ babelHelpers: 'bundled' }),
-        cleanup(),
         obfuscator({
-            identifierNamesGenerator: 'mangled',
             unicodeEscapeSequence: true,
-            splitStrings: true,
-            splitStringsChunkLength: 5,
         }),
     ],
 }

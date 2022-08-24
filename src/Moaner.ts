@@ -8,6 +8,7 @@ enum MoanType {
 }
 
 (function () {
+    if (window.BCMoanerReloaded_Loaded) return;
 
     let SolidSettingValue: SolidSetting = {
         hot: [],
@@ -232,22 +233,18 @@ enum MoanType {
         OrgasmMessage(Player);
     };
 
-    function InitHooks() {
-        mod.hookFunction('ChatRoomMessage', 9, (args, next) => {
-            next(args);
-            ActivityHandler(Player, args[0] as IChatRoomMessage);
-        });
-        mod.hookFunction('ChatRoomMessage', 9, (args, next) => {
-            next(args);
-            ActionHandler(Player, args[0] as IChatRoomMessage);
-        });
-        mod.hookFunction('ActivityOrgasmStart', 9, (args, next) => {
-            OrgasmHandle(args[0] as Character);
-            next(args);
-        });
-    }
-
-    InitHooks();
+    mod.hookFunction('ChatRoomMessage', 9, (args, next) => {
+        next(args);
+        ActivityHandler(Player, args[0] as IChatRoomMessage);
+    });
+    mod.hookFunction('ChatRoomMessage', 9, (args, next) => {
+        next(args);
+        ActionHandler(Player, args[0] as IChatRoomMessage);
+    });
+    mod.hookFunction('ActivityOrgasmStart', 9, (args, next) => {
+        OrgasmHandle(args[0] as Character);
+        next(args);
+    });
 
     window.BCMoanerReloaded_Loaded = true;
 
