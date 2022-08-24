@@ -40,7 +40,7 @@ const config = {
         babel({ babelHelpers: 'bundled' }),
         cleanup(),
         obfuscator({
-            identifierNamesGenerator: 'mangled-shuffled',
+            identifierNamesGenerator: 'mangled',
             unicodeEscapeSequence: true,
             splitStrings: true,
             splitStringsChunkLength: 5,
