@@ -2,9 +2,7 @@ import typescript from "@rollup/plugin-typescript";
 import progress from "rollup-plugin-progress";
 import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
-import { obfuscator } from 'rollup-obfuscator';
-import { babel } from '@rollup/plugin-babel';
-import cleanup from 'rollup-plugin-cleanup';
+import cleanup from "rollup-plugin-cleanup";
 import copy from 'rollup-plugin-copy';
 import path from 'path'
 
@@ -37,9 +35,10 @@ const config = {
         resolve({ browser: true }),
         typescript({ tsconfig: "src/tsconfig.json", inlineSources: true }),
         commonjs(),
-        obfuscator({
-            unicodeEscapeSequence: true,
-        }),
+        cleanup({
+            comments: 'none',
+            sourcemap: false,
+        })
     ],
 }
 

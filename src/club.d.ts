@@ -123,9 +123,29 @@ declare function AssetGroupGet(Family: string, Group: string): AssetGroup | null
 declare var KeyPress: number;
 declare var MiniGameCheatAvailable: boolean;
 
-declare var MainCanvas: {
-    getImageData: (x: number, y: number, w: number, h: number) => { data: [number, number, number] };
-}
+declare var MouseX: number;
+declare var MouseY: number;
+declare var MainCanvas: CanvasRenderingContext2D;
+declare function DrawGetImage(Source: string): HTMLImageElement;
+declare function DrawButton(Left: number, Top: number, Width: number, Height: number, Label: string, Color: string, Image?: string, HoveringText?: string, Disabled?: boolean): void;
+declare function DrawCheckbox(Left: number, Top: number, Width: number, Height: number, Text: string, IsChecked: boolean, Disabled?: boolean, TextColor?: string, CheckImage?: string): void;
+declare function DrawText(Text: string, X: number, Y: number, Color: string, BackColor?: string): void;
+declare function DrawTextFit(Text: string, X: number, Y: number, Width: number, Color: string, BackColor?: string): void;
+declare function DrawTextWrap(Text: string, X: number, Y: number, Width: number, Height: number, ForeColor: string, BackColor?: string, MaxLine?: number): void;
+declare function DrawBackNextButton(Left: number, Top: number, Width: number, Height: number, Label: string, Color: string, Image?: string, BackText?: () => string, NextText?: () => string, Disabled?: boolean, ArrowWidth?: number): void;
+declare function DrawButtonHover(Left: number, Top: number, Width: number, Height: number, HoveringText: string): void;
+declare function DrawEmptyRect(Left: number, Top: number, Width: number, Height: number, Color: string, Thickness?: number): void;
+declare function DrawRect(Left: number, Top: number, Width: number, Height: number, Color: string): void;
+declare function DrawCharacter(C: Character, X: number, Y: number, Zoom: number, IsHeightResizeAllowed: boolean, DrawCanvas: CanvasRenderingContext2D): void;
+
+declare function MouseIn(Left: number, Top: number, Width: number, Height: number): boolean;
+declare function MouseXIn(Left: number, Width: number): boolean;
+declare function MouseYIn(Top: number, Height: number): boolean;
+
+declare function ElementCreateInput(ID: string, Type: string, Value: string, MaxLength: string): HTMLInputElement;
+declare function ElementPosition(ElementID: string, X: number, Y: number, W: number, H?: number): void;
+declare function ElementPositionFix(ElementID: string, Font: any, X: number, Y: number, W: number, H: number): void;
+declare function ElementRemove(ID: string): void;
 
 declare var ServerAccountUpdate: {
     SyncToServer(): void;
@@ -197,3 +217,5 @@ declare function ChatRoomHTMLEntities(msg: string): string;
 
 //Speech.js
 declare function SpeechGarble(C: Character, CD: string, NoDeaf?: boolean): string;
+
+declare const LZString: import("lz-string").LZStringStatic;

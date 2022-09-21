@@ -1,4 +1,4 @@
-interface SolidSetting {
+interface MoanSetting {
     hot: string[];
     medium: string[];
     light: string[];
@@ -8,9 +8,15 @@ interface SolidSetting {
     tickle: string[];
 }
 
-type MoanSetting = Partial<SolidSetting>;
+interface SolidSetting extends MoanSetting {
+    settings: { enable: boolean };
+}
+
+type PartialSetting = Partial<SolidSetting>;
+
+type ModSetting = { BCMoanerReloaded?: string };
 
 interface Window {
     BCMoanerReloaded_Loaded?: boolean;
-    BCMoanerReloaded?: (enable: boolean, source: MoanSetting) => void;
+    BCMoanerReloaded?: (enable: boolean, source: PartialSetting) => void;
 }
