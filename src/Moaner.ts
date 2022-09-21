@@ -37,7 +37,7 @@ import { ShuffleStr } from './utils';
             if (k === 'settings') continue;
             let r = validate(src[k as keyof PartialSetting]);
             if (data.hasOwnProperty(k) && r) {
-                (data[k as keyof SolidSetting] as string[]) = ShuffleStr(r);
+                (data[k as keyof SolidSetting] as string[]) = JSON.parse(JSON.stringify(r));
             }
         }
 

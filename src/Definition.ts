@@ -8,7 +8,7 @@ export enum MoanType {
     Tickle
 }
 
-export const ModVersion = buildVersion(0, 3, 0);
+export const ModVersion = buildVersion(0, 3, 1);
 export const ModName = 'BondageClub Moaner Reloaded'
 
 export const DebugMode = false;

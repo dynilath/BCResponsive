@@ -82,7 +82,7 @@ export class GUIMainMenu extends GUISettingScreen {
             DataManager.instance.ServerStoreData();
             this.Exit();
         }
-        else if (MouseIn(500, 160, 64, 64)) {
+        else if (MouseIn(400, 160, 64, 64)) {
             data.settings.enable = !data.settings.enable;
         }
     }

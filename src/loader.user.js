@@ -12,7 +12,7 @@
 
 (function () {
     "use strict";
-    if (typeof BCADCS_Loaded === "undefined") {
+    if (typeof BCMoanerReloaded_Loaded === "undefined") {
         const script = document.createElement("script");
         script.src = `https://dynilath.gitlab.io/SaotomeToyStoreVendor/Moaner/main.js?v=${Date.now()}`;
         document.head.appendChild(script);
