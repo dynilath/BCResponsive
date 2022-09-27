@@ -14,7 +14,7 @@ export abstract class GUISettingScreen {
 export class GUIMainMenu extends GUISettingScreen {
     private static keys: (keyof MoanSetting)[] = ['low', 'light', 'medium', 'hot', 'orgasm', 'pain', 'tickle'];
 
-    private static ElementID = (k: keyof SolidSetting) => `BCMoaner_Input${k}`;
+    private static ElementID = (k: keyof MoanerSolidSetting) => `BCMoaner_Input${k}`;
     private static StringListShow = (p: string[]) => {
         if (p.length === 0) return "";
         let result = JSON.stringify(p);

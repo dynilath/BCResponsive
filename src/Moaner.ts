@@ -16,8 +16,8 @@ import { ShuffleStr } from './utils';
 
     window.BCMoanerReloaded_Loaded = false;
 
-    window.BCMoanerReloaded = function (enable: boolean, src: PartialSetting) {
-        let data: SolidSetting = {
+    window.BCMoanerReloaded = function (enable: boolean, src: MoanerPartialSetting) {
+        let data: MoanerSolidSetting = {
             settings: { enable },
             low: [],
             light: [],
@@ -35,9 +35,9 @@ import { ShuffleStr } from './utils';
 
         for (const k in src) {
             if (k === 'settings') continue;
-            let r = validate(src[k as keyof PartialSetting]);
+            let r = validate(src[k as keyof MoanerPartialSetting]);
             if (data.hasOwnProperty(k) && r) {
-                (data[k as keyof SolidSetting] as string[]) = JSON.parse(JSON.stringify(r));
+                (data[k as keyof MoanerSolidSetting] as string[]) = JSON.parse(JSON.stringify(r));
             }
         }
 

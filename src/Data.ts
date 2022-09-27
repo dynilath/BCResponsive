@@ -12,10 +12,10 @@ export class DataManager {
         return DataManager._instance as DataManager;
     }
 
-    modData: PartialSetting = {};
-    mergeData: SolidSetting | undefined;
+    modData: MoanerPartialSetting = {};
+    mergeData: MoanerSolidSetting | undefined;
 
-    static DefaultValue: SolidSetting = {
+    static DefaultValue: MoanerSolidSetting = {
         settings: { enable: true },
         hot: ["n... Nyah♥", "Oooh", "mmmmmh!", "NYyaaA♥"],
         medium: ["mm", "aaaah", "nyAh♥"],
@@ -31,12 +31,12 @@ export class DataManager {
         return (object[key] as any[]).filter(_ => typeof _ === 'string');
     }
 
-    private static ValidatorItem(key: keyof SolidSetting): [keyof SolidSetting, (d: PartialSetting) => any] {
-        return [key, (d: PartialSetting): string[] => DataManager.ValidateStringList(d, key)]
+    private static ValidatorItem(key: keyof MoanerSolidSetting): [keyof MoanerSolidSetting, (d: MoanerPartialSetting) => any] {
+        return [key, (d: MoanerPartialSetting): string[] => DataManager.ValidateStringList(d, key)]
     }
 
-    private static Validator = new Map<keyof SolidSetting, (d: PartialSetting) => any>([
-        ["settings", (d: PartialSetting): SolidSetting['settings'] => {
+    private static Validator = new Map<keyof MoanerSolidSetting, (d: MoanerPartialSetting) => any>([
+        ["settings", (d: MoanerPartialSetting): MoanerSolidSetting['settings'] => {
             if (d.settings === undefined || typeof d.settings.enable !== "boolean") return { enable: true };
             return d.settings;
         }],
@@ -52,7 +52,7 @@ export class DataManager {
     private EncodeDataStr() {
         let data: { [k: string]: any } = {}
         for (const k in this.modData) {
-            data[k] = this.modData[k as keyof SolidSetting];
+            data[k] = this.modData[k as keyof MoanerSolidSetting];
         }
         return LZString.compressToBase64(JSON.stringify(data));
     }
@@ -72,7 +72,7 @@ export class DataManager {
         } catch { }
 
         DataManager.Validator.forEach((v, k) => {
-            this.modData[k as keyof SolidSetting] = v(data);
+            this.modData[k as keyof MoanerSolidSetting] = v(data);
         })
     }
 
@@ -105,14 +105,14 @@ export class DataManager {
     }
 
     get data() {
-        return this.modData as SolidSetting;
+        return this.modData as MoanerSolidSetting;
     }
 
-    set data(d: SolidSetting) {
+    set data(d: MoanerSolidSetting) {
         this.modData = d;
     }
 
-    PushMergeData(data: SolidSetting) {
+    PushMergeData(data: MoanerSolidSetting) {
         this.mergeData = data;
         if (Player && Player.OnlineSettings) this.ServerTakeData();
     }
