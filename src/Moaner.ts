@@ -1,5 +1,4 @@
 import bcMod from 'bondage-club-mod-sdk'
-import { ActionHandle } from './Message/Action';
 import { ActivityHandle } from './Message/Activity';
 import { ChatMessageHandler } from './Message/ChatMessageHandler';
 import { ActivityDeconstruct } from './Message/ChatMessages';
@@ -63,13 +62,7 @@ import { ShuffleStr } from './utils';
         next(args);
     });
 
-    chatMessageHandler.Register('Action', (player, sender, data) => {
-        ActionHandle(player, sender, data);
-    });
-
-    chatMessageHandler.Register('Activity', (player, sender, data) => {
-        ActivityHandle(player, sender, data);
-    });
+    chatMessageHandler.Register('Activity', ActivityHandle);
 
     const GUI = new GUISetting;
     GUI.load(mod);
