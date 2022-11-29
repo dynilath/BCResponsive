@@ -11,7 +11,7 @@ import { ShuffleStr } from './utils';
 (function () {
     if (window.BCMoanerReloaded_Loaded) return;
 
-    let mod = bcMod.registerMod(ModName, ModVersion);
+    let mod = bcMod.registerMod({ name: ModName, fullName: ModName, version: ModVersion });
 
     window.BCMoanerReloaded_Loaded = false;
 
