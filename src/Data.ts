@@ -87,8 +87,12 @@ export class DataManager {
 
     ServerTakeData() {
         if (Player && Player.OnlineSettings) {
-            let rawData = ((Player.OnlineSettings as any) as ModSetting).BCResponsive;
-            if (rawData === undefined) this.initFromNoData = true;
+            let rawData = (Player.OnlineSettings as ModSetting).BCResponsive;
+            if (rawData === undefined) {
+                let oldData = (Player.OnlineSettings as any) as { BCMoanerReloaded?: string };
+                rawData = oldData.BCMoanerReloaded;
+                if (rawData !== undefined) delete oldData.BCMoanerReloaded;
+            }
             this.DecodeDataStr(rawData);
         }
         if (this.mergeData !== undefined) {
