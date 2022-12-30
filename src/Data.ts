@@ -12,10 +12,10 @@ export class DataManager {
         return DataManager._instance as DataManager;
     }
 
-    modData: MoanerPartialSetting = {};
-    mergeData: MoanerSolidSetting | undefined;
+    modData: ResponsivePartialSetting = {};
+    mergeData: ResponsiveSolidSetting | undefined;
 
-    static DefaultValue: MoanerSolidSetting = {
+    static DefaultValue: ResponsiveSolidSetting = {
         settings: { enable: true },
         hot: ["n... Nyah♥", "Oooh", "mmmmmh!", "NYyaaA♥"],
         medium: ["mm", "aaaah", "nyAh♥"],
@@ -31,12 +31,12 @@ export class DataManager {
         return (object[key] as any[]).filter(_ => typeof _ === 'string');
     }
 
-    private static ValidatorItem(key: keyof MoanerSolidSetting): [keyof MoanerSolidSetting, (d: MoanerPartialSetting) => any] {
-        return [key, (d: MoanerPartialSetting): string[] => DataManager.ValidateStringList(d, key)]
+    private static ValidatorItem(key: keyof ResponsiveSolidSetting): [keyof ResponsiveSolidSetting, (d: ResponsivePartialSetting) => any] {
+        return [key, (d: ResponsivePartialSetting): string[] => DataManager.ValidateStringList(d, key)]
     }
 
-    private static Validator = new Map<keyof MoanerSolidSetting, (d: MoanerPartialSetting) => any>([
-        ["settings", (d: MoanerPartialSetting): MoanerSolidSetting['settings'] => {
+    private static Validator = new Map<keyof ResponsiveSolidSetting, (d: ResponsivePartialSetting) => any>([
+        ["settings", (d: ResponsivePartialSetting): ResponsiveSolidSetting['settings'] => {
             if (d.settings === undefined || typeof d.settings.enable !== "boolean") return { enable: true };
             return d.settings;
         }],
@@ -52,7 +52,7 @@ export class DataManager {
     private EncodeDataStr() {
         let data: { [k: string]: any } = {}
         for (const k in this.modData) {
-            data[k] = this.modData[k as keyof MoanerSolidSetting];
+            data[k] = this.modData[k as keyof ResponsiveSolidSetting];
         }
         return LZString.compressToBase64(JSON.stringify(data));
     }
@@ -72,13 +72,13 @@ export class DataManager {
         } catch { }
 
         DataManager.Validator.forEach((v, k) => {
-            this.modData[k as keyof MoanerSolidSetting] = v(data);
+            this.modData[k as keyof ResponsiveSolidSetting] = v(data);
         })
     }
 
     ServerStoreData() {
         if (Player && Player.OnlineSettings) {
-            ((Player.OnlineSettings as any) as ModSetting).BCMoanerReloaded = this.EncodeDataStr();
+            ((Player.OnlineSettings as any) as ModSetting).BCResponsive = this.EncodeDataStr();
             if (ServerAccountUpdate) {
                 ServerAccountUpdate.QueueData({ OnlineSettings: Player.OnlineSettings });
             }
@@ -87,14 +87,14 @@ export class DataManager {
 
     ServerTakeData() {
         if (Player && Player.OnlineSettings) {
-            let rawData = ((Player.OnlineSettings as any) as ModSetting).BCMoanerReloaded;
+            let rawData = ((Player.OnlineSettings as any) as ModSetting).BCResponsive;
             if (rawData === undefined) this.initFromNoData = true;
             this.DecodeDataStr(rawData);
         }
         if (this.mergeData !== undefined) {
             this.modData.settings = { enable: this.mergeData.settings.enable };
             if (this.initFromNoData) {
-                const rkeys: (keyof MoanSetting)[] = ['low', 'light', 'medium', 'hot', 'orgasm', 'pain', 'tickle'];
+                const rkeys: (keyof ResponsiveSetting)[] = ['low', 'light', 'medium', 'hot', 'orgasm', 'pain', 'tickle'];
                 for (const t of rkeys) {
                     this.modData[t] = this.mergeData[t];
                 }
@@ -105,14 +105,14 @@ export class DataManager {
     }
 
     get data() {
-        return this.modData as MoanerSolidSetting;
+        return this.modData as ResponsiveSolidSetting;
     }
 
-    set data(d: MoanerSolidSetting) {
+    set data(d: ResponsiveSolidSetting) {
         this.modData = d;
     }
 
-    PushMergeData(data: MoanerSolidSetting) {
+    PushMergeData(data: ResponsiveSolidSetting) {
         this.mergeData = data;
         if (Player && Player.OnlineSettings) this.ServerTakeData();
     }

@@ -4,7 +4,7 @@ import { ShuffleStr } from "../utils";
 import { DataManager } from "../Data";
 
 
-let ShiftingMoans: MoanSetting = {
+let ShiftingMoans: ResponsiveSetting = {
     hot: [],
     medium: [],
     light: [],
@@ -14,7 +14,7 @@ let ShiftingMoans: MoanSetting = {
     tickle: [],
 };
 
-function NextMoanString(key: keyof MoanSetting) {
+function NextMoanString(key: keyof ResponsiveSetting) {
     if (ShiftingMoans[key].length === 0) {
         let r = DataManager.instance.data[key];
         if (r.length > 0) ShiftingMoans[key] = ShuffleStr(r);
@@ -28,7 +28,7 @@ function NextMoanString(key: keyof MoanSetting) {
 }
 
 function TypedMoan(t: MoanType) {
-    let k: keyof MoanSetting | undefined;
+    let k: keyof ResponsiveSetting | undefined;
     if (t === MoanType.Orgasm) k = 'orgasm';
     else if (t === MoanType.Pain) k = 'pain';
     else if (t === MoanType.Tickle) k = 'tickle';
@@ -41,7 +41,7 @@ function BaseMoan(Arousal: number, shift?: number) {
     if (shift) factor -= shift;
     if (factor < 0) factor = 0;
     else if (factor > 5) factor = 5;
-    const Tkeys: (keyof MoanSetting)[] = ['low', 'low', 'light', 'medium', 'hot', 'hot'];
+    const Tkeys: (keyof ResponsiveSetting)[] = ['low', 'low', 'light', 'medium', 'hot', 'hot'];
     let k = Tkeys[factor];
     return NextMoanString(k);
 }

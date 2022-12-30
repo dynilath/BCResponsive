@@ -1,4 +1,4 @@
-interface MoanSetting {
+interface ResponsiveSetting {
     hot: string[];
     medium: string[];
     light: string[];
@@ -8,15 +8,14 @@ interface MoanSetting {
     tickle: string[];
 }
 
-interface MoanerSolidSetting extends MoanSetting {
+interface ResponsiveSolidSetting extends ResponsiveSetting {
     settings: { enable: boolean };
 }
 
-type MoanerPartialSetting = Partial<MoanerSolidSetting>;
+type ResponsivePartialSetting = Partial<ResponsiveSolidSetting>;
 
-type ModSetting = { BCMoanerReloaded?: string };
+type ModSetting = { BCResponsive?: string };
 
 interface Window {
-    BCMoanerReloaded_Loaded?: boolean;
-    BCMoanerReloaded?: (enable: boolean, source: MoanerPartialSetting) => void;
+    BCResponsive_Loaded?: boolean;
 }

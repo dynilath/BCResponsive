@@ -1,24 +1,24 @@
 {
-  "name": "bc-moaner-reloaded",
+  "name": "bc-responsive",
   "version": "1.0.0",
-  "description": "A Moaner script for bondage-club",
+  "description": "A auto response script for bondage-club",
   "scripts": {
     "build": "rollup -c src/rollup.config.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/dynilath/BCMoanerReloaded.git"
+    "url": "git+https://gitlab.com/dynilath/BCResponsive.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://gitlab.com/dynilath/BCMoanerReloaded/issues"
+    "url": "https://gitlab.com/dynilath/BCResponsive/issues"
   },
-  "homepage": "https://gitlab.com/dynilath/BCMoanerReloaded#readme",
+  "homepage": "https://gitlab.com/dynilath/BCResponsive#readme",
   "dependencies": {
     "@babel/core": "^7.18.9",
-    "bondage-club-mod-sdk": "^1.0.2"
+    "bondage-club-mod-sdk": "^1.1.0"
   },
   "devDependencies": {
     "@rollup/plugin-babel": "^5.3.1",

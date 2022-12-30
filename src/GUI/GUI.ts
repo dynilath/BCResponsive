@@ -12,9 +12,9 @@ export abstract class GUISettingScreen {
 }
 
 export class GUIMainMenu extends GUISettingScreen {
-    private static keys: (keyof MoanSetting)[] = ['low', 'light', 'medium', 'hot', 'orgasm', 'pain', 'tickle'];
+    private static keys: (keyof ResponsiveSetting)[] = ['low', 'light', 'medium', 'hot', 'orgasm', 'pain', 'tickle'];
 
-    private static ElementID = (k: keyof MoanerSolidSetting) => `BCMoaner_Input${k}`;
+    private static ElementID = (k: keyof ResponsiveSolidSetting) => `BCResponsive_Input${k}`;
     private static StringListShow = (p: string[]) => {
         if (p.length === 0) return "";
         let result = JSON.stringify(p);
@@ -43,7 +43,7 @@ export class GUIMainMenu extends GUISettingScreen {
         DrawButton(1815, 75, 90, 90, "", "White", "Icons/Exit.png");
         const titleBaseX = 400;
         const titleBaseY = 280
-        DrawText(Localization.GetText("moaner_setting_title"), titleBaseX, 125, "Black", "Gray");
+        DrawText(Localization.GetText("responsive_setting_title"), titleBaseX, 125, "Black", "Gray");
         DrawText(`v${ModVersion}`, titleBaseX + 400, 125, "Black", "Gray");
         DrawCheckbox(titleBaseX, 160, 64, 64, Localization.GetText("setting_enable"), data.settings.enable);
 

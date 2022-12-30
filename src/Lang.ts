@@ -1,8 +1,8 @@
 export class Localization {
     private static CNTextMap = new Map<string, string>([
-        ["moaner_setting_title", "- BC Moaner 设置 -"],
-        ["setting_button_popup", "BC Moaner 设置"],
-        ["setting_enable", "启用 Moaner"],
+        ["responsive_setting_title", "- BC Responsive 设置 -"],
+        ["setting_button_popup", "BC Responsive 设置"],
+        ["setting_enable", "启用 Responsive"],
         ["setting_title_low", "低性奋"],
         ["setting_title_light", "微弱性奋"],
         ["setting_title_medium", "中等性奋"],
@@ -14,9 +14,9 @@ export class Localization {
     ]);
 
     private static ENTextMap = new Map<string, string>([
-        ["moaner_setting_title", "- BC Moaner Setting -"],
-        ["setting_button_popup", "BC Moaner Setting"],
-        ["setting_enable", "Enable Moaner"],
+        ["responsive_setting_title", "- BC Responsive Setting -"],
+        ["setting_button_popup", "BC Responsive Setting"],
+        ["setting_enable", "Enable Responsive"],
         ["setting_title_low", "Low"],
         ["setting_title_light", "Light"],
         ["setting_title_medium", "Medium"],

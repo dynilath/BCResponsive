@@ -9,6 +9,6 @@ export enum MoanType {
 }
 
 export const ModVersion = buildVersion(0, 3, 1);
-export const ModName = 'BondageClub Moaner Reloaded'
+export const ModName = 'BondageClub Responsive'
 
 export const DebugMode = false;

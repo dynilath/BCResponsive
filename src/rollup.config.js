@@ -8,8 +8,8 @@ import path from 'path'
 
 
 const config_d = {
-    folder: "Moaner",
-    input: "Moaner.ts",
+    folder: "Responsive",
+    input: "Responsive.ts",
     output: "main.js",
     loader: "loader.user.js",
 }
