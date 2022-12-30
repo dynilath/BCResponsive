@@ -33,7 +33,7 @@ const config = {
         }),
         progress({ clearLine: true }),
         resolve({ browser: true }),
-        typescript({ tsconfig: "src/tsconfig.json", inlineSources: true }),
+        typescript({ tsconfig: `${relative_dir}/tsconfig.json`, inlineSources: true }),
         commonjs(),
         cleanup({
             comments: 'none',
