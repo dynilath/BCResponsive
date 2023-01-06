@@ -156,7 +156,8 @@ export class GUISetting {
             }
 
             next(args);
-            DrawButton(1815, 820, 90, 90, "", "White", "Icons/Arousal.png", Localization.GetText("setting_button_popup"));
+            if (PreferenceSubscreen !== "")
+                DrawButton(1815, 820, 90, 90, "", "White", "Icons/Arousal.png", Localization.GetText("setting_button_popup"));
         });
 
         mod.hookFunction("PreferenceClick", 10, (args, next) => {
