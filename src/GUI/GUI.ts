@@ -156,7 +156,7 @@ export class GUISetting {
             }
 
             next(args);
-            if (PreferenceSubscreen !== "")
+            if (PreferenceSubscreen === "")
                 DrawButton(1815, 820, 90, 90, "", "White", "Icons/Arousal.png", Localization.GetText("setting_button_popup"));
         });
 
