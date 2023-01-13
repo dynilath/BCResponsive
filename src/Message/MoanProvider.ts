@@ -91,7 +91,7 @@ export function MasturbateMoan(player: Character, masturSrc: 'MasturbateHand' | 
     ChatRoomAutoInterceptMessage(ElementValue("InputChat"), BaseMoanStepped(player, masturSrc));
 }
 
-export function PainMessage(player: Character, painSrc: 'Bite' | 'Slap' | 'Pinch' | 'Spank' | 'SpankItem' | 'ShockItem') {
+export function PainMessage(player: Character, painSrc: 'Bite' | 'Slap' | 'Pinch' | 'Spank' | 'SpankItem' | 'ShockItem' | 'Kick') {
     if (!DataManager.instance.data.pain) return;
     ChatRoomAutoInterceptMessage(ElementValue("InputChat"), MixMoan(player, MoanType.Pain, painSrc));
 }

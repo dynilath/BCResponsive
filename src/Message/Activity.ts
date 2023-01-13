@@ -6,6 +6,7 @@ const ActivityDict = new Map<string, (player: Character) => void>([
     ['Slap', (player) => PainMessage(player, 'Slap')],
     ['Bite', (player) => PainMessage(player, 'Bite')],
     ['Spank', (player) => PainMessage(player, 'Spank')],
+    ['Kick', (player) => PainMessage(player, 'Kick')],
     ['Pinch', (player) => PainMessage(player, 'Pinch')],
     ['Tickle', (player) => TickleMessage(player, 'Tickle')],
     ['SpankItem', (player) => PainMessage(player, 'SpankItem')],
