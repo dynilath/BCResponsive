@@ -198,6 +198,8 @@ declare var PreferenceSubscreen: string;
 declare function ChatRoomSendChat(): void;
 declare function ElementValue(id: string, value?: string): string;
 
+// Character.js
+declare function CharacterNickname(C:Character): string;
 
 // Cafe.js
 declare var CafeIsHeadMaid: boolean;

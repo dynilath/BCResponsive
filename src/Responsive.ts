@@ -17,7 +17,7 @@ import { OrgasmMessage } from './Message/MoanProvider';
         if (!DataManager.instance.data.settings.enable) return;
         if (CurrentScreen !== 'ChatRoom' || !Player) return;
         if (Player.MemberNumber !== C.MemberNumber) return;
-        OrgasmMessage(Player);
+        OrgasmMessage(Player, Player);
     };
 
     const chatMessageHandler = new ChatMessageHandler;

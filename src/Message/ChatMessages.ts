@@ -1,3 +1,5 @@
+import {ChatRoomSendAction } from "../utils";
+
 interface ActivityInfo {
     SourceCharacter: { MemberNumber: number };
     TargetCharacter: { MemberNumber: number };
@@ -45,9 +47,22 @@ function ChatRoomNormalMessage(msg: string) {
 }
 
 export function ChatRoomAutoInterceptMessage(cur_msg: string, msg: string) {
-    if (IsSimpleChat(cur_msg) && ChatRoomTargetMemberNumber == null) {
-        ChatRoomInterceptMessage(cur_msg, msg);
-    } else {
-        ChatRoomNormalMessage(msg);
-    }
+    if(msg.trimStart().startsWith(".a")) {
+        if(IsSimpleChat(cur_msg) && ChatRoomTargetMemberNumber == null){
+            ElementValue("InputChat", cur_msg + "... ");
+            ChatRoomSendChat();
+        }
+        
+        msg = msg.trimStart();
+        if(msg.startsWith(".action")) msg = msg.substring(7);
+        else if(msg.startsWith(".a")) msg = msg.substring(2);
+        ChatRoomSendAction(msg.trimStart());
+    } 
+    else {
+        if (IsSimpleChat(cur_msg) && ChatRoomTargetMemberNumber == null) {
+            ChatRoomInterceptMessage(cur_msg, msg);
+        } else {
+            ChatRoomNormalMessage(msg);
+        }
+    } 
 }

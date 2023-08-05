@@ -8,3 +8,18 @@ export function ShuffleStr(src: string[]) {
     }
     return ret;
 }
+
+export function ChatRoomSendAction(Content: string) {
+    if (!Content || !Player || !Player.MemberNumber) return;
+    ServerSend("ChatRoomChat", {
+        Content: "Beep",
+        Type: "Action",
+        Dictionary: [
+            { Tag: "Beep", Text: "msg" },
+            { Tag: "Biep", Text: "msg" },
+            { Tag: "Sonner", Text: "msg" },
+            { Tag: "发送私聊", Text: "msg" },
+            { Tag: "msg", Text: Content }
+        ]
+    });
+}
