@@ -1,102 +1,75 @@
-import { ChatRoomAutoInterceptMessage } from "./ChatMessages";
-import { MoanType } from "../Definition";
-import { ShuffleStr } from "../utils";
+import { TriggerData, TriggerDataActivity, TriggerDataOrgasm, isTriggerDataActivity, isTriggerDataOrgasm } from ".";
 import { DataManager } from "../Data";
+import { ChatRoomAutoInterceptMessage, ChatRoomSendAction } from "./ChatMessages";
+import { ReplaceField } from "./MessageFields";
 
+export function InvokeResponse(data: TriggerData, player: Character | undefined, target?: Character) {
+    let active_personality = DataManager.get_active_personality();
 
-let ShiftingMoans: ResponsiveSetting = {
-    hot: [],
-    medium: [],
-    light: [],
-    low: [],
-    orgasm: [],
-    pain: [],
-    tickle: [],
-};
+    if (active_personality === undefined) return;
 
-function NextMoanString(key: keyof ResponsiveSetting) {
-    if (ShiftingMoans[key].length === 0) {
-        let r = DataManager.instance.data[key];
-        if (r.length > 0) ShiftingMoans[key] = ShuffleStr(r);
+    if (isTriggerDataActivity(data)) {
+        InvokeResponseForActivity(active_personality, data, player, target);
+    } else if (isTriggerDataOrgasm(data)) {
+        InvokeResponseForOrgasm(active_personality, data, player);
     }
-
-    if (ShiftingMoans[key].length > 0) {
-        return ShiftingMoans[key].shift() as string;
-    }
-
-    return '';
 }
 
-function TypedMoan(player: Character, sender: Character, t: MoanType) {
-    let k: keyof ResponsiveSetting | undefined;
-    if (t === MoanType.Orgasm) k = 'orgasm';
-    else if (t === MoanType.Pain) k = 'pain';
-    else if (t === MoanType.Tickle) k = 'tickle';
-    if (!k) return '';
-    return NextMoanString(k).replaceAll('MY_NAME', CharacterNickname(player)).replaceAll('SOURCE_NAME', CharacterNickname(sender));
-}
+function InvokeResponseForActivity(persona: ResponsivePersonality, data: TriggerDataActivity, player: Character | undefined, target: Character | undefined) {
+    let selected = (() => {
+        let actived_messages = persona.responses.filter(i => {
+            const trigger = i.trigger;
+            if (trigger.mode !== "activity") return false;
+            if (trigger.allow_activities !== undefined && !trigger.allow_activities.includes(data.activity)) return false;
+            if (trigger.allow_bodyparts !== undefined && !trigger.allow_bodyparts.includes(data.bodypart)) return false;
+            if (trigger.allow_ids !== undefined && !trigger.allow_ids.includes(data.from)) return false;
+            return true;
+        }).reduce((acc, cur) => { return acc.concat(cur.messages); }, [] as ResponsiveMessage[]);
 
-function BaseMoan(player: Character, Arousal: number, shift?: number) {
-    let factor = Math.floor(Arousal / 20);
-    if (shift) factor -= shift;
-    if (factor < 0) factor = 0;
-    else if (factor > 5) factor = 5;
-    const Tkeys: (keyof ResponsiveSetting)[] = ['low', 'low', 'light', 'medium', 'hot', 'hot'];
-    let k = Tkeys[factor];
-    return NextMoanString(k).replaceAll('MY_NAME', CharacterNickname(player));
-}
+        if (actived_messages.length === 0) return undefined;
+        return actived_messages[Math.floor(Math.random() * actived_messages.length)];
+    })();
+    if (selected === undefined) return;
 
-function MixMoan(player: Character, sender: Character, t: MoanType, act: string) {
-    let actFactor = player.ArousalSettings.Activity.find(_ => _.Name === act)?.Self;
-    if (!actFactor) return '';
-
-    let threthold1 = Math.max(10, (4 - actFactor) * 25);
-    let threthold2 = threthold1 + 40;
-    let arousal = player.ArousalSettings.Progress;
-
-    let typed = TypedMoan(player, sender, t);
-    let base = BaseMoan(player, arousal);
-
-    if (arousal <= threthold1) {
-        return typed;
-    } else {
-        let m = BaseMoan(player, arousal);
-        if (!m) return typed;
-        else {
-            if (arousal <= threthold2)  return typed + "♥" + base + "♥";
-            else return "♥" + base + "♥";
+    if (selected.type === "message") {
+        let selected_spicer = (() => {
+            let actived_spicers = persona.responses.filter(i => {
+                const trigger = i.trigger;
+                if (trigger.mode !== "spicer") return false;
+                if (trigger.min_arousal !== undefined && data.arousal < trigger.min_arousal) return false;
+                if (trigger.max_arousal !== undefined && data.arousal > trigger.max_arousal) return false;
+                if (trigger.allow_ids !== undefined && !trigger.allow_ids.includes(data.from)) return false;
+                return true;
+            }).reduce((acc, cur) => { return acc.concat(cur.messages); }, [] as ResponsiveMessage[]);
+            if (actived_spicers.length === 0) return undefined;
+            return actived_spicers[Math.floor(Math.random() * actived_spicers.length)];
+        })();
+        if (selected_spicer === undefined) {
+            ChatRoomAutoInterceptMessage(ReplaceField(selected.content, player, target));
+        } else {
+            ChatRoomAutoInterceptMessage(ReplaceField(selected_spicer.content, player, target) + " " + ReplaceField(selected.content, player, target));
         }
+    } else if (selected.type === "action") {
+        ChatRoomSendAction(ReplaceField(selected.content, player, target));
     }
 }
 
-function BaseMoanStepped(player: Character, act: string) {
-    let actFactor = player.ArousalSettings.Activity.find(_ => _.Name === act)?.Self;
-    if (!actFactor) return '';
+function InvokeResponseForOrgasm(persona: ResponsivePersonality, data: TriggerDataOrgasm, player: Character | undefined) {
+    let selected = (() => {
+        let actived_messages = persona.responses.filter(i => {
+            const trigger = i.trigger;
+            if (trigger.mode !== "orgasm") return false;
+            return true;
+        }).reduce((acc, cur) => { return acc.concat(cur.messages); }, [] as ResponsiveMessage[]);
 
-    let threthold1 = Math.max(10, (4 - actFactor) * 25);
-    let threthold2 = threthold1 + 40;
-    let arousal = player.ArousalSettings.Progress;
+        if (actived_messages.length === 0) return undefined;
+        return actived_messages[Math.floor(Math.random() * actived_messages.length)];
+    })();
+    if (selected === undefined) return;
 
-    if (arousal <= threthold1) return BaseMoan(player, arousal, 1);
-    else if (arousal <= threthold2) return BaseMoan(player, arousal, 0);
-    else return BaseMoan(player, arousal, -1);
-}
-
-export function MasturbateMoan(player: Character, sender: Character, masturSrc: 'MasturbateHand' | 'MasturbateFist' | 'MasturbateFoot' | 'MasturbateItem' | 'MasturbateTongue') {
-    ChatRoomAutoInterceptMessage(ElementValue("InputChat"), BaseMoanStepped(player, masturSrc));
-}
-
-export function PainMessage(player: Character, sender: Character, painSrc: 'Bite' | 'Slap' | 'Pinch' | 'Spank' | 'SpankItem' | 'ShockItem' | 'Kick') {
-    if (!DataManager.instance.data.pain) return;
-    ChatRoomAutoInterceptMessage(ElementValue("InputChat"), MixMoan(player, sender, MoanType.Pain, painSrc));
-}
-
-export function OrgasmMessage(player: Character, sender: Character) {
-    if (!DataManager.instance.data.orgasm) return;
-    ChatRoomAutoInterceptMessage(ElementValue("InputChat"), TypedMoan(player, sender, MoanType.Orgasm));
-}
-
-export function TickleMessage(player: Character, sender: Character, tickleSrc: 'TickleItem' | 'Tickle') {
-    if (!DataManager.instance.data.tickle) return;
-    ChatRoomAutoInterceptMessage(ElementValue("InputChat"), MixMoan(player, sender, MoanType.Tickle, tickleSrc));
+    if (selected.type === "message") {
+        ChatRoomAutoInterceptMessage(ReplaceField(selected.content, player, undefined));
+    } else if (selected.type === "action") {
+        ChatRoomSendAction(ReplaceField(selected.content, player, undefined));
+    }
 }

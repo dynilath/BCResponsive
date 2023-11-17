@@ -1,5 +1,3 @@
-import {ChatRoomSendAction } from "../utils";
-
 interface ActivityInfo {
     SourceCharacter: { MemberNumber: number };
     TargetCharacter: { MemberNumber: number };
@@ -10,13 +8,13 @@ interface ActivityInfo {
 export function ActivityDeconstruct(dict: ChatMessageDictionary): ActivityInfo | undefined {
     let SourceCharacter, TargetCharacter, ActivityGroup, ActivityName;
     for (let v of dict) {
-        if(v.hasOwnProperty('TargetCharacter')){
+        if (v.hasOwnProperty('TargetCharacter')) {
             TargetCharacter = { MemberNumber: v['TargetCharacter'] };
-        } else if(v.hasOwnProperty('SourceCharacter')){
+        } else if (v.hasOwnProperty('SourceCharacter')) {
             SourceCharacter = { MemberNumber: v['SourceCharacter'] };
-        } else if(v.hasOwnProperty('ActivityName')){
+        } else if (v.hasOwnProperty('ActivityName')) {
             ActivityName = v['ActivityName'];
-        } else if(v.hasOwnProperty('Tag') && v.Tag === 'FocusAssetGroup'){
+        } else if (v.hasOwnProperty('Tag') && v.Tag === 'FocusAssetGroup') {
             ActivityGroup = v['FocusGroupName'];
         }
     }
@@ -46,23 +44,26 @@ function ChatRoomNormalMessage(msg: string) {
     ChatRoomTargetMemberNumber = backupChatRoomTargetMemberNumber;
 }
 
-export function ChatRoomAutoInterceptMessage(cur_msg: string, msg: string) {
-    if(msg.trimStart().startsWith(".a")) {
-        if(IsSimpleChat(cur_msg) && ChatRoomTargetMemberNumber == null){
-            ElementValue("InputChat", cur_msg + "... ");
-            ChatRoomSendChat();
-        }
-        
-        msg = msg.trimStart();
-        if(msg.startsWith(".action")) msg = msg.substring(7);
-        else if(msg.startsWith(".a")) msg = msg.substring(2);
-        ChatRoomSendAction(msg.trimStart());
-    } 
-    else {
-        if (IsSimpleChat(cur_msg) && ChatRoomTargetMemberNumber == null) {
-            ChatRoomInterceptMessage(cur_msg, msg);
-        } else {
-            ChatRoomNormalMessage(msg);
-        }
-    } 
+export function ChatRoomAutoInterceptMessage(msg: string) {
+    let cur_msg = ElementValue("InputChat");
+    if (IsSimpleChat(cur_msg) && ChatRoomTargetMemberNumber == null) {
+        ChatRoomInterceptMessage(cur_msg, msg);
+    } else {
+        ChatRoomNormalMessage(msg);
+    }
+}
+
+export function ChatRoomSendAction(Content: string) {
+    if (!Content || !Player || !Player.MemberNumber) return;
+    ServerSend("ChatRoomChat", {
+        Content: "Beep",
+        Type: "Action",
+        Dictionary: [
+            { Tag: "Beep", Text: "msg" },
+            { Tag: "Biep", Text: "msg" },
+            { Tag: "Sonner", Text: "msg" },
+            { Tag: "发送私聊", Text: "msg" },
+            { Tag: "msg", Text: Content }
+        ]
+    });
 }
