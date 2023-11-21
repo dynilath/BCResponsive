@@ -193,7 +193,10 @@ interface IChatRoomMessage extends IChatRoomMessageBasic {
 declare function ChatRoomMessage(data: IChatRoomMessage): void;
 
 declare function PreferenceIsPlayerInSensDep(bypassblindness: boolean): boolean;
+declare var PreferenceSubscreenList: string[];
 declare var PreferenceSubscreen: string;
+declare var PreferencePageCurrent: number;
+declare var PreferenceMessage: string;
 
 declare function ChatRoomSendChat(): void;
 declare function ElementValue(id: string, value?: string): string;

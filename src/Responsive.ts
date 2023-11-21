@@ -1,10 +1,10 @@
 import bcMod from 'bondage-club-mod-sdk'
-import { ActivityHandle } from './Message/Activity';
+import { ActivityHandle, OrgasmHandle } from './Message/Handlers';
 import { ChatMessageHandler } from './Message/ChatMessageHandler';
 import { DataManager } from './Data';
 import { ModName, ModVersion } from './Definition';
 import { GUISetting } from './GUI/GUI';
-import { OrgasmMessage } from './Message/MoanProvider';
+import { GUIMainMenu } from './GUI/MainMenu';
 
 (function () {
     if (window.BCResponsive_Loaded) return;
@@ -13,30 +13,17 @@ import { OrgasmMessage } from './Message/MoanProvider';
 
     window.BCResponsive_Loaded = false;
 
-    const OrgasmHandle = (C: Character) => {
-        if (!DataManager.instance.data.settings.enable) return;
-        if (CurrentScreen !== 'ChatRoom' || !Player) return;
-        if (Player.MemberNumber !== C.MemberNumber) return;
-        OrgasmMessage(Player, Player);
-    };
-
-    const chatMessageHandler = new ChatMessageHandler;
-
     mod.hookFunction('ChatRoomMessage', 9, (args, next) => {
         next(args);
-        chatMessageHandler.Run(Player, args[0] as IChatRoomMessage);
+        ActivityHandle(Player, args[0] as IChatRoomMessage);
     });
 
     mod.hookFunction('ActivityOrgasmStart', 9, (args, next) => {
-        OrgasmHandle(args[0] as Character);
         next(args);
+        OrgasmHandle(Player, args[0] as Character);
     });
 
-    chatMessageHandler.Register('Activity', ActivityHandle);
-
-    const GUI = new GUISetting;
-    GUI.load(mod);
-
+    GUISetting.init(mod, () => { return new GUIMainMenu });
     DataManager.init();
 
     function LoadAndMessage() {

@@ -8,7 +8,9 @@ export enum MoanType {
     Tickle
 }
 
-export const ModVersion = buildVersion(0, 3, 5);
+export const ModVersion = buildVersion(1, 0, 0);
 export const ModName = 'BondageClub Responsive'
 
-export const DebugMode = false;
+export const DebugMode = true;
+
+export const SettingName = "BCResponsiveSetting";

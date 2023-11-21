@@ -229,6 +229,20 @@ export class DataManager {
         return DataManager._instance as DataManager;
     }
 
+    static load() {
+        this.instance.ServerTakeData();
+    }
+
+    static save() {
+        this.instance.ServerStoreData();
+    }
+
+    static get_active_personality() {
+        let data = this.instance.data;
+        if (data.active_personality === null) return undefined;
+        return data.personalities.find(_ => _.name === data.active_personality);
+    }
+
     modData: ResponsivePartialSetting = {};
 
     private EncodeDataStr(): string {
