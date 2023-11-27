@@ -20,20 +20,14 @@ export function setSubscreen(subscreen: GUISettingScreen | null): void {
     if (GUISetting.instance) {
         GUISetting.instance.currentScreen = subscreen;
     }
-    if(subscreen === null){
+    if (subscreen === null) {
         PreferenceSubscreen = "";
         PreferencePageCurrent = 1;
         PreferenceMessage = "";
     }
 }
 
-export function setMainScreenProvider(func:()=>GUISettingScreen){
-    if(GUISetting.instance) {
-        GUISetting.instance._mainScreenProvider = func;
-    }
-}
-
-function drawTooltip(){
+function drawTooltip() {
     if (DebugMode) {
         if (MouseX > 0 || MouseY > 0) {
             MainCanvas.save();
@@ -60,7 +54,7 @@ export class GUISetting {
 
     private _currentScreen: GUISettingScreen | null = null;
 
-    _mainScreenProvider: (()=>GUISettingScreen) | null = null;
+    private _mainScreenProvider: (() => GUISettingScreen) | null = null;
 
     get currentScreen(): GUISettingScreen | null {
         return this._currentScreen;
@@ -76,16 +70,16 @@ export class GUISetting {
         }
     }
 
-    static init(mod:ModSDKModAPI,func:()=>GUISettingScreen){
-        GUISetting.instance = new GUISetting(mod);
-        GUISetting.instance._mainScreenProvider = func;
+    static init(mod: ModSDKModAPI, func: () => GUISettingScreen) {
+        GUISetting.instance = new GUISetting(mod, func);
     }
 
-    constructor(mod: ModSDKModAPI) {
+    constructor(mod: ModSDKModAPI, func: () => GUISettingScreen) {
         this.hook(mod);
+        this._mainScreenProvider = func;
     }
 
-    hook(mod: ModSDKModAPI<any>) {
+    private hook(mod: ModSDKModAPI<any>) {
         mod.hookFunction("PreferenceRun", 10, (args, next) => {
             if (this._currentScreen) {
                 MainCanvas.textAlign = "left";
@@ -115,7 +109,7 @@ export class GUISetting {
             return next(args);
         });
 
-        if(!PreferenceSubscreenList.includes(SettingName))
+        if (!PreferenceSubscreenList.includes(SettingName))
             PreferenceSubscreenList.push(SettingName);
 
         mod.hookFunction("TextGet", 2, (args: string[], next: (arg0: any) => any) => {
@@ -124,7 +118,7 @@ export class GUISetting {
         });
 
         (window as any)[`PreferenceSubscreen${SettingName}Load`] = () => {
-            if(this._mainScreenProvider){
+            if (this._mainScreenProvider) {
                 this.currentScreen = this._mainScreenProvider();
             }
         }
