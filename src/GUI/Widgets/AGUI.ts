@@ -14,7 +14,7 @@ export interface IPoint {
 
 export abstract class AGUIItem {
     abstract Draw(): void;
-    abstract Click(mouse: IPoint): void;
+    Click(mouse: IPoint): void { };
 }
 
 export class AGUIScreen extends GUISettingScreen {
@@ -49,6 +49,6 @@ export class AGUIScreen extends GUISettingScreen {
     }
 }
 
-export function WithInRect(mouse: IPoint, rect: IRect): boolean {
+export function WithinRect(mouse: IPoint, rect: IRect): boolean {
     return mouse.x >= rect.x && mouse.x <= rect.x + rect.width && mouse.y >= rect.y && mouse.y <= rect.y + rect.height;
 }

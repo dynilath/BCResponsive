@@ -1,9 +1,17 @@
 import { ModVersion } from "../../Definition";
 import { LocalizedText } from "../../i18n";
 import { setSubscreen } from "../GUI";
-import { AGUIItem, IPoint, IRect, WithInRect as WithinRect } from "./AGUI";
+import { AGUIItem, IPoint, IRect, WithinRect as WithinRect } from "./AGUI";
 
-function ADrawTextButton(rect: IRect, Text: string, BackColor: string, Icon: string) {
+export function ADrawButton(rect: IRect, Text: string, BackColor: string, Icon: string) {
+    DrawButton(rect.x, rect.y, rect.width, rect.height, Text, BackColor, Icon);
+}
+
+export function ADrawText(rect: IPoint, Text: string) {
+    DrawText(Text, rect.x, rect.y, "Black");
+}
+
+export function ADrawTextButton(rect: IRect, Text: string, BackColor: string, Icon: string) {
     const align = MainCanvas.textAlign;
     MainCanvas.textAlign = "center";
     DrawButton(rect.x, rect.y, rect.width, rect.height, "", BackColor, Icon);
@@ -11,7 +19,7 @@ function ADrawTextButton(rect: IRect, Text: string, BackColor: string, Icon: str
     MainCanvas.textAlign = align;
 }
 
-function ADrawIconButton(rect: IRect, Text: string, BackColor: string, Icon: string) {
+export function ADrawIconButton(rect: IRect, Text: string, BackColor: string, Icon: string) {
     DrawButton(rect.x, rect.y, rect.width, rect.height, "", BackColor, Icon);
 }
 
@@ -37,6 +45,27 @@ export class StdButton extends AGUIItem {
         } else if (this._text) {
             ADrawTextButton(this._rect, this._text, "White", "");
         }
+    }
+
+    Click(mouse: IPoint) {
+        if (WithinRect(mouse, this._rect)) this._callback();
+    }
+}
+
+export class TextButton extends AGUIItem {
+    private _rect: IRect;
+    private _callback: () => void;
+    private _text: string;
+
+    constructor(rect: IRect, text: string, callback: () => void) {
+        super();
+        this._rect = rect;
+        this._text = text;
+        this._callback = callback;
+    }
+
+    Draw() {
+        ADrawTextButton(this._rect, this._text, "White", "");
     }
 
     Click(mouse: IPoint) {
@@ -74,6 +103,19 @@ export class TitleText extends AGUIItem {
     Draw() {
         DrawText(`${LocalizedText("responsive_setting_title")} v${ModVersion}`, 200, 125, "Black");
     }
+}
 
-    Click(mouse: IPoint): void { }
+export class BasicText extends AGUIItem {
+    private _where: IPoint;
+    private _text: string;
+
+    constructor(where: IPoint, text: string) {
+        super();
+        this._where = where;
+        this._text = text;
+    }
+
+    Draw() {
+        DrawText(this._text, this._where.x, this._where.y, "Black");
+    }
 }
