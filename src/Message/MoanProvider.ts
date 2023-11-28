@@ -1,4 +1,4 @@
-import { TriggerData, TriggerDataActivity, TriggerDataOrgasm, isTriggerDataActivity, isTriggerDataOrgasm } from ".";
+import { TriggerData, TriggerDataActivity, TriggerDataOrgasm, isTriggerDataActivity, isTriggerDataOrgasm } from "./types";
 import { DataManager } from "../Data";
 import { ChatRoomAutoInterceptMessage, ChatRoomSendAction } from "./ChatMessages";
 import { ReplaceField } from "./MessageFields";
