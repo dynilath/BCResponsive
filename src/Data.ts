@@ -1,4 +1,4 @@
-import { DebugMode, MaxPersonalities } from "./Definition";
+import { DebugMode, DefaultPersonaName, MaxPersonalities } from "./Definition";
 
 const DefaultValueV1: ResponsiveSettingV1 = {
     settings: { enable: true },
@@ -17,7 +17,14 @@ const DefaultValueV1TriggerActivities = {
     masturbate: ["MasturbateHand", "MasturbateFist", "MasturbateFoot", "MasturbateTongue", "MasturbateItem", "PenetrateFast", "PenetrateSlow", "PenetrateItem"],
 }
 
-function getDefaultSettings(): ResponsiveSettingV2 {
+function FirstOr<T, U>(v1: T, v2: U) {
+    return (id: number) => {
+        if (id === 0) return v1;
+        else return v2;
+    }
+}
+
+export function getDefaultPersonaList() {
     const message_mapper = (_: string) => { return { type: "message", content: _ } as ResponsiveMessage };
     const action_mapper = (_: string) => { return { type: "action", content: _ } as ResponsiveMessage };
 
@@ -72,12 +79,18 @@ function getDefaultSettings(): ResponsiveSettingV2 {
         messages: DefaultValueV1.low.map(message_mapper)
     }];
 
-    return Object.assign({}, {
-        settings: { enabled: true }, active_personality: "Default", personalities: [{
-            name: "Default",
+    return Array.from({ length: MaxPersonalities }, (_, index) => index).map(
+        FirstOr({
+            name: DefaultPersonaName,
             index: 0,
             responses: default_personality
-        }]
+        } as ResponsivePersonality, undefined)
+    );
+}
+
+function getDefaultSettings(): ResponsiveSettingV2 {
+    return Object.assign({}, {
+        settings: { enabled: true }, active_personality: "Default", personalities: getDefaultPersonaList()
     });
 }
 
@@ -191,22 +204,19 @@ function V1SettingToV2Setting(data: ResponsiveSettingV1): ResponsiveSettingV2 {
     let def = getDefaultSettings();
     def.settings.enabled = data.settings.enable;
     const v1mapper = (_: string) => { return { type: "message", content: _ } as ResponsiveMessage };
-    def.personalities = [[
-        { name: "Pain", trigger: { mode: "activity", allow_activities: DefaultValueV1TriggerActivities.pain }, messages: data.pain.map(v1mapper) },
-        { name: "Tickle", trigger: { mode: "activity", allow_activities: DefaultValueV1TriggerActivities.tickle }, messages: data.tickle.map(v1mapper) },
-        { name: "Masturbate", trigger: { mode: "activity", allow_activities: DefaultValueV1TriggerActivities.masturbate }, messages: data.hot.map(v1mapper) },
-        { name: "Orgasm", trigger: { mode: "orgasm" }, messages: data.orgasm.map(v1mapper) },
-        { name: "High Arousal", trigger: { mode: "spicer", min_arousal: 80 }, messages: data.hot.map(v1mapper) },
-        { name: "Mid Arousal", trigger: { mode: "spicer", max_arousal: 80, min_arousal: 50 }, messages: data.medium.map(v1mapper) },
-        { name: "Low Arousal", trigger: { mode: "spicer", max_arousal: 50 }, messages: data.low.map(v1mapper) },
-    ] as ResponsiveItem[], undefined, undefined, undefined, undefined].map((_): ResponsivePersonality | undefined => {
-        if (Array.isArray(_)) return {
-            name: "Default",
-            index: 0,
-            responses: _
-        }
-        else return _;
-    });
+    def.personalities = Array.from({ length: MaxPersonalities }, (_, index) => index).map(FirstOr({
+        name: "Default",
+        index: 0,
+        responses: [
+            { name: "Pain", trigger: { mode: "activity", allow_activities: DefaultValueV1TriggerActivities.pain }, messages: data.pain.map(v1mapper) },
+            { name: "Tickle", trigger: { mode: "activity", allow_activities: DefaultValueV1TriggerActivities.tickle }, messages: data.tickle.map(v1mapper) },
+            { name: "Masturbate", trigger: { mode: "activity", allow_activities: DefaultValueV1TriggerActivities.masturbate }, messages: data.hot.map(v1mapper) },
+            { name: "Orgasm", trigger: { mode: "orgasm" }, messages: data.orgasm.map(v1mapper) },
+            { name: "High Arousal", trigger: { mode: "spicer", min_arousal: 80 }, messages: data.hot.map(v1mapper) },
+            { name: "Mid Arousal", trigger: { mode: "spicer", max_arousal: 80, min_arousal: 50 }, messages: data.medium.map(v1mapper) },
+            { name: "Low Arousal", trigger: { mode: "spicer", max_arousal: 50 }, messages: data.low.map(v1mapper) },
+        ] as ResponsiveItem[]
+    }, undefined));
     return def;
 }
 
