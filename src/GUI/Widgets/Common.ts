@@ -3,24 +3,32 @@ import { LocalizedText } from "../../i18n";
 import { setSubscreen } from "../GUI";
 import { AGUIItem, IPoint, IRect, WithinRect as WithinRect } from "./AGUI";
 
-export function ADrawButton(rect: IRect, Text: string, BackColor: string, Icon: string) {
-    DrawButton(rect.x, rect.y, rect.width, rect.height, Text, BackColor, Icon);
+export function ADrawButton(rect: IRect, Text: string, Icon: string) {
+    DrawButton(rect.x, rect.y, rect.width, rect.height, Text, "White", Icon);
 }
 
 export function ADrawText(rect: IPoint, Text: string) {
     DrawText(Text, rect.x, rect.y, "Black");
 }
 
-export function ADrawTextButton(rect: IRect, Text: string, BackColor: string, Icon: string) {
+export function ADrawIconTextButton(rect: IRect, Text: string, Icon: string, active: boolean = true) {
     const align = MainCanvas.textAlign;
     MainCanvas.textAlign = "center";
-    DrawButton(rect.x, rect.y, rect.width, rect.height, "", BackColor, Icon);
-    DrawTextFit(Text, rect.x + rect.width / 2, rect.y + rect.height / 2, rect.width - rect.height, "Black");
+    DrawButton(rect.x, rect.y, rect.width, rect.height, "", "White", Icon, undefined, active);
+    DrawTextFit(Text, rect.x + (rect.height + rect.width) / 2, rect.y + rect.height / 2, rect.width - rect.height, "Black");
     MainCanvas.textAlign = align;
 }
 
-export function ADrawIconButton(rect: IRect, Text: string, BackColor: string, Icon: string) {
-    DrawButton(rect.x, rect.y, rect.width, rect.height, "", BackColor, Icon);
+export function ADrawTextButton(rect: IRect, Text: string, active: boolean = true) {
+    const align = MainCanvas.textAlign;
+    MainCanvas.textAlign = "center";
+    DrawButton(rect.x, rect.y, rect.width, rect.height, "", "White", "", undefined, active);
+    DrawTextFit(Text, rect.x + rect.width / 2, rect.y + rect.height / 2, rect.width, "Black");
+    MainCanvas.textAlign = align;
+}
+
+export function ADrawIconButton(rect: IRect, Icon: string, active: boolean = true) {
+    DrawButton(rect.x, rect.y, rect.width, rect.height, "", "White", Icon, undefined, active);
 }
 
 export class StdButton extends AGUIItem {
@@ -37,13 +45,13 @@ export class StdButton extends AGUIItem {
         this._icon = icon;
     }
 
-    Draw() {
+    Draw(hasFocus: boolean) {
         if (this._icon && this._text) {
-            ADrawTextButton(this._rect, this._text, "White", this._icon);
+            ADrawIconTextButton(this._rect, this._text, this._icon);
         } else if (this._icon) {
-            ADrawIconButton(this._rect, "", "White", this._icon);
+            ADrawIconButton(this._rect, this._icon);
         } else if (this._text) {
-            ADrawTextButton(this._rect, this._text, "White", "");
+            ADrawIconTextButton(this._rect, this._text, "");
         }
     }
 
@@ -64,8 +72,8 @@ export class TextButton extends AGUIItem {
         this._callback = callback;
     }
 
-    Draw() {
-        ADrawTextButton(this._rect, this._text, "White", "");
+    Draw(hasFocus: boolean) {
+        ADrawTextButton(this._rect, this._text, hasFocus);
     }
 
     Click(mouse: IPoint) {
@@ -88,8 +96,8 @@ export class ExitButton extends AGUIItem {
         this.callback = callback;
     }
 
-    Draw() {
-        ADrawIconButton(this._rect, "", "White", "Icons/Exit.png");
+    Draw(hasFocus: boolean) {
+        ADrawIconButton(this._rect, "Icons/Exit.png", hasFocus);
     }
 
     Click(mouse: IPoint) {

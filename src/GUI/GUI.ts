@@ -16,6 +16,10 @@ export function getCurrentSubscreen(): GUISettingScreen | null {
     return GUISetting.instance && GUISetting.instance.currentScreen;
 }
 
+export function hasFocus(subscreen: GUISettingScreen): boolean {
+    return getCurrentSubscreen() === subscreen;
+}
+
 export function setSubscreen(subscreen: GUISettingScreen | null): void {
     if (GUISetting.instance) {
         GUISetting.instance.currentScreen = subscreen;

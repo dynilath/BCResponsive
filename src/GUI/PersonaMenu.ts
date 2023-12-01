@@ -1,7 +1,8 @@
 import { DataManager } from "../Data";
+import { MaxPersonalities } from "../Definition";
 import { GUISettingScreen } from "./GUI";
 import { AGUIItem, AGUIScreen, IPoint, IRect, WithinRect } from "./Widgets/AGUI";
-import { ADrawButton, ADrawText, ADrawTextButton, BasicText, ExitButton, TitleText } from "./Widgets/Common";
+import { ADrawButton, ADrawText, ADrawIconTextButton, BasicText, ExitButton, TitleText, ADrawTextButton } from "./Widgets/Common";
 
 class PersonaItem extends AGUIItem {
     private _persona: ResponsivePersonality;
@@ -54,7 +55,7 @@ class PersonaItem extends AGUIItem {
         };
     }
 
-    Draw() {
+    Draw(hasFocus: boolean) {
         const align = MainCanvas.textAlign;
         MainCanvas.textAlign = "center";
 
@@ -69,11 +70,11 @@ class PersonaItem extends AGUIItem {
 
         ADrawText(this._name_point, this._persona.name);
 
-        ADrawButton(this._import_rect, "Import", "White", "");
-        ADrawButton(this._export_rect, "Export", "White", "");
+        ADrawTextButton(this._import_rect, "Import", hasFocus);
+        ADrawTextButton(this._export_rect, "Export", hasFocus);
 
         if (this._persona.name !== DataManager.instance.data.active_personality)
-            ADrawButton(this._activate_rect, "Activate", "White", "");
+            ADrawTextButton(this._activate_rect, "Activate", hasFocus);
 
         MainCanvas.textAlign = align;
     }
@@ -93,19 +94,21 @@ class PersonaItem extends AGUIItem {
 
 class PersonaNewItem extends AGUIItem {
     private _rect: IRect;
-    constructor(rect: IRect) {
+    private _index: number;
+    constructor(index: number, rect: IRect) {
         super();
+        this._index = index;
         this._rect = rect;
     }
 
-    Draw() {
+    Draw(hasFocus: boolean) {
         const align = MainCanvas.textAlign;
         MainCanvas.textAlign = "center";
 
         MainCanvas.beginPath();
         MainCanvas.rect(this._rect.x, this._rect.y, this._rect.width, this._rect.height);
 
-        if (WithinRect({ x: MouseX, y: MouseY }, this._rect))
+        if (WithinRect({ x: MouseX, y: MouseY }, this._rect) && hasFocus)
             MainCanvas.fillStyle = 'Cyan';
         else MainCanvas.fillStyle = 'White';
 
@@ -121,6 +124,16 @@ class PersonaNewItem extends AGUIItem {
         DrawText("Create", centerX, centerY, "Black");
 
         MainCanvas.textAlign = align;
+    }
+
+    Click(mouse: IPoint): void {
+        if (WithinRect(mouse, this._rect)) {
+            DataManager.instance.data.personalities[this._index] = {
+                name: "New Personality",
+                index: this._index,
+                responses: [],
+            };
+        }
     }
 }
 
@@ -140,13 +153,14 @@ export class PersonaSetting extends AGUIScreen {
         const personaStartX = centerX - personaBannerTotalWidth / 2;
         const personaStartY = centerY - personaBannerHeight / 2;
 
-        super(prev, [0, 1, 2, 3, 4].map((index): AGUIItem => {
+        super(prev, Array.from({ length: MaxPersonalities }, (_, index): number => index).map((index): AGUIItem => {
             const rect: IRect = {
                 x: personaStartX + (personaBannerWidth + personaBannerSpacing) * index,
                 y: personaStartY, width: personaBannerWidth, height: personaBannerHeight
             };
-            if (index < personas.length) return new PersonaItem(personas[index], rect);
-            else return new PersonaNewItem(rect);
+            const pers = personas[index];
+            if (pers === undefined) return new PersonaNewItem(index, rect);
+            else return new PersonaItem(pers, rect);
         }).concat([new ExitButton(() => this.Exit()), new TitleText(), new BasicText({ x: 200, y: 200 }, "Personality Setting")]));
     }
 }

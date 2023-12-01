@@ -1,4 +1,4 @@
-import { GUISettingScreen, setSubscreen } from "../GUI";
+import { GUISettingScreen, hasFocus, setSubscreen } from "../GUI";
 
 export interface IRect {
     x: number;
@@ -13,14 +13,14 @@ export interface IPoint {
 }
 
 export abstract class AGUIItem {
-    abstract Draw(): void;
+    abstract Draw(hasFocus: boolean): void;
     Click(mouse: IPoint): void { };
 }
 
 export class AGUIScreen extends GUISettingScreen {
-    private _prev: GUISettingScreen | null = null;
+    protected _prev: GUISettingScreen | null = null;
 
-    private _items: AGUIItem[] = [];
+    protected _items: AGUIItem[] = [];
 
     constructor(prev: GUISettingScreen | null, items: AGUIItem[] = []) {
         super();
@@ -32,12 +32,8 @@ export class AGUIScreen extends GUISettingScreen {
         this._items.push(item);
     }
 
-    set Items(items: AGUIItem[]) {
-        this._items = items;
-    }
-
     Run(): void {
-        this._items.forEach(item => item.Draw());
+        this._items.forEach(item => item.Draw(hasFocus(this)));
     }
 
     Click(): void {
