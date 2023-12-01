@@ -1,4 +1,4 @@
-import { DebugMode } from "./Definition";
+import { DebugMode, MaxPersonalities } from "./Definition";
 
 const DefaultValueV1: ResponsiveSettingV1 = {
     settings: { enable: true },
@@ -75,6 +75,7 @@ function getDefaultSettings(): ResponsiveSettingV2 {
     return Object.assign({}, {
         settings: { enabled: true }, active_personality: "Default", personalities: [{
             name: "Default",
+            index: 0,
             responses: default_personality
         }]
     });
@@ -121,6 +122,8 @@ function pickV2Setting(data: any): ResponsiveSettingV2 {
         let triggers = data.triggers.map((i: any): ResponsivePersonality | undefined => {
             if (typeof i !== "object") return undefined;
             if (typeof i.name !== "string") return undefined;
+            if (typeof i.index !== "number") return undefined;
+
             if (!Array.isArray(i.responses)) return undefined;
 
             let responses = i.responses.map((j: any): ResponsiveItem | undefined => {
@@ -167,8 +170,15 @@ function pickV2Setting(data: any): ResponsiveSettingV2 {
                 return { name: j.name, trigger: trigger, messages: messages };
             }).filter((_: any) => _ !== undefined) as ResponsiveItem[];
 
-            return { name: i.name, responses: responses };
-        }).filter((_: any) => _ !== undefined) as ResponsiveTrigger[];
+            return { name: i.name, index: i.index, responses: responses };
+        }).filter((_: any) => _ !== undefined) as ResponsivePersonality[];
+
+        let result_array: (ResponsivePersonality | undefined)[] = [];
+
+        for (let i = 0; i < MaxPersonalities; i++) {
+            result_array.push(triggers.find(_ => _.index === i));
+        }
+
         Object.assign(ret, { triggers: triggers });
     } else {
         Object.assign(ret, { triggers: [] });
@@ -181,7 +191,7 @@ function V1SettingToV2Setting(data: ResponsiveSettingV1): ResponsiveSettingV2 {
     let def = getDefaultSettings();
     def.settings.enabled = data.settings.enable;
     const v1mapper = (_: string) => { return { type: "message", content: _ } as ResponsiveMessage };
-    def.personalities[0].responses = [
+    def.personalities = [[
         { name: "Pain", trigger: { mode: "activity", allow_activities: DefaultValueV1TriggerActivities.pain }, messages: data.pain.map(v1mapper) },
         { name: "Tickle", trigger: { mode: "activity", allow_activities: DefaultValueV1TriggerActivities.tickle }, messages: data.tickle.map(v1mapper) },
         { name: "Masturbate", trigger: { mode: "activity", allow_activities: DefaultValueV1TriggerActivities.masturbate }, messages: data.hot.map(v1mapper) },
@@ -189,7 +199,14 @@ function V1SettingToV2Setting(data: ResponsiveSettingV1): ResponsiveSettingV2 {
         { name: "High Arousal", trigger: { mode: "spicer", min_arousal: 80 }, messages: data.hot.map(v1mapper) },
         { name: "Mid Arousal", trigger: { mode: "spicer", max_arousal: 80, min_arousal: 50 }, messages: data.medium.map(v1mapper) },
         { name: "Low Arousal", trigger: { mode: "spicer", max_arousal: 50 }, messages: data.low.map(v1mapper) },
-    ];
+    ] as ResponsiveItem[], undefined, undefined, undefined, undefined].map((_): ResponsivePersonality | undefined => {
+        if (Array.isArray(_)) return {
+            name: "Default",
+            index: 0,
+            responses: _
+        }
+        else return _;
+    });
     return def;
 }
 
@@ -240,7 +257,7 @@ export class DataManager {
     static get_active_personality() {
         let data = this.instance.data;
         if (data.active_personality === null) return undefined;
-        return data.personalities.find(_ => _.name === data.active_personality);
+        return data.personalities.find((_: ResponsivePersonality | undefined) => _ && _.name === data.active_personality);
     }
 
     modData: ResponsivePartialSetting = {};

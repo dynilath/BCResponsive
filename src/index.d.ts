@@ -55,13 +55,14 @@ interface ResponsiveItem {
 
 interface ResponsivePersonality {
     name: string;
+    index: number;
     responses: ResponsiveItem[];
 }
 
 interface ResponsiveSettingV2 {
     settings: { enabled: boolean };
     active_personality: string | null;
-    personalities: ResponsivePersonality[];
+    personalities: (ResponsivePersonality | undefined)[];
 }
 
 type ResponsiveSetting = ResponsiveSettingV1 | ResponsiveSettingV2;

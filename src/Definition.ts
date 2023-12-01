@@ -14,3 +14,5 @@ export const ModName = 'BondageClub Responsive'
 export const DebugMode = true;
 
 export const SettingName = "BCResponsiveSetting";
+
+export const MaxPersonalities = 5;
