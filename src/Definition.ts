@@ -16,4 +16,5 @@ export const DebugMode = true;
 export const SettingName = "BCResponsiveSetting";
 
 export const DefaultPersonaName = "Default";
+export const DefaultPersonaIndex = 0;
 export const MaxPersonalities = 5;

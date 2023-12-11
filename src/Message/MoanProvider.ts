@@ -4,7 +4,7 @@ import { ChatRoomAutoInterceptMessage, ChatRoomSendAction } from "./ChatMessages
 import { ReplaceField } from "./MessageFields";
 
 export function InvokeResponse(data: TriggerData, player: Character | undefined, target?: Character) {
-    let active_personality = DataManager.get_active_personality();
+    const active_personality = DataManager.active_personality;
 
     if (active_personality === undefined) return;
 

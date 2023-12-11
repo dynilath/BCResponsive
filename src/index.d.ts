@@ -61,7 +61,7 @@ interface ResponsivePersonality {
 
 interface ResponsiveSettingV2 {
     settings: { enabled: boolean };
-    active_personality: string | null;
+    active_personality: number | null;
     personalities: (ResponsivePersonality | undefined)[];
 }
 
