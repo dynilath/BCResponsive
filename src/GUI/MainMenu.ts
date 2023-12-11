@@ -2,8 +2,8 @@
 import { DataManager } from "../Data";
 import { LocalizedText } from "../i18n";
 import { GUISettingScreen, setSubscreen } from "./GUI";
-import { PersonaSetting } from "./PersonaMenu";
-import { TriggerSetting } from "./TriggerSetting";
+import { PersonaSetting } from "./Persona/PersonaMenu";
+import { TriggerSetting } from "./Response/ResponseMenu";
 import { AGUIScreen } from "./Widgets/AGUI";
 import { ExitButton, TextButton, TitleText } from "./Widgets/Common";
 
@@ -16,11 +16,17 @@ export class GUIMainMenu extends AGUIScreen {
             new ExitButton(() => this.Exit()),
             new TitleText(),
             new TextButton({ x: titleBaseX, y: titleBaseY + 0, width: 400, height: 100 }, "Personality Setting", () => this.gotoPersonaSetting()),
-            new TextButton({ x: titleBaseX, y: titleBaseY + 110, width: 400, height: 100 }, "Response Setting", () => { }),
+            new TextButton({ x: titleBaseX, y: titleBaseY + 110, width: 400, height: 100 }, "Response Setting", () => this.gotoTriggerSetting()),
         ]);
     }
 
     gotoPersonaSetting() {
         setSubscreen(new PersonaSetting(this));
+    }
+
+    gotoTriggerSetting() {
+        const persona = DataManager.active_personality;
+        if (!persona) return;
+        setSubscreen(new TriggerSetting(this, persona));
     }
 }

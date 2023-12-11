@@ -127,15 +127,8 @@ declare var MouseX: number;
 declare var MouseY: number;
 declare var MainCanvas: CanvasRenderingContext2D;
 declare function DrawGetImage(Source: string): HTMLImageElement;
-declare function DrawButton(Left: number, Top: number, Width: number, Height: number, Label: string, Color: string, Image?: string, HoveringText?: string, Disabled?: boolean): void;
-declare function DrawCheckbox(Left: number, Top: number, Width: number, Height: number, Text: string, IsChecked: boolean, Disabled?: boolean, TextColor?: string, CheckImage?: string): void;
+declare function DrawImage(Source: string, X: number, Y: number): void;
 declare function DrawText(Text: string, X: number, Y: number, Color: string, BackColor?: string): void;
-declare function DrawTextFit(Text: string, X: number, Y: number, Width: number, Color: string, BackColor?: string): void;
-declare function DrawTextWrap(Text: string, X: number, Y: number, Width: number, Height: number, ForeColor: string, BackColor?: string, MaxLine?: number): void;
-declare function DrawBackNextButton(Left: number, Top: number, Width: number, Height: number, Label: string, Color: string, Image?: string, BackText?: () => string, NextText?: () => string, Disabled?: boolean, ArrowWidth?: number): void;
-declare function DrawButtonHover(Left: number, Top: number, Width: number, Height: number, HoveringText: string): void;
-declare function DrawEmptyRect(Left: number, Top: number, Width: number, Height: number, Color: string, Thickness?: number): void;
-declare function DrawRect(Left: number, Top: number, Width: number, Height: number, Color: string): void;
 declare function DrawCharacter(C: Character, X: number, Y: number, Zoom: number, IsHeightResizeAllowed: boolean, DrawCanvas: CanvasRenderingContext2D): void;
 
 declare function MouseIn(Left: number, Top: number, Width: number, Height: number): boolean;
@@ -201,8 +194,11 @@ declare var PreferenceMessage: string;
 declare function ChatRoomSendChat(): void;
 declare function ElementValue(id: string, value?: string): string;
 
+// Common.js
+declare function CommonGetFontName(): string;
+
 // Character.js
-declare function CharacterNickname(C:Character): string;
+declare function CharacterNickname(C: Character): string;
 
 // Cafe.js
 declare var CafeIsHeadMaid: boolean;
