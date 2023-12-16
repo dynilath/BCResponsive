@@ -32,8 +32,10 @@ interface ResponsiveTriggerSpicer {
 
 type ResponsiveTrigger = ResponsiveTriggerActivity | ResponsiveTriggerOrgasm | ResponsiveTriggerSpicer;
 
+type ResponsiveTriggerMode = "activity" | "orgasm" | "spicer";
+
 interface ResponsiveTriggerType {
-    mode: "activity" | "orgasm" | "spicer";
+    mode: ResponsiveTriggerMode;
     min_arousal?: number;
     max_arousal?: number;
     apply_favorite?: boolean;

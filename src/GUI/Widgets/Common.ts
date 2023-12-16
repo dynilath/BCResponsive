@@ -1,6 +1,5 @@
-import { ModVersion } from "../../Definition";
+import { Colors, ModVersion } from "../../Definition";
 import { LocalizedText } from "../../i18n";
-import { setSubscreen } from "../GUI";
 import { AGUIItem, IPoint, IRect, WithinRect as WithinRect } from "./AGUI";
 
 export function ADrawText(rect: IPoint, Text: string, color: string = 'Black') {
@@ -8,17 +7,23 @@ export function ADrawText(rect: IPoint, Text: string, color: string = 'Black') {
     MainCanvas.fillText(Text, rect.x, rect.y);
 }
 
-export function ADrawTextFit(rect: IRect, Text: string, color: string = 'Black') {
+export function ADrawTextFit(rect: IRect, Text: string, args?: { color?: string, padding?: number }) {
+    if (!args) args = {};
+    const color = args.color || "Black";
+    const padding = args.padding || 5;
+
+    const actualWidth = rect.width - padding * 2;
+
     const align = MainCanvas.textAlign;
     MainCanvas.textAlign = "center";
     const centerX = rect.x + rect.width / 2;
     const centerY = rect.y + rect.height / 2;
     const measure = MainCanvas.measureText(Text);
     MainCanvas.fillStyle = color;
-    if (rect.width < measure.width) {
-        const ratio = rect.width / measure.width;
+    if (actualWidth < measure.width) {
+        const ratio = actualWidth / measure.width;
         MainCanvas.scale(ratio, ratio);
-        MainCanvas.fillText(Text, centerX, centerY);
+        MainCanvas.fillText(Text, centerX / ratio, centerY / ratio);
         MainCanvas.scale(1 / ratio, 1 / ratio);
     } else {
         MainCanvas.fillText(Text, centerX, centerY);
@@ -34,25 +39,39 @@ export function ADrawIconTextButton(rect: IRect, Text: string, Icon: string, act
     MainCanvas.textAlign = align;
 }
 
-export function ADrawFramedRect(rect: IRect, fill: string, line: string = 'black', lineWidth: number = 2) {
-    MainCanvas.rect(rect.x, rect.y, rect.width, rect.height);
-    MainCanvas.fillStyle = fill;
-    MainCanvas.fillRect(rect.x, rect.y, rect.width, rect.height);
+export function AStrokeRect(rect: IRect, line: string = 'black', lineWidth: number = 2) {
     MainCanvas.lineWidth = lineWidth;
     MainCanvas.strokeStyle = line;
     MainCanvas.strokeRect(rect.x, rect.y, rect.width, rect.height);
 }
 
-export function ADrawTextButton(rect: IRect, Text: string, active: boolean = true, background: { idle: string, hover: string } = { idle: "White", hover: "Cyan" }) {
+export function AFillRect(rect: IRect, fill: string) {
+    MainCanvas.fillStyle = fill;
+    MainCanvas.fillRect(rect.x, rect.y, rect.width, rect.height);
+}
+
+export function ADrawFramedRect(rect: IRect, fill: string, line: string = 'black', lineWidth: number = 2) {
+    AFillRect(rect, fill);
+    AStrokeRect(rect, line, lineWidth);
+}
+
+export function ADrawTextButton(rect: IRect, Text: string, active: boolean = true, background?: { idle?: string, hover?: string }) {
+    if (!background) background = {};
+    const idle = background.idle || "White";
+    const hover = background.hover || Colors.Hover;
+
     const align = MainCanvas.textAlign;
     MainCanvas.textAlign = "center";
-    ADrawFramedRect(rect, active && WithinRect({ x: MouseX, y: MouseY }, rect) ? background.hover : background.idle, "Black", 2)
+    ADrawFramedRect(rect, active && WithinRect({ x: MouseX, y: MouseY }, rect) ? hover : idle, "Black", 2)
     ADrawTextFit(rect, Text);
     MainCanvas.textAlign = align;
 }
 
-export function ADrawIconButton(rect: IRect, Icon: string, active: boolean = true) {
-    ADrawFramedRect(rect, active && WithinRect({ x: MouseX, y: MouseY }, rect) ? 'Cyan' : 'White', "Black", 2);
+export function ADrawIconButton(rect: IRect, Icon: string, active: boolean = true, background?: { idle?: string, hover?: string }) {
+    if (!background) background = {};
+    const idle = background.idle || "White";
+    const hover = background.hover || Colors.Hover;
+    ADrawFramedRect(rect, active && WithinRect({ x: MouseX, y: MouseY }, rect) ? hover : idle, "Black", 2);
     DrawImage(Icon, rect.x + 2, rect.y + 2);
 }
 

@@ -21,12 +21,14 @@ export class PersonaSetting extends AGUIScreen {
         const personaStartX = centerX - personaBannerTotalWidth / 2;
         const personaStartY = centerY - personaBannerHeight / 2;
 
-        super(prev, Array.from({ length: MaxPersonalities }, (_, index): number => index).map((index): AGUIItem => {
+        super(prev);
+
+        this._items = Array.from({ length: MaxPersonalities }, (_, index): number => index).map((index): AGUIItem => {
             const rect: IRect = {
                 x: personaStartX + (personaBannerWidth + personaBannerSpacing) * index,
                 y: personaStartY, width: personaBannerWidth, height: personaBannerHeight
             };
-            return new PersonaItem(() => this, index, rect);
-        }).concat([new ExitButton(() => this.Exit()), new TitleText()]));
+            return new PersonaItem(this, index, rect);
+        }).concat([new ExitButton(() => this.Exit()), new TitleText()])
     }
 }

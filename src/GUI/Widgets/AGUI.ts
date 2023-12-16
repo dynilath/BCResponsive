@@ -15,6 +15,7 @@ export interface IPoint {
 export abstract class AGUIItem {
     abstract Draw(hasFocus: boolean): void;
     Click(mouse: IPoint): void { };
+    Unload(): void { };
 }
 
 export class AGUIScreen extends GUISettingScreen {
@@ -42,6 +43,10 @@ export class AGUIScreen extends GUISettingScreen {
 
     Exit(): void {
         setSubscreen(this._prev);
+    }
+
+    Unload(): void {
+        this._items.forEach(item => item.Unload());
     }
 }
 

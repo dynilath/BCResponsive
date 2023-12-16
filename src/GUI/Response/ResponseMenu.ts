@@ -1,196 +1,159 @@
-import { GUISettingScreen, hasFocus, setSubscreen } from "../GUI";
-import { AGUIItem, IPoint, IRect, WithinRect } from "../Widgets/AGUI";
-import { ADrawFramedRect, ADrawTextButton, ADrawTextFit, ExitButton, TitleText } from "../Widgets/Common";
+import { isTriggerActivity } from "../../Data";
+import { Colors } from "../../Definition";
+import { GUISettingScreen } from "../GUI";
+import { AGUIItem, AGUIScreen, IPoint, IRect, WithinRect } from "../Widgets/AGUI";
+import { ADrawFramedRect, ADrawTextFit, AFillRect, AStrokeRect, BasicText, ExitButton, TitleText } from "../Widgets/Common";
+import { ResponseMenuState } from "./ResponseMenuState";
+import { TriggerName } from "./TriggerName";
+import { TriggerTab } from "./TriggerTab";
 
-
-export class TriggerSetting extends GUISettingScreen {
-    private _prev: GUISettingScreen | null;
-
-    private _target: ResponsivePersonality;
-    private _targetTrigger: ResponsiveTrigger | null = null;
-
-    get activeTrigger(): ResponsiveTrigger | null {
-        return this._targetTrigger;
-    }
-
-    set activeTrigger(value: ResponsiveTrigger | null) {
-        this._targetTrigger = value;
-    }
-
-    get targetPersona(): ResponsivePersonality {
-        return this._target;
-    }
-
-    private _items: AGUIItem[] = [];
-
+export class TriggerSetting extends AGUIScreen {
+    private readonly _state: ResponseMenuState;
     constructor(prev: GUISettingScreen | null = null, persona: ResponsivePersonality) {
-        super();
-        this._prev = prev;
-        this._target = persona;
+        const CommonFontSize = 36;
 
-        if (persona.responses.length > 0)
-            this._targetTrigger = persona.responses[0].trigger;
+        const MenuBaseY = 200;
+        const MenuBaseItemHeight = 70;
 
+        const TriggerTabBaseX = 200;
+
+        const TriggerInfoBaseX = 550;
+        const TriggerInfoNextX = TriggerInfoBaseX + 150;
+        const TriggerInfoHeight = 60;
+
+        super(prev);
+        this._state = new ResponseMenuState(persona);
         this._items = [
-            new ResponseTab(this, { x: 200, y: 200, width: 300, height: 650 }),
+            new TriggerTab(this._state, { x: TriggerTabBaseX, y: MenuBaseY, width: 300, height: 660 }),
             new ExitButton(() => this.Exit()),
             new TitleText(),
+            new BasicText({ x: TriggerInfoBaseX, y: MenuBaseY + TriggerInfoHeight / 2 }, "Name:"),
+            new TriggerName(this._state, { x: TriggerInfoNextX, y: MenuBaseY, width: 450, height: TriggerInfoHeight }),
+            new BasicText({ x: TriggerInfoBaseX, y: MenuBaseY + MenuBaseItemHeight + TriggerInfoHeight / 2 }, "Mode:"),
+            new TriggerMode(this._state, { x: TriggerInfoNextX, y: MenuBaseY + MenuBaseItemHeight, width: 450, height: TriggerInfoHeight }),
+            new ActivityAreaInfo(this._state, { x: TriggerInfoBaseX, y: MenuBaseY + MenuBaseItemHeight * 2 + TriggerInfoHeight / 2, width: 450, height: 450 }),
         ];
     }
-
-    Run(): void {
-        this._items.forEach(item => item.Draw(hasFocus(this)));
-    }
-
-    Click(): void {
-        this._items.forEach(item => item.Click({ x: MouseX, y: MouseY }));
-    }
-
-    Exit(): void {
-        setSubscreen(this._prev);
-    }
 }
+export class TriggerMode extends AGUIItem {
+    private readonly _state: ResponseMenuState;
+    private readonly _rect: IRect;
+    private readonly _sect: IRect[];
+    private readonly Modes: ResponsiveTriggerMode[] = ['activity', 'orgasm', 'spicer'];
 
-
-export class ResponseTab extends AGUIItem {
-    private _parent: {
-        targetPersona: ResponsivePersonality,
-        activeTrigger: ResponsiveTrigger | null
-    };
-
-    private _active_rect_state: { state: 'idle' | 'focused' | 'active', value: number }[];
-
-    private _last_update: number = 0;
-
-    private _page: number;
-    private _max_page: number;
-
-    private _layout_items: IRect[];
-    private _layout_prev_button: IRect;
-    private _layout_next_button: IRect;
-    private _layout_page_text: IRect;
-
-    constructor(parent: { targetPersona: ResponsivePersonality, activeTrigger: ResponsiveTrigger | null }, rect: IRect) {
+    constructor(state: ResponseMenuState, rect: IRect) {
         super();
-        this._parent = parent;
-        this._active_rect_state = this._parent.targetPersona.responses.map(_ => { return { state: 'idle', value: 0 } });
-        this._last_update = Date.now();
+        this._state = state;
+        this._rect = rect;
 
-        const button_spacing = 5;
-        const item_height = 75;
-
-        const item_button_spacing = 15;
-        const button_height = 50;
-        const button_width = 50;
-        const page_text_width = 100;
-
-        const item_width = rect.width;
-        const item_count = Math.max(1, Math.floor((rect.height - item_button_spacing - button_height + button_spacing) / (item_height + button_spacing)));
-
-        this._page = 0;
-        this._max_page = Math.ceil(this._parent.targetPersona.responses.length / item_count) - 1;
-
-        this._layout_items = Array.from({ length: item_count }, (_, index) => {
+        const sectWidth = rect.width / this.Modes.length;
+        this._sect = Array.from({ length: this.Modes.length }, (_, index) => {
             return {
-                x: rect.x,
-                y: rect.y + index * (item_height + button_spacing),
-                width: item_width,
-                height: item_height
-            }
-        });
-
-        this._layout_prev_button = {
-            x: rect.x,
-            y: rect.y + rect.height - button_height,
-            width: button_width,
-            height: button_height
-        };
-
-        this._layout_next_button = {
-            x: rect.x + rect.width - button_width,
-            y: rect.y + rect.height - button_height,
-            width: button_width,
-            height: button_height
-        };
-
-        this._layout_page_text = {
-            x: rect.x + rect.width / 2 - page_text_width / 2,
-            y: rect.y + rect.height - button_height,
-            width: page_text_width,
-            height: button_height
-        };
-    }
-
-    update_state(focus: number) {
-        const delta = Date.now() - this._last_update;
-        this._last_update = Date.now();
-
-        const active = this._parent.activeTrigger;
-
-        this._active_rect_state.forEach((state, index) => {
-            const id = index + this._page * this._layout_items.length;
-            if (id >= this._parent.targetPersona.responses.length) {
-                state.state = 'idle';
-                state.value = 0;
-                return;
-            }
-
-            if (active && active == this._parent.targetPersona.responses[id].trigger) {
-                state.state = 'active';
-                state.value = 0.6;
-            } else if (focus == index) {
-                state.state = 'focused';
-                state.value = Math.min(1, state.value + delta / 100);
-            } else {
-                state.state = 'idle';
-                state.value = Math.max(0, state.value - delta / 100);
+                x: rect.x + sectWidth * index,
+                y: rect.y,
+                width: sectWidth,
+                height: rect.height
             }
         });
     }
 
     Draw(hasFocus: boolean): void {
-        ADrawTextButton(this._layout_prev_button, "<", hasFocus);
-        ADrawTextFit(this._layout_page_text, `${this._page + 1}/${this._max_page + 1}`);
-        ADrawTextButton(this._layout_next_button, ">", hasFocus);
-        if (hasFocus) {
-            let focusing = -1;
-            this._layout_items.forEach((rect, index) => {
-                if (WithinRect({ x: MouseX, y: MouseY }, rect)) {
-                    focusing = index;
-                }
-            });
-            this.update_state(focusing);
-        }
+        if (this._state.activeItem === null) return;
 
-        this._layout_items.forEach((rect, index) => {
-            const state = this._active_rect_state[index];
-            const response = this._parent.targetPersona.responses[index + this._page * this._layout_items.length];
+        const mode = this._state.activeItem.trigger.mode;
 
-            if (!response) return;
-
-            const expansion = 5 * (1 - state.value);
-            const frect = { x: rect.x + expansion, y: rect.y + expansion, width: rect.width - expansion * 2, height: rect.height - expansion * 2 };
-
-            if (state.state == 'active')
-                ADrawFramedRect(frect, "Cyan");
-            else
-                ADrawFramedRect(frect, "White");
-
-            ADrawTextFit(rect, response.name);
+        AFillRect(this._rect, "White");
+        if (hasFocus) this._sect.forEach((v, i) => {
+            if (WithinRect({ x: MouseX, y: MouseY }, v)) AFillRect(v, Colors.Hover);
+            else if (mode === this.Modes[i]) AFillRect(v, Colors.Active);
         });
+        this._sect.forEach((v, i) => { AStrokeRect(v); ADrawTextFit(v, this.Modes[i]); });
     }
 
     Click(mouse: IPoint): void {
-        if (WithinRect(mouse, this._layout_prev_button)) {
-            this._page = Math.max(0, this._page - 1);
-        } else if (WithinRect(mouse, this._layout_next_button)) {
-            this._page = Math.min(this._max_page, this._page + 1);
+        if (this._state.activeItem === null) return;
+
+        this._sect.forEach((v, i) => {
+            if (WithinRect(mouse, v)) {
+                if (this._state.activeItem !== null)
+                    this._state.activeItem.trigger.mode = this.Modes[i];
+            }
+        });
+    }
+}
+
+export class ActivityAreaInfo extends AGUIItem {
+    private readonly _state: ResponseMenuState;
+    private readonly _rect: IRect;
+    private readonly _translate: IPoint;
+    private readonly _scale: number;
+
+    constructor(state: ResponseMenuState, rect: IRect) {
+        super();
+        this._state = state;
+        this._rect = rect;
+
+        const expectRange = AssetGroup.map(i => i.Zone).flat().reduce((prev, cur) => {
+            if (!cur) return prev;
+            return {
+                left: Math.min(prev.left, cur[0]),
+                top: Math.min(prev.top, cur[1]),
+                bottom: Math.max(prev.bottom, cur[0] + cur[2]),
+                right: Math.max(prev.right, cur[1] + cur[3])
+            }
+        }, { left: 2000, top: 1000, bottom: 0, right: 0 });
+        const expectWH = { width: expectRange.right - expectRange.left, height: expectRange.bottom - expectRange.top };
+        const expectRatio = expectWH.width / expectWH.height;
+        const givenRatio = rect.width / rect.height;
+
+        if (expectRatio < givenRatio) {
+            const tX = rect.x + rect.width / 2 - expectWH.width / 2;
+            this._scale = rect.height / expectWH.height;
+            this._translate = { x: tX - expectRange.left * this._scale, y: rect.y - expectRange.top * this._scale };
         } else {
-            this._layout_items.forEach((rect, index) => {
-                if (WithinRect(mouse, rect)) {
-                    this._parent.activeTrigger = this._parent.targetPersona.responses[index + this._page * this._layout_items.length].trigger;
-                }
-            });
+            const tY = rect.y + rect.height / 2 - expectWH.height / 2;
+            this._scale = rect.width / expectWH.width;
+            this._translate = { x: rect.x - expectRange.left * this._scale, y: tY - expectRange.top * this._scale };
         }
+    }
+
+    RectTuple2Rect(rect: [number, number, number, number]): IRect {
+        return {
+            x: rect[0] * this._scale + this._translate.x,
+            y: rect[1] * this._scale + this._translate.y,
+            width: rect[2] * this._scale,
+            height: rect[3] * this._scale
+        };
+    }
+
+    Draw(hasFocus: boolean): void {
+        if (this._state.activeItem === null || !isTriggerActivity(this._state.activeItem.trigger)) return;
+
+        const allowParts = this._state.activeItem.trigger.allow_bodyparts;
+
+        AssetGroup.forEach((v, i) => {
+            if (!v.Zone) return;
+            const isHover = v.Zone.some(v => WithinRect({ x: MouseX, y: MouseY }, this.RectTuple2Rect(v)));
+            const isActive = allowParts && allowParts.includes(v.Name);
+            const color = isHover ? Colors.Hover : isActive ? Colors.Active : "White";
+            v.Zone.forEach((v, i) => {
+                ADrawFramedRect(this.RectTuple2Rect(v), color, "Black");
+            });
+        });
+    }
+}
+
+export class ActivityModeInfo extends AGUIItem {
+    private _state: ResponseMenuState;
+    private _rect: IRect;
+
+    constructor(state: ResponseMenuState, rect: IRect) {
+        super();
+        this._state = state;
+        this._rect = rect;
+    }
+
+    Draw(hasFocus: boolean): void {
+        if (this._state.activeItem === null || !isTriggerActivity(this._state.activeItem.trigger)) return;
     }
 }

@@ -1,7 +1,7 @@
 import bcMod from 'bondage-club-mod-sdk'
 import { ActivityHandle, OrgasmHandle } from './Message/Handlers';
 import { ChatMessageHandler } from './Message/ChatMessageHandler';
-import { DataManager } from './Data';
+import { DataManager } from './Data/Data';
 import { ModName, ModVersion } from './Definition';
 import { GUISetting } from './GUI/GUI';
 import { GUIMainMenu } from './GUI/MainMenu';

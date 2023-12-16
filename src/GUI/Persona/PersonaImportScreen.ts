@@ -8,8 +8,8 @@ import { LZStringToPersona, PersonaToLZString } from "./PersonaCompress";
 
 
 export class PersonaImportScreen extends Popup {
-    _bind: { text: string };
-    _input: InputTextArea;
+    readonly _bind: { text: string };
+    readonly _input: InputTextArea;
     _lastInputInvalid: boolean = false;
 
     constructor(prev: GUISettingScreen | null = null, index: number) {

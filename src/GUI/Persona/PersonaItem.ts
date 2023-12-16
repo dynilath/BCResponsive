@@ -1,21 +1,22 @@
 import { DataManager } from "../../Data";
+import { Colors } from "../../Definition";
 import { GUISettingScreen, setSubscreen } from "../GUI";
 import { AGUIItem, IPoint, IRect, WithinRect } from "../Widgets/AGUI";
 import { ADrawFramedRect, ADrawText, ADrawTextButton } from "../Widgets/Common";
 import { PersonaImportScreen } from "./PersonaImportScreen";
 
 export class PersonaItem extends AGUIItem {
-    private _index: number;
-    private _rect: IRect;
+    private readonly _index: number;
+    private readonly _rect: IRect;
 
-    private _import_rect: IRect;
-    private _activated_img_pos: IPoint
-    private _delete_rect: IRect;
-    private _name_point: IPoint;
+    private readonly _import_rect: IRect;
+    private readonly _activated_img_pos: IPoint
+    private readonly _delete_rect: IRect;
+    private readonly _name_point: IPoint;
 
-    private _parent: () => GUISettingScreen | null;
+    private readonly _parent: GUISettingScreen | null;
 
-    constructor(parent: () => GUISettingScreen | null, index: number, rect: IRect) {
+    constructor(parent: GUISettingScreen | null, index: number, rect: IRect) {
         super();
         this._index = index;
         this._rect = rect;
@@ -93,25 +94,34 @@ export class PersonaItem extends AGUIItem {
             height: this._rect.height - expand_margin * 2
         };
 
+        let bgcolor = 'White';
+
+        if (hasFocus && WithinRect({ x: MouseX, y: MouseY }, adjusted_rect)) {
+            this._focusState.state = 'focused';
+            this._focusState.value = Math.min(1, this._focusState.value + delta / 100);
+            bgcolor = Colors.Hover;
+        }
+        else {
+            this._focusState.state = 'idle';
+            this._focusState.value = Math.max(0, this._focusState.value - delta / 100);
+        }
+
         if (persona && DataManager.active_personality === persona) {
             this._focusState.state = 'active';
-        } else if (hasFocus && WithinRect({ x: MouseX, y: MouseY }, adjusted_rect))
-            this._focusState.state = 'focused';
-        else this._focusState.state = 'idle';
-
-
-        if (this._focusState.state === 'idle') {
-            this._focusState.value = Math.max(0, this._focusState.value - delta / 100);
-        } else if (this._focusState.state === 'focused') {
-            this._focusState.value = Math.min(1, this._focusState.value + delta / 100);
-        } else if (this._focusState.state === 'active') {
-            this._focusState.value = 0.6;
+            if (bgcolor === 'White') bgcolor = Colors.Active;
         }
 
         if (persona) {
-            if (this._focusState.state === 'active')
-                ADrawFramedRect(adjusted_rect, 'White', 'Black', 4);
-            else ADrawFramedRect(adjusted_rect, 'White');
+            const mouse = { x: MouseX, y: MouseY };
+
+            if (this._focusState.state === 'active') {
+                if (WithinRect(mouse, this._import_rect)) bgcolor = Colors.Active;
+            } else {
+                if (WithinRect(mouse, this._import_rect) || WithinRect(mouse, this._delete_rect)) bgcolor = 'White';
+            }
+
+            if (this._focusState.state === 'active') ADrawFramedRect(adjusted_rect, bgcolor, 'Black', 3);
+            else ADrawFramedRect(adjusted_rect, bgcolor);
 
             ADrawText(this._name_point, persona.name);
             ADrawTextButton(this._import_rect, "Import/Export", hasFocus);
@@ -123,7 +133,7 @@ export class PersonaItem extends AGUIItem {
                 else ADrawTextButton(this._delete_rect, "Confirm?", hasFocus, { idle: 'Pink', hover: 'Red' });
             }
         } else {
-            ADrawFramedRect(adjusted_rect, 'White', 'DarkGray');
+            ADrawFramedRect(adjusted_rect, bgcolor, 'DarkGray');
             ADrawText({ x: this._rect.x + this._rect.width / 2, y: this._rect.y + this._rect.height / 2 }, "Create New");
         }
         MainCanvas.textAlign = align;
@@ -144,7 +154,7 @@ export class PersonaItem extends AGUIItem {
 
         if (persona) {
             if (WithinRect(mouse, this._import_rect)) {
-                setSubscreen(new PersonaImportScreen(this._parent(), this._index));
+                setSubscreen(new PersonaImportScreen(this._parent, this._index));
             } else if (WithinRect(mouse, this._delete_rect)) {
                 if (this.deleteState === 0) {
                     this.deleteState = 1;

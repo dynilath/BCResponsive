@@ -194,6 +194,15 @@ declare var PreferenceMessage: string;
 declare function ChatRoomSendChat(): void;
 declare function ElementValue(id: string, value?: string): string;
 
+// Asset.js
+type RectTuple = [X: number, Y: number, W: number, H: number];
+interface AssetGroup {
+    readonly Name: AssetGroupName;
+    readonly Zone?: readonly RectTuple[];
+    readonly Category: 'Appearance' | 'Item' | 'Script';
+}
+declare var AssetGroup: AssetGroup[];
+
 // Common.js
 declare function CommonGetFontName(): string;
 
