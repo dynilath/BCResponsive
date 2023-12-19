@@ -2,7 +2,7 @@ import { ModSDKModAPI } from "bondage-club-mod-sdk";
 import { DebugMode, SettingName } from "../Definition";
 import { Localization } from "../Lang";
 import { icons } from "./icons";
-import { LocalizedText } from "../i18n";
+import { Text } from "../i18n";
 
 export abstract class GUISettingScreen {
     Load() { }
@@ -33,6 +33,7 @@ export function setSubscreen(subscreen: GUISettingScreen | null): void {
 
 function drawTooltip() {
     if (DebugMode) {
+        MainCanvas.textAlign = "center";
         if (MouseX > 0 || MouseY > 0) {
             MainCanvas.save();
             MainCanvas.lineWidth = 1;
@@ -86,10 +87,10 @@ export class GUISetting {
     private hook(mod: ModSDKModAPI<any>) {
         mod.hookFunction("PreferenceRun", 10, (args, next) => {
             if (this._currentScreen) {
-                MainCanvas.textAlign = "left";
+                const origAlign = MainCanvas.textAlign;
                 this._currentScreen.Run();
-                MainCanvas.textAlign = "center";
                 drawTooltip();
+                MainCanvas.textAlign = origAlign;
                 return;
             }
 
@@ -117,7 +118,7 @@ export class GUISetting {
             PreferenceSubscreenList.push(SettingName);
 
         mod.hookFunction("TextGet", 2, (args: string[], next: (arg0: any) => any) => {
-            if (args[0] == `Homepage${SettingName}`) return LocalizedText("setting_button_text");
+            if (args[0] == `Homepage${SettingName}`) return Text("setting_button_text");
             return next(args);
         });
 

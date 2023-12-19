@@ -1,6 +1,6 @@
 
 import { DataManager } from "../Data";
-import { LocalizedText } from "../i18n";
+import { Text } from "../i18n";
 import { GUISettingScreen, setSubscreen } from "./GUI";
 import { PersonaSetting } from "./Persona/PersonaMenu";
 import { TriggerSetting } from "./Response/ResponseMenu";

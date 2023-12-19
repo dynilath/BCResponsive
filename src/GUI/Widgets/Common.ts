@@ -1,5 +1,5 @@
 import { Colors, ModVersion } from "../../Definition";
-import { LocalizedText } from "../../i18n";
+import { Text } from "../../i18n";
 import { AGUIItem, IPoint, IRect, WithinRect as WithinRect } from "./AGUI";
 
 export function ADrawText(rect: IPoint, Text: string, color: string = 'Black') {
@@ -168,7 +168,7 @@ export class TitleText extends AGUIItem {
     constructor() { super(); }
 
     Draw() {
-        ADrawText({ x: 200, y: 125 }, `${LocalizedText("responsive_setting_title")} v${ModVersion}`);
+        ADrawText({ x: 200, y: 125 }, `${Text("responsive_setting_title")} v${ModVersion}`);
     }
 }
 
