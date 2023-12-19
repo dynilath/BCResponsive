@@ -12,21 +12,16 @@ const titleBaseY = 200;
 
 export class GUIMainMenu extends AGUIScreen {
     constructor(prev: GUISettingScreen | null = null) {
-        super(prev, [
+        super(prev);
+        this._items = [
             new ExitButton(() => this.Exit()),
             new TitleText(),
-            new TextButton({ x: titleBaseX, y: titleBaseY + 0, width: 400, height: 100 }, "Personality Setting", () => this.gotoPersonaSetting()),
-            new TextButton({ x: titleBaseX, y: titleBaseY + 110, width: 400, height: 100 }, "Response Setting", () => this.gotoTriggerSetting()),
-        ]);
-    }
-
-    gotoPersonaSetting() {
-        setSubscreen(new PersonaSetting(this));
-    }
-
-    gotoTriggerSetting() {
-        const persona = DataManager.active_personality;
-        if (!persona) return;
-        setSubscreen(new TriggerSetting(this, persona));
+            new TextButton({ x: titleBaseX, y: titleBaseY + 0, width: 400, height: 100 }, "Personality Setting", () => setSubscreen(new PersonaSetting(this))),
+            new TextButton({ x: titleBaseX, y: titleBaseY + 110, width: 400, height: 100 }, "Response Setting", () => {
+                const persona = DataManager.active_personality;
+                if (!persona) return;
+                setSubscreen(new TriggerSetting(this, persona));
+            }),
+        ]
     }
 }

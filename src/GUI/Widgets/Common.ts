@@ -2,8 +2,13 @@ import { Colors, ModVersion } from "../../Definition";
 import { Text } from "../../i18n";
 import { AGUIItem, IPoint, IRect, WithinRect as WithinRect } from "./AGUI";
 
-export function ADrawText(rect: IPoint, Text: string, color: string = 'Black') {
+export function ADrawText(rect: IPoint, Text: string, option?: { color?: string, align?: CanvasTextAlign }) {
+    if (!option) option = {};
+    const color = option.color || "Black";
+    const align = option.align || "left";
+
     MainCanvas.fillStyle = color;
+    MainCanvas.textAlign = align;
     MainCanvas.fillText(Text, rect.x, rect.y);
 }
 
@@ -14,7 +19,6 @@ export function ADrawTextFit(rect: IRect, Text: string, args?: { color?: string,
 
     const actualWidth = rect.width - padding * 2;
 
-    const align = MainCanvas.textAlign;
     MainCanvas.textAlign = "center";
     const centerX = rect.x + rect.width / 2;
     const centerY = rect.y + rect.height / 2;
@@ -28,15 +32,12 @@ export function ADrawTextFit(rect: IRect, Text: string, args?: { color?: string,
     } else {
         MainCanvas.fillText(Text, centerX, centerY);
     }
-    MainCanvas.textAlign = align;
 }
 
 export function ADrawIconTextButton(rect: IRect, Text: string, Icon: string, active: boolean = true) {
-    const align = MainCanvas.textAlign;
     MainCanvas.textAlign = "center";
     ADrawIconButton(rect, Icon, active);
     ADrawTextFit(rect, Text);
-    MainCanvas.textAlign = align;
 }
 
 export function AStrokeRect(rect: IRect, line: string = 'black', lineWidth: number = 2) {
@@ -55,23 +56,25 @@ export function ADrawFramedRect(rect: IRect, fill: string, line: string = 'black
     AStrokeRect(rect, line, lineWidth);
 }
 
-export function ADrawTextButton(rect: IRect, Text: string, active: boolean = true, background?: { idle?: string, hover?: string }) {
+export function ADrawTextButton(rect: IRect, Text: string, active: boolean = true, background?: { idle?: string, hover?: string, stroke?: string, strokeWidth?: number }) {
     if (!background) background = {};
     const idle = background.idle || "White";
     const hover = background.hover || Colors.Hover;
+    const stroke = background.stroke || "Black";
+    const strokeWidth = background.strokeWidth || 2;
 
-    const align = MainCanvas.textAlign;
     MainCanvas.textAlign = "center";
-    ADrawFramedRect(rect, active && WithinRect({ x: MouseX, y: MouseY }, rect) ? hover : idle, "Black", 2)
+    ADrawFramedRect(rect, active && WithinRect({ x: MouseX, y: MouseY }, rect) ? hover : idle, stroke, strokeWidth)
     ADrawTextFit(rect, Text);
-    MainCanvas.textAlign = align;
 }
 
-export function ADrawIconButton(rect: IRect, Icon: string, active: boolean = true, background?: { idle?: string, hover?: string }) {
+export function ADrawIconButton(rect: IRect, Icon: string, active: boolean = true, background?: { idle?: string, hover?: string, stroke?: string, strokeWidth?: number }) {
     if (!background) background = {};
     const idle = background.idle || "White";
     const hover = background.hover || Colors.Hover;
-    ADrawFramedRect(rect, active && WithinRect({ x: MouseX, y: MouseY }, rect) ? hover : idle, "Black", 2);
+    const stroke = background.stroke || "Black";
+    const strokeWidth = background.strokeWidth || 2;
+    ADrawFramedRect(rect, active && WithinRect({ x: MouseX, y: MouseY }, rect) ? hover : idle, stroke, strokeWidth);
     DrawImage(Icon, rect.x + 2, rect.y + 2);
 }
 
@@ -187,11 +190,9 @@ export class BasicText extends AGUIItem {
     }
 
     Draw() {
-        const align = MainCanvas.textAlign;
         MainCanvas.textAlign = this._align;
         MainCanvas.fillStyle = this._color;
         MainCanvas.fillText(this._text, this._where.x, this._where.y);
-        MainCanvas.textAlign = align;
     }
 }
 
@@ -204,14 +205,9 @@ export class DynamicText extends AGUIItem {
     }
 
     Draw() {
-        const _align = MainCanvas.textAlign;
-
         const { where, text, align, color } = this._pattern();
-
         MainCanvas.textAlign = align;
         MainCanvas.fillStyle = color;
         MainCanvas.fillText(text, where.x, where.y);
-
-        MainCanvas.textAlign = _align;
     }
 }

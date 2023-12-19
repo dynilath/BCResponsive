@@ -76,7 +76,6 @@ export class PersonaItem extends AGUIItem {
     private deleteState: number = 0;
 
     Draw(hasFocus: boolean) {
-        const align = MainCanvas.textAlign;
         MainCanvas.textAlign = "center";
 
         const persona = DataManager.instance.data.personalities[this._index];
@@ -123,7 +122,7 @@ export class PersonaItem extends AGUIItem {
             if (this._focusState.state === 'active') ADrawFramedRect(adjusted_rect, bgcolor, 'Black', 3);
             else ADrawFramedRect(adjusted_rect, bgcolor);
 
-            ADrawText(this._name_point, persona.name);
+            ADrawText(this._name_point, persona.name, { align: "center" });
             ADrawTextButton(this._import_rect, "Import/Export", hasFocus);
 
             if (this._focusState.state === 'active')
@@ -133,10 +132,9 @@ export class PersonaItem extends AGUIItem {
                 else ADrawTextButton(this._delete_rect, "Confirm?", hasFocus, { idle: 'Pink', hover: 'Red' });
             }
         } else {
-            ADrawFramedRect(adjusted_rect, bgcolor, 'DarkGray');
-            ADrawText({ x: this._rect.x + this._rect.width / 2, y: this._rect.y + this._rect.height / 2 }, "Create New");
+            ADrawFramedRect(adjusted_rect, bgcolor, 'DarkGrey');
+            ADrawText({ x: this._rect.x + this._rect.width / 2, y: this._rect.y + this._rect.height / 2 }, "Create New", { align: "center" });
         }
-        MainCanvas.textAlign = align;
     }
 
     Click(mouse: IPoint): void {
