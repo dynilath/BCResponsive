@@ -11,15 +11,13 @@ interface ResponsiveSettingV1 {
 
 interface ResponsiveTriggerActivity {
     mode: "activity";
-    allow_activities?: string[];
+    allow_activities: string[];
     allow_bodyparts?: string[];
     allow_ids?: number[];
 }
 
 interface ResponsiveTriggerOrgasm {
     mode: "orgasm";
-    allow_activities?: string[];
-    allow_bodyparts?: string[];
 }
 
 interface ResponsiveTriggerSpicer {

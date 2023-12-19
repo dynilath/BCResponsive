@@ -155,7 +155,7 @@ export class TriggerTab extends AGUIItem {
                 const targetId = index + this._page * this._layout_items.length;
                 if (WithinRect(mouse, rect)) {
                     if (targetId == this._parent.targetPersona.responses.length) {
-                        this._parent.targetPersona.responses.push({ name: "New Response", trigger: { mode: "activity" }, messages: [] });
+                        this._parent.targetPersona.responses.push({ name: "New Response", trigger: { mode: "activity", allow_activities: [] }, messages: [] });
                         this._parent.activeItem = this._parent.targetPersona.responses[targetId];
                         this.calPage();
                     } else if (targetId < this._parent.targetPersona.responses.length) {
