@@ -1,8 +1,10 @@
-import { isTriggerActivity, isTriggerSpicer } from "../../Data";
+import { isTriggerActivity } from "../../Data";
 import { Colors } from "../../Definition";
-import { GUISettingScreen } from "../GUI";
+import { GUISettingScreen, setSubscreen } from "../GUI";
 import { AGUIItem, AGUIScreen, IPoint, IRect, WithinRect } from "../Widgets/AGUI";
+import { ADrawFramedRect, ADrawText, ADrawTextButton, BasicText, ExitButton, TitleText } from "../Widgets/Common";
 import { ActivityModeInfo } from "./ActivityModeInfo";
+import { MessageSettinPopup } from "./MessageSettingPopup";
 import { ResponseMenuState } from "./ResponseMenuState";
 import { SpicerModeInfo } from "./SpicerModeInfo";
 import { TriggerModeInfo } from "./TriggerModeInfo";
@@ -36,7 +38,7 @@ export class TriggerSetting extends AGUIScreen {
             new BasicText({ x: TriggerInfoBaseX, y: MenuBaseY + TriggerInfoHeight / 2 }, "Name:"),
             new TriggerName(this._state, { x: TriggerInfoNextX, y: MenuBaseY, width: TriggerInfoNextWidth, height: TriggerInfoHeight }),
             new BasicText({ x: TriggerInfoBaseX, y: MenuBaseY + MenuBaseItemHeight + TriggerInfoHeight / 2 }, "Mode:"),
-            new TriggerMode(this._state, { x: TriggerInfoNextX, y: MenuBaseY + MenuBaseItemHeight, width: TriggerInfoNextWidth, height: TriggerInfoHeight }),
+            new TriggerModeInfo(this._state, { x: TriggerInfoNextX, y: MenuBaseY + MenuBaseItemHeight, width: TriggerInfoNextWidth, height: TriggerInfoHeight }),
             new ActivityModeInfo(this._state, {
                 x: TriggerInfoBaseX,
                 y: MenuBaseY + MenuBaseItemHeight * 2 + TriggerInfoHeight / 2,
@@ -49,7 +51,7 @@ export class TriggerSetting extends AGUIScreen {
                 width: TriggerInfoNextWidth + TriggerInfoNextX - TriggerInfoBaseX,
                 height: 450
             }),
-            new ResponseMessageList(this._state, {
+            new ResponseMessageList(this, this._state, {
                 x: TriggerMessageBaseX,
                 y: MenuBaseY,
                 width: TriggerMessageWidth,
@@ -67,8 +69,11 @@ export class ResponseMessageList extends AGUIItem {
     private readonly _nextButton: IRect;
     private readonly _pageText: IPoint;
 
-    constructor(state: ResponseMenuState, rect: IRect) {
+    private readonly _parent: TriggerSetting;
+
+    constructor(parent: TriggerSetting, state: ResponseMenuState, rect: IRect) {
         super();
+        this._parent = parent;
         this._state = state;
 
         const itemHeight = 60;
@@ -120,6 +125,24 @@ export class ResponseMessageList extends AGUIItem {
             ADrawTextButton(this._nextButton, ">", hasFocus && this.curPage < this.maxPage, { stroke: hasFocus && this.curPage < this.maxPage ? "Black" : "DarkGrey" });
         }
         ADrawText(this._pageText, `${this.curPage + 1}/${this.maxPage + 1}`, { align: "center" });
+    }
+
+    Click(mouse: IPoint): void {
+        if (this._state.activeItem === null) return;
+
+        if (WithinRect(mouse, this._prevButton)) {
+            this.curPage = Math.max(this.curPage - 1, 0);
+        } else if (WithinRect(mouse, this._nextButton)) {
+            this.curPage = Math.min(this.curPage + 1, this.maxPage);
+        } else {
+            this._itemRects.forEach((v, i) => {
+                const targetIndex = this.curPage * this._itemRects.length + i;
+                if (WithinRect(mouse, v) && this._state.activeItem !== null) {
+                    setSubscreen(new MessageSettinPopup(this._parent, this._state.activeItem.messages[targetIndex]));
+                }
+            });
+        }
+
     }
 }
 

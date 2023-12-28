@@ -9,7 +9,6 @@ import { LZStringToPersona, PersonaToLZString } from "./PersonaCompress";
 
 export class PersonaImportScreen extends Popup {
     readonly _bind: { text: string };
-    readonly _input: InputTextArea;
     _lastInputInvalid: boolean = false;
 
     constructor(prev: GUISettingScreen | null = null, index: number) {
@@ -42,8 +41,6 @@ export class PersonaImportScreen extends Popup {
             })()
         }
 
-        this._input = new InputTextArea({ x: centerX - inputWidth / 2, y: centerY - totalHeight / 2 + FontSize + padding, width: inputWidth, height: inputHeight }, "InputPersonaData", this._bind)
-
         this._items = [
             new FramedRect({ x: centerX - totalWidth / 2 - padding, y: centerY - totalHeight / 2 - padding, width: totalWidth + padding * 2, height: totalHeight + padding * 2 }, "White"),
             new DynamicText(() => {
@@ -62,7 +59,7 @@ export class PersonaImportScreen extends Popup {
                     color: "Black"
                 }
             }),
-            this._input,
+            new InputTextArea({ x: centerX - inputWidth / 2, y: centerY - totalHeight / 2 + FontSize + padding, width: inputWidth, height: inputHeight }, "InputPersonaData", this._bind),
             new TextButton({
                 x: centerX - buttonTotalWidth / 2,
                 y: centerY + totalHeight / 2 - buttonHeight,
@@ -96,9 +93,5 @@ export class PersonaImportScreen extends Popup {
         MainCanvas.fillRect(0, 0, 2000, 1000);
 
         this._items.forEach(item => item.Draw(hasFocus(this)));
-    }
-
-    Unload(): void {
-        this._input.Unload();
     }
 }

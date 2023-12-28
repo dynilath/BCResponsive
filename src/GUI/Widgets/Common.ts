@@ -143,6 +143,56 @@ export class TextButton extends AGUIItem {
     }
 }
 
+export class SegmentButton extends AGUIItem {
+    private readonly _rect: IRect;
+    private readonly _rects: IRect[];
+    private readonly _padding: number = 5;
+
+    private setting: {
+        text: { display: string, value: string }[], init: string, callback: (id: string) => void
+    }
+
+    constructor(rect: IRect, setting: SegmentButton['setting']) {
+        super();
+
+        const textWidths = setting.text.map(t => MainCanvas.measureText(t.display).width + this._padding * 2);
+        const increment = textWidths.reduce((prev, b) => {
+            return prev.concat(prev[prev.length - 1] + b);
+        }, [0]);
+
+        const fullTextWidth = increment[increment.length - 1];
+
+        this._rect = rect;
+        this._rects = setting.text.map((text, index) => {
+            return {
+                x: rect.x + rect.width * increment[index] / fullTextWidth,
+                y: rect.y,
+                width: rect.width * textWidths[index] / fullTextWidth,
+                height: rect.height
+            };
+        });
+        this.setting = setting;
+    }
+
+    Draw(hasFocus: boolean) {
+        ADrawFramedRect(this._rect, "White");
+        this._rects.forEach((r, i) => {
+            const color = WithinRect({ x: MouseX, y: MouseY }, r) && hasFocus ? Colors.Hover : this.setting.init === this.setting.text[i].value ? Colors.Active : "White";
+            ADrawFramedRect(r, color);
+            ADrawTextFit({ x: r.x + this._padding, y: r.y + this._padding, width: r.width - this._padding * 2, height: r.height - this._padding * 2 }, this.setting.text[i].display);
+        });
+    }
+
+    Click(mouse: IPoint) {
+        this.setting.text.forEach((text, index) => {
+            if (WithinRect(mouse, this._rects[index])) {
+                this.setting.init = text.value;
+                this.setting.callback(text.value);
+            }
+        });
+    }
+}
+
 export class ExitButton extends AGUIItem {
     private _rect: IRect = {
         x: 1815,
@@ -176,22 +226,29 @@ export class TitleText extends AGUIItem {
 }
 
 export class BasicText extends AGUIItem {
-    private _color: string;
     private _where: IPoint;
     private _text: string;
-    private _align: CanvasTextAlign;
 
-    constructor(where: IPoint, text: string, align: CanvasTextAlign = "left", color: string = "Black") {
+    private setting: {
+        align: CanvasTextAlign,
+        color: string
+    }
+
+    constructor(where: IPoint, text: string, setting?: Partial<BasicText['setting']>) {
         super();
         this._where = where;
         this._text = text;
-        this._color = color;
-        this._align = align;
+
+        if (!setting) setting = {};
+        this.setting = {
+            align: setting.align || "left",
+            color: setting.color || "Black"
+        }
     }
 
     Draw() {
-        MainCanvas.textAlign = this._align;
-        MainCanvas.fillStyle = this._color;
+        MainCanvas.textAlign = this.setting.align;
+        MainCanvas.fillStyle = this.setting.color;
         MainCanvas.fillText(this._text, this._where.x, this._where.y);
     }
 }
