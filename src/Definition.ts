@@ -15,6 +15,8 @@ export const DebugMode = true;
 
 export const SettingName = "BCResponsiveSetting";
 
+export const CUSTOM_ACTION_TAG = "BCR_CustomAction";
+
 export const Colors = {
     Active: "#CCC",
     Hover: "#80FFFF"
