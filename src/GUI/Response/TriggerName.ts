@@ -1,4 +1,5 @@
 import { MaxTriggerNameLength } from "../../Definition";
+import { HTMLID } from "../GUI";
 import { AGUIItem, IPoint, IRect, WithinRect } from "../Widgets/AGUI";
 import { ADrawTextButton } from "../Widgets/Common";
 import { ResponseMenuState } from "./ResponseMenuState";
@@ -17,7 +18,7 @@ export class TriggerName extends AGUIItem {
         this._rect = rect;
 
         this._text = document.createElement("input");
-        this._text.id = 'ResponsiveInputTriggerName';
+        this._text.id = HTMLID("TriggerName");
         this._text.setAttribute("screen-generated", CurrentScreen);
         this._text.className = "HideOnPopup";
         this._text.maxLength = MaxTriggerNameLength;

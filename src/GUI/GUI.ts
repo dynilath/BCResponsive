@@ -1,8 +1,12 @@
 import { ModSDKModAPI } from "bondage-club-mod-sdk";
-import { DebugMode, SettingName } from "../Definition";
+import { DebugMode, HTMLIDPrefix, SettingName } from "../Definition";
 import { Localization } from "../Lang";
 import { icons } from "./icons";
-import { Text } from "../i18n";
+import { GetText } from "../i18n";
+
+export function HTMLID(id: string): string {
+    return `${HTMLIDPrefix}${id}`;
+}
 
 export abstract class GUISettingScreen {
     Load() { }
@@ -118,7 +122,7 @@ export class GUISetting {
             PreferenceSubscreenList.push(SettingName);
 
         mod.hookFunction("TextGet", 2, (args: string[], next: (arg0: any) => any) => {
-            if (args[0] == `Homepage${SettingName}`) return Text("setting_button_text");
+            if (args[0] == `Homepage${SettingName}`) return GetText("setting_button_text");
             return next(args);
         });
 

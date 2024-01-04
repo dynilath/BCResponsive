@@ -1,3 +1,4 @@
+import { GetText } from "../../i18n";
 import { GUISettingScreen } from "../GUI";
 import { IPoint, IRect } from "../Widgets/AGUI";
 import { BasicText, FramedRect, SegmentButton, TextButton } from "../Widgets/Common";
@@ -17,8 +18,9 @@ export class MessageSettinPopup extends Popup {
 
 
     private _input_state: ResponsiveMessage;
+    private _text_input: InputTextArea;
 
-    constructor(prev: GUISettingScreen | null, target: ResponsiveMessage) {
+    constructor(prev: GUISettingScreen | null, target: ResponsiveMessage | undefined) {
         super(prev);
 
         const centerX = 1000;
@@ -48,7 +50,7 @@ export class MessageSettinPopup extends Popup {
 
         this._type_segbutton = {
             x: centerX - dialogTotalWidth / 2,
-            y: centerY - dialogTotalWidth / 2 + FontSize + spacing,
+            y: centerY - dialogTotalHeight / 2 + FontSize + spacing,
             width: buttonWidth, height: buttonHeight
         };
 
@@ -82,26 +84,33 @@ export class MessageSettinPopup extends Popup {
             width: buttonWidth, height: buttonHeight
         };
 
-        this._input_state = { ...target };
+        if (target) this._input_state = { ...target };
+        else this._input_state = { type: "message", content: GetText("Example Message") };
+
+        this._text_input = new InputTextArea(this._input, "InputMessage", { text: this._input_state.content });
 
         this._items = [
             new FramedRect(this._dialog, "White"),
-            new BasicText(this._title, "Edit Message", { align: "center" }),
-            new InputTextArea(this._input, "InputMessage", { text: this._input_state.content }),
+            new BasicText(this._title, GetText("Edit Message"), { align: "center" }),
+            this._text_input,
             new SegmentButton(this._type_segbutton, {
-                text: ["message", "action"].map(type => ({ display: type, value: type })),
+                text: ["message", "action"].map(type => ({ display: GetText(type), value: type })),
                 init: this._input_state.type,
                 callback: (text) => {
                     this._input_state.type = text as ResponsiveMessage["type"];
                 }
             }),
-            new TextButton(this._insert_me_button, "Insert Me", () => { }),
-            new TextButton(this._insert_other_button, "Insert Other", () => { }),
-            new TextButton(this._confirm_button, "Confirm", () => {
+            new TextButton(this._insert_me_button, GetText("Insert Me"), () => {
+                this._text_input.InsertAtCursor("{me}");
+            }),
+            new TextButton(this._insert_other_button, GetText("Insert Other"), () => {
+                this._text_input.InsertAtCursor("{other}");
+            }),
+            new TextButton(this._confirm_button, GetText("Confirm"), () => {
                 target = { ... this._input_state };
                 this.Exit();
             }),
-            new TextButton(this._cancel_button, "Cancel", () => this.Exit())
+            new TextButton(this._cancel_button, GetText("Cancel"), () => this.Exit())
         ]
     }
 }

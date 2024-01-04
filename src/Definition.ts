@@ -10,6 +10,7 @@ export enum MoanType {
 
 export const ModVersion = buildVersion(1, 0, 0);
 export const ModName = 'BondageClub Responsive'
+export const HTMLIDPrefix = "BCR_";
 
 export const DebugMode = true;
 

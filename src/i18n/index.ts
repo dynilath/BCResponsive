@@ -6,7 +6,7 @@ const textmap = new Map<string, Map<string, string>>([
     ["EN", ENTextMap],
 ]);
 
-export function Text(srcTag: string) {
+export function GetText(srcTag: string) {
     let target = textmap.get(TranslationLanguage);
     if (target !== undefined) {
         return target.get(srcTag) || srcTag;

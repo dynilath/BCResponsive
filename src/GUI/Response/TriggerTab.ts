@@ -83,8 +83,8 @@ export class TriggerTab extends AGUIItem {
         const active = this._parent.activeItem;
 
         this._active_rect_state.forEach((state, index) => {
-            const id = index + this._page * this._layout_items.length;
-            if (id > this._parent.targetPersona.responses.length) {
+            const idx = index + this._page * this._layout_items.length;
+            if (idx > this._parent.targetPersona.responses.length) {
                 state.state = 'idle';
                 state.value = 0;
                 return;
@@ -98,7 +98,7 @@ export class TriggerTab extends AGUIItem {
                 state.value = Math.max(0, state.value - delta / 100);
             }
 
-            if (active && active == this._parent.targetPersona.responses[id]) {
+            if (active && active == this._parent.targetPersona.responses[idx]) {
                 state.state = 'active';
             }
         });
@@ -127,7 +127,7 @@ export class TriggerTab extends AGUIItem {
                 height: rect.height + expansion * 2
             };
 
-            const targetId = index + this._page * this._layout_items.length;
+            const targetIdx = index + this._page * this._layout_items.length;
 
             const bgcolor = (() => {
                 if (focusing === index) return Colors.Hover;
@@ -135,12 +135,12 @@ export class TriggerTab extends AGUIItem {
                 else return 'White';
             })();
 
-            if (targetId == this._parent.targetPersona.responses.length) {
+            if (targetIdx == this._parent.targetPersona.responses.length) {
                 ADrawFramedRect(frect, bgcolor, "Grey");
                 ADrawTextFit(rect, "Add New");
-            } else if (targetId < this._parent.targetPersona.responses.length) {
+            } else if (targetIdx < this._parent.targetPersona.responses.length) {
                 ADrawFramedRect(frect, bgcolor);
-                ADrawTextFit(rect, this._parent.targetPersona.responses[targetId].name);
+                ADrawTextFit(rect, this._parent.targetPersona.responses[targetIdx].name);
             }
         });
     }
@@ -152,14 +152,14 @@ export class TriggerTab extends AGUIItem {
             this._page = Math.min(this._max_page, this._page + 1);
         } else {
             this._layout_items.forEach((rect, index) => {
-                const targetId = index + this._page * this._layout_items.length;
+                const targetIdx = index + this._page * this._layout_items.length;
                 if (WithinRect(mouse, rect)) {
-                    if (targetId == this._parent.targetPersona.responses.length) {
+                    if (targetIdx == this._parent.targetPersona.responses.length) {
                         this._parent.targetPersona.responses.push({ name: "New Response", trigger: { mode: "activity", allow_activities: [] }, messages: [] });
-                        this._parent.activeItem = this._parent.targetPersona.responses[targetId];
+                        this._parent.activeItem = this._parent.targetPersona.responses[targetIdx];
                         this.calPage();
-                    } else if (targetId < this._parent.targetPersona.responses.length) {
-                        this._parent.activeItem = this._parent.targetPersona.responses[targetId];
+                    } else if (targetIdx < this._parent.targetPersona.responses.length) {
+                        this._parent.activeItem = this._parent.targetPersona.responses[targetIdx];
                     }
                 }
             });

@@ -1,3 +1,4 @@
+import { HTMLID } from "../GUI";
 import { AGUIItem, IRect } from "./AGUI";
 
 export class InputTextArea extends AGUIItem {
@@ -9,11 +10,11 @@ export class InputTextArea extends AGUIItem {
     constructor(rect: IRect, id: string, bind: { text: string; }, hint?: string) {
         super();
         this._rect = rect;
-        this._id = id;
+        this._id = HTMLID(id);
 
         this._text = document.createElement("textarea");
-        this._text.id = id;
-        this._text.name = id;
+        this._text.id = this._id;
+        this._text.name = this._id;
         this._text.value = bind.text;
         this._text.setAttribute("screen-generated", CurrentScreen);
 
@@ -24,6 +25,15 @@ export class InputTextArea extends AGUIItem {
         };
 
         document.body.appendChild(this._text);
+    }
+
+    InsertAtCursor(text: string) {
+        const start = this._text.selectionStart;
+        const end = this._text.selectionEnd;
+        const oldText = this._text.value;
+        this._text.value = oldText.substring(0, start) + text + oldText.substring(end);
+        this._text.selectionStart = this._text.selectionEnd = start + text.length;
+        this._text.focus();
     }
 
     Draw(hasFocus: boolean): void {

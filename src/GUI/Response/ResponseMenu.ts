@@ -1,5 +1,6 @@
 import { isTriggerActivity } from "../../Data";
 import { Colors } from "../../Definition";
+import { GetText } from "../../i18n";
 import { GUISettingScreen, setSubscreen } from "../GUI";
 import { AGUIItem, AGUIScreen, IPoint, IRect, WithinRect } from "../Widgets/AGUI";
 import { ADrawFramedRect, ADrawText, ADrawTextButton, BasicText, ExitButton, TitleText } from "../Widgets/Common";
@@ -35,9 +36,9 @@ export class TriggerSetting extends AGUIScreen {
             new TriggerTab(this._state, { x: TriggerTabBaseX, y: MenuBaseY, width: 300, height: 660 }),
             new ExitButton(() => this.Exit()),
             new TitleText(),
-            new BasicText({ x: TriggerInfoBaseX, y: MenuBaseY + TriggerInfoHeight / 2 }, "Name:"),
+            new BasicText({ x: TriggerInfoBaseX, y: MenuBaseY + TriggerInfoHeight / 2 }, GetText("Name:")),
             new TriggerName(this._state, { x: TriggerInfoNextX, y: MenuBaseY, width: TriggerInfoNextWidth, height: TriggerInfoHeight }),
-            new BasicText({ x: TriggerInfoBaseX, y: MenuBaseY + MenuBaseItemHeight + TriggerInfoHeight / 2 }, "Mode:"),
+            new BasicText({ x: TriggerInfoBaseX, y: MenuBaseY + MenuBaseItemHeight + TriggerInfoHeight / 2 }, GetText("Mode:")),
             new TriggerModeInfo(this._state, { x: TriggerInfoNextX, y: MenuBaseY + MenuBaseItemHeight, width: TriggerInfoNextWidth, height: TriggerInfoHeight }),
             new ActivityModeInfo(this._state, {
                 x: TriggerInfoBaseX,
@@ -106,8 +107,8 @@ export class ResponseMessageList extends AGUIItem {
         const messages = this._state.activeItem.messages;
         const itemPerPage = this._itemRects.length;
 
-        this.maxPage = Math.ceil(messages.length / itemPerPage) - 1;
-        this.curPage = Math.min(this.curPage, this.maxPage);
+        this.maxPage = Math.max(0, Math.ceil(messages.length / itemPerPage) - 1);
+        this.curPage = Math.max(0, Math.min(this.curPage, this.maxPage));
 
         this._itemRects.forEach((v, i) => {
             const targetIndex = this.curPage * itemPerPage + i;
@@ -115,7 +116,7 @@ export class ResponseMessageList extends AGUIItem {
                 const message = messages[targetIndex];
                 ADrawTextButton({ x: v.x, y: v.y, width: 100, height: v.height }, message.type, hasFocus);
                 ADrawTextButton({ x: v.x + 120, y: v.y, width: v.width - 120, height: v.height }, message.content, hasFocus);
-            } else if (messages.length === targetIndex || messages.length === 0) {
+            } else if (messages.length === targetIndex) {
                 ADrawTextButton(v, "New Responses", hasFocus, { stroke: "DarkGrey" });
             }
         });

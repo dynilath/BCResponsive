@@ -1,4 +1,5 @@
 import { isTriggerActivity } from "../../Data";
+import { GetText } from "../../i18n";
 import { AGUIItem, IPoint, IRect } from "../Widgets/AGUI";
 import { ADrawText, ADrawTextButton } from "../Widgets/Common";
 import { ResponseMenuState } from "./ResponseMenuState";
@@ -37,13 +38,13 @@ export class ActivityModeInfo extends AGUIItem {
 
     Draw(hasFocus: boolean): void {
         if (this._state.activeItem === null || !isTriggerActivity(this._state.activeItem.trigger)) return;
-        ADrawText(this._activity_text, "On Activity:");
-        ADrawTextButton(this._activity_state, this._state.activeItem.trigger.allow_activities.join(', '), hasFocus);
+        ADrawText(this._activity_text, GetText("On Activity:"));
+        ADrawTextButton(this._activity_state, (v => v.length > 0 ? v.join(', ') : GetText("No Activity"))(this._state.activeItem.trigger.allow_activities), hasFocus);
 
-        ADrawText(this._bodypart_text, "On Bodyparts:");
-        ADrawTextButton(this._bodypart_state, (v => v ? v.join(", ") : "All Bodyparts")(this._state.activeItem.trigger.allow_bodyparts), hasFocus);
+        ADrawText(this._bodypart_text, GetText("On Bodyparts:"));
+        ADrawTextButton(this._bodypart_state, (v => v ? v.join(", ") : GetText("All Bodyparts"))(this._state.activeItem.trigger.allow_bodyparts), hasFocus);
 
-        ADrawText(this._allow_ids_text, "On Members:");
-        ADrawTextButton(this._allow_ids_state, (v => v ? v.join(", ") : "All IDs")(this._state.activeItem.trigger.allow_ids), hasFocus);
+        ADrawText(this._allow_ids_text, GetText("On Members:"));
+        ADrawTextButton(this._allow_ids_state, (v => v ? v.join(", ") : GetText("All IDs"))(this._state.activeItem.trigger.allow_ids), hasFocus);
     }
 }
