@@ -5,7 +5,9 @@ import { GUISettingScreen, setSubscreen } from "./GUI";
 import { PersonaSetting } from "./Persona/PersonaMenu";
 import { TriggerSetting } from "./Response/ResponseMenu";
 import { AGUIScreen } from "./Widgets/AGUI";
-import { ExitButton, TextButton, TitleText } from "./Widgets/Common";
+import { ExitButton } from "./Widgets/Button";
+import { TextButton } from "./Widgets/Button";
+import { TitleText } from "./Widgets/Text";
 
 const titleBaseX = 200;
 const titleBaseY = 200;

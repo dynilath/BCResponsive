@@ -1,9 +1,12 @@
-import { GetText } from "../../i18n";
-import { GUISettingScreen } from "../GUI";
-import { IPoint, IRect } from "../Widgets/AGUI";
-import { BasicText, FramedRect, SegmentButton, TextButton } from "../Widgets/Common";
-import { InputTextArea } from "../Widgets/InputText";
-import { Popup } from "../Widgets/Popup";
+import { GetText } from "../../../i18n";
+import { GUISettingScreen } from "../../GUI";
+import { IPoint, IRect } from "../../Widgets/AGUI";
+import { FramedRect } from "../../Widgets/Common";
+import { TextButton } from "../../Widgets/Button";
+import { BasicText } from "../../Widgets/Text";
+import { SegmentButton } from "../../Widgets/SegmentButton";
+import { InputTextArea } from "../../Widgets/InputText";
+import { Popup } from "../../Widgets/Popup";
 
 
 export class MessageSettinPopup extends Popup {

@@ -185,6 +185,10 @@ interface IChatRoomMessage extends IChatRoomMessageBasic {
 
 declare function ChatRoomMessage(data: IChatRoomMessage): void;
 
+// Activity.js
+declare function ActivityDictionaryText(Tag: string): string;
+
+// Preference.js
 declare function PreferenceIsPlayerInSensDep(bypassblindness: boolean): boolean;
 declare var PreferenceSubscreenList: string[];
 declare var PreferenceSubscreen: string;
@@ -202,6 +206,7 @@ interface AssetGroup {
     readonly Category: 'Appearance' | 'Item' | 'Script';
 }
 declare var AssetGroup: AssetGroup[];
+declare var AssetGroupMap: Map<string, AssetGroup>;
 
 // Common.js
 declare function CommonGetFontName(): string;

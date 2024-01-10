@@ -20,7 +20,9 @@ export const CUSTOM_ACTION_TAG = "BCR_CustomAction";
 
 export const Colors = {
     Active: "#CCC",
-    Hover: "#80FFFF"
+    Hover: "#80FFFF",
+    SwitchOn: "#80FFFF",
+    SwitchOff: "#9A9A9A",
 }
 
 export const DefaultPersonaName = "Default";

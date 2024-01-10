@@ -1,5 +1,4 @@
-import { Colors, ModVersion } from "../../Definition";
-import { GetText } from "../../i18n";
+import { Colors } from "../../Definition";
 import { AGUIItem, IPoint, IRect, WithinRect as WithinRect } from "./AGUI";
 
 export function ADrawText(rect: IPoint, Text: string, option?: { color?: string, align?: CanvasTextAlign }) {
@@ -78,33 +77,50 @@ export function ADrawIconButton(rect: IRect, Icon: string, active: boolean = tru
     DrawImage(Icon, rect.x + 2, rect.y + 2);
 }
 
-export class StdButton extends AGUIItem {
-    private _rect: IRect;
-    private _callback: () => void;
-    private _text: string | null = null;
-    private _icon: string | null = null;
+export function ADrawCircleRect(rect: IRect, style?: { fill?: string, stroke?: string, strokeWidth?: number }) {
+    if (!style) style = {};
+    const radius = rect.height / 2;
+    const xLeft = rect.x + radius;
+    const xRight = rect.x + rect.width - radius;
+    MainCanvas.strokeStyle = style.stroke || "Black";
+    MainCanvas.lineWidth = style.strokeWidth || 2;
+    if (style.fill) MainCanvas.fillStyle = style.fill;
+    MainCanvas.beginPath();
+    MainCanvas.moveTo(xLeft, rect.y);
+    MainCanvas.lineTo(xRight, rect.y);
+    MainCanvas.arc(xRight, rect.y + radius, radius, -Math.PI * 0.5, Math.PI * 0.5);
+    MainCanvas.lineTo(xLeft, rect.y + rect.height);
+    MainCanvas.arc(xLeft, rect.y + radius, radius, Math.PI * 0.5, -Math.PI * 0.5);
+    MainCanvas.closePath();
+    if (style.fill) MainCanvas.fill();
+    MainCanvas.stroke();
+}
 
-    constructor(rect: IRect, text: string, callback: () => void, icon: string | null = null) {
-        super();
-        this._rect = rect;
-        this._text = text;
-        this._callback = callback;
-        this._icon = icon;
-    }
+export function ADrawRoundRect(rect: IRect, radius: number, style?: { fill?: string, stroke?: string, strokeWidth?: number }) {
+    if (!style) style = {};
+    MainCanvas.strokeStyle = style.stroke || "Black";
+    MainCanvas.lineWidth = style.strokeWidth || 2;
+    if (style.fill) MainCanvas.fillStyle = style.fill;
 
-    Draw(hasFocus: boolean) {
-        if (this._icon && this._text) {
-            ADrawIconTextButton(this._rect, this._text, this._icon);
-        } else if (this._icon) {
-            ADrawIconButton(this._rect, this._icon);
-        } else if (this._text) {
-            ADrawIconTextButton(this._rect, this._text, "");
-        }
-    }
+    const xLeft = rect.x + radius;
+    const xRight = rect.x + rect.width - radius;
+    const yTop = rect.y + radius;
+    const yBottom = rect.y + rect.height - radius;
 
-    Click(mouse: IPoint) {
-        if (WithinRect(mouse, this._rect)) this._callback();
-    }
+    MainCanvas.beginPath();
+    MainCanvas.moveTo(xLeft, rect.y);
+    MainCanvas.lineTo(xRight, rect.y);
+    MainCanvas.arc(xRight, yTop, radius, -Math.PI * 0.5, 0);
+    MainCanvas.lineTo(rect.x + rect.width, yBottom);
+    MainCanvas.arc(xRight, yBottom, radius, 0, Math.PI * 0.5);
+    MainCanvas.lineTo(xLeft, rect.y + rect.height);
+    MainCanvas.arc(xLeft, yBottom, radius, Math.PI * 0.5, Math.PI);
+    MainCanvas.lineTo(rect.x, yTop);
+    MainCanvas.arc(xLeft, yTop, radius, Math.PI, Math.PI * 1.5);
+    MainCanvas.closePath();
+
+    if (style.fill) MainCanvas.fill();
+    MainCanvas.stroke();
 }
 
 export class FramedRect extends AGUIItem {
@@ -122,149 +138,4 @@ export class FramedRect extends AGUIItem {
     }
 }
 
-export class TextButton extends AGUIItem {
-    private _rect: IRect;
-    private _callback: () => void;
-    private _text: string;
 
-    constructor(rect: IRect, text: string, callback: () => void) {
-        super();
-        this._rect = rect;
-        this._text = text;
-        this._callback = callback;
-    }
-
-    Draw(hasFocus: boolean) {
-        ADrawTextButton(this._rect, this._text, hasFocus);
-    }
-
-    Click(mouse: IPoint) {
-        if (WithinRect(mouse, this._rect)) this._callback();
-    }
-}
-
-export class SegmentButton extends AGUIItem {
-    private readonly _rect: IRect;
-    private readonly _rects: IRect[];
-    private readonly _padding: number = 5;
-
-    private setting: {
-        text: { display: string, value: string }[], init: string, callback: (id: string) => void
-    }
-
-    constructor(rect: IRect, setting: SegmentButton['setting']) {
-        super();
-
-        const textWidths = setting.text.map(t => MainCanvas.measureText(t.display).width + this._padding * 2);
-        const increment = textWidths.reduce((prev, b) => {
-            return prev.concat(prev[prev.length - 1] + b);
-        }, [0]);
-
-        const fullTextWidth = increment[increment.length - 1];
-
-        this._rect = rect;
-        this._rects = setting.text.map((text, index) => {
-            return {
-                x: rect.x + rect.width * increment[index] / fullTextWidth,
-                y: rect.y,
-                width: rect.width * textWidths[index] / fullTextWidth,
-                height: rect.height
-            };
-        });
-        this.setting = setting;
-    }
-
-    Draw(hasFocus: boolean) {
-        ADrawFramedRect(this._rect, "White");
-        this._rects.forEach((r, i) => {
-            const color = WithinRect({ x: MouseX, y: MouseY }, r) && hasFocus ? Colors.Hover : this.setting.init === this.setting.text[i].value ? Colors.Active : "White";
-            ADrawFramedRect(r, color);
-            ADrawTextFit({ x: r.x + this._padding, y: r.y + this._padding, width: r.width - this._padding * 2, height: r.height - this._padding * 2 }, this.setting.text[i].display);
-        });
-    }
-
-    Click(mouse: IPoint) {
-        this.setting.text.forEach((text, index) => {
-            if (WithinRect(mouse, this._rects[index])) {
-                this.setting.init = text.value;
-                this.setting.callback(text.value);
-            }
-        });
-    }
-}
-
-export class ExitButton extends AGUIItem {
-    private _rect: IRect = {
-        x: 1815,
-        y: 75,
-        width: 90,
-        height: 90
-    };
-
-    callback: () => void;
-
-    constructor(callback: () => void) {
-        super();
-        this.callback = callback;
-    }
-
-    Draw(hasFocus: boolean) {
-        ADrawIconButton(this._rect, "Icons/Exit.png", hasFocus);
-    }
-
-    Click(mouse: IPoint) {
-        if (WithinRect(mouse, this._rect)) this.callback();
-    }
-}
-
-export class TitleText extends AGUIItem {
-    constructor() { super(); }
-
-    Draw() {
-        ADrawText({ x: 200, y: 125 }, `${GetText("responsive_setting_title")} v${ModVersion}`);
-    }
-}
-
-export class BasicText extends AGUIItem {
-    private _where: IPoint;
-    private _text: string;
-
-    private setting: {
-        align: CanvasTextAlign,
-        color: string
-    }
-
-    constructor(where: IPoint, text: string, setting?: Partial<BasicText['setting']>) {
-        super();
-        this._where = where;
-        this._text = text;
-
-        if (!setting) setting = {};
-        this.setting = {
-            align: setting.align || "left",
-            color: setting.color || "Black"
-        }
-    }
-
-    Draw() {
-        MainCanvas.textAlign = this.setting.align;
-        MainCanvas.fillStyle = this.setting.color;
-        MainCanvas.fillText(this._text, this._where.x, this._where.y);
-    }
-}
-
-export class DynamicText extends AGUIItem {
-    private _pattern: () => { where: IPoint, text: string, align: CanvasTextAlign, color: string };
-
-    constructor(pattern: () => { where: IPoint, text: string, align: CanvasTextAlign, color: string }) {
-        super();
-        this._pattern = pattern;
-    }
-
-    Draw() {
-        const { where, text, align, color } = this._pattern();
-        MainCanvas.textAlign = align;
-        MainCanvas.fillStyle = color;
-        MainCanvas.fillText(text, where.x, where.y);
-    }
-}

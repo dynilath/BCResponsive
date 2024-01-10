@@ -1,76 +1,64 @@
-import { MaxTriggerNameLength } from "../../Definition";
 import { HTMLID } from "../GUI";
-import { AGUIItem, IPoint, IRect, WithinRect } from "../Widgets/AGUI";
-import { ADrawTextButton } from "../Widgets/Common";
-import { ResponseMenuState } from "./ResponseMenuState";
+import { AGUIItem, IPoint, IRect, WithinRect } from "./AGUI";
+import { Binding } from "./Binding";
+import { ADrawTextButton } from "./Common";
 
-export class TriggerName extends AGUIItem {
-    private _state: ResponseMenuState;
+export class ButtonEdit extends AGUIItem {
+    private _binding: Binding<string>;
+    private _HTMLID: string;
     private _rect: IRect;
-
     private _text: HTMLInputElement;
 
     private _display_state: 'input' | 'button' = 'button';
 
-    constructor(state: ResponseMenuState, rect: IRect) {
+    constructor(bind: Binding<string>, id: string, rect: IRect) {
         super();
-        this._state = state;
+        this._binding = bind;
         this._rect = rect;
+        this._HTMLID = id;
 
         this._text = document.createElement("input");
-        this._text.id = HTMLID("TriggerName");
+        this._text.id = HTMLID(this._HTMLID);
         this._text.setAttribute("screen-generated", CurrentScreen);
         this._text.className = "HideOnPopup";
-        this._text.maxLength = MaxTriggerNameLength;
 
-        this.Reload();
+        this._text.value = this._binding.value;
 
         this._text.onchange = () => {
-            this.OnChange();
+            this._display_state = 'button';
+            this._binding.value = this._text.value.trim();
         };
 
         document.body.appendChild(this._text);
     }
 
-    private _last_item: ResponsiveItem | null = null;
-
-    Reload() {
-        if (this._last_item !== null) {
-            if (this._display_state === 'input')
-                this._last_item.name = this._text.value.trim().substring(0, MaxTriggerNameLength);
-        }
-        this._display_state = 'button';
-        this._last_item = this._state.activeItem;
-        this._text.value = this._last_item ? this._last_item.name : "";
-    }
-
     Click(mouse: IPoint): void {
         if (WithinRect(mouse, this._rect)) {
             if (this._display_state === 'button') {
+                this._text.value = this._binding.value;
                 this._display_state = 'input';
             }
         } else {
-            this.Reload();
+            if (this._display_state === 'input') {
+                this._display_state = 'button';
+                this._binding.value = this._text.value.trim();
+            }
         }
     }
 
     OnChange(): void {
-        if (this._state.activeItem !== null) {
-            this._state.activeItem.name = this._text.value.trim().substring(0, MaxTriggerNameLength);
-        }
+        this._binding.value = this._text.value.trim();
     }
 
     Draw(hasFocus: boolean): void {
-        if (this._state.activeItem === null || !hasFocus) {
-            this._text.style.display = 'none';
-            this._text.hidden = true;
+        if (!hasFocus) {
+            this.HideTextEdit();
             return;
         }
 
         if (this._display_state === 'button') {
-            this._text.style.display = 'none';
-            this._text.hidden = true;
-            ADrawTextButton(this._rect, this._state.activeItem.name, hasFocus);
+            this.HideTextEdit();
+            ADrawTextButton(this._rect, this._binding.value, hasFocus);
         } else {
             this._text.hidden = false;
 
@@ -99,7 +87,13 @@ export class TriggerName extends AGUIItem {
         }
     }
 
+    HideTextEdit(): void {
+        this._text.style.display = 'none';
+        this._text.hidden = true;
+    }
+
     Unload(): void {
         this._text.remove();
     }
+
 }

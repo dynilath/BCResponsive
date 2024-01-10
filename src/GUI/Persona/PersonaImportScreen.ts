@@ -1,7 +1,10 @@
 import { DataManager } from "../../Data";
 import { GUISettingScreen, hasFocus } from "../GUI";
 import { IPoint, IRect } from "../Widgets/AGUI";
-import { ADrawFramedRect, ADrawText, BasicText, DynamicText, FramedRect, TextButton } from "../Widgets/Common";
+import { ADrawFramedRect, ADrawText, FramedRect } from "../Widgets/Common";
+import { TextButton } from "../Widgets/Button";
+import { DynamicText } from "../Widgets/Text";
+import { BasicText } from "../Widgets/Text";
 import { InputTextArea } from "../Widgets/InputText";
 import { Popup } from "../Widgets/Popup";
 import { LZStringToPersona, PersonaToLZString } from "./PersonaCompress";

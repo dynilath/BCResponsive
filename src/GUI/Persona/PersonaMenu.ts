@@ -2,7 +2,8 @@ import { DataManager } from "../../Data";
 import { MaxPersonalities } from "../../Definition";
 import { GUISettingScreen } from "../GUI";
 import { AGUIItem, AGUIScreen, IRect } from "../Widgets/AGUI";
-import { ExitButton, TitleText } from "../Widgets/Common";
+import { ExitButton } from "../Widgets/Button";
+import { TitleText } from "../Widgets/Text";
 import { PersonaItem } from "./PersonaItem";
 
 export class PersonaSetting extends AGUIScreen {

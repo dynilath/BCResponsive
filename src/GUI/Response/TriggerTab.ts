@@ -80,7 +80,7 @@ export class TriggerTab extends AGUIItem {
         const delta = Date.now() - this._last_update;
         this._last_update = Date.now();
 
-        const active = this._parent.activeItem;
+        const active = this._parent.targetItem;
 
         this._active_rect_state.forEach((state, index) => {
             const idx = index + this._page * this._layout_items.length;
@@ -156,10 +156,10 @@ export class TriggerTab extends AGUIItem {
                 if (WithinRect(mouse, rect)) {
                     if (targetIdx == this._parent.targetPersona.responses.length) {
                         this._parent.targetPersona.responses.push({ name: "New Response", trigger: { mode: "activity", allow_activities: [] }, messages: [] });
-                        this._parent.activeItem = this._parent.targetPersona.responses[targetIdx];
+                        this._parent.targetItem = this._parent.targetPersona.responses[targetIdx];
                         this.calPage();
                     } else if (targetIdx < this._parent.targetPersona.responses.length) {
-                        this._parent.activeItem = this._parent.targetPersona.responses[targetIdx];
+                        this._parent.targetItem = this._parent.targetPersona.responses[targetIdx];
                     }
                 }
             });
