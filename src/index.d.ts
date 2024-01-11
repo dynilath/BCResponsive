@@ -30,7 +30,7 @@ interface ResponsiveTriggerSpicer {
 
 type ResponsiveTrigger = ResponsiveTriggerActivity | ResponsiveTriggerOrgasm | ResponsiveTriggerSpicer;
 
-type ResponsiveTriggerMode = "activity" | "orgasm" | "spicer";
+type ResponsiveTriggerMode = ResponsiveTrigger["mode"];
 
 interface ResponsiveTriggerType {
     mode: ResponsiveTriggerMode;
