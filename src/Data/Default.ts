@@ -14,14 +14,14 @@ export function getDefaultPersonaList() {
             mode: "activity",
             allow_activities: DefaultValueV1TriggerActivities.pain
         },
-        messages: DefaultValueV1.pain.map(message_mapper).concat(["PLAYER_NAME feels the pain and frowned."].map(action_mapper))
+        messages: DefaultValueV1.pain.map(message_mapper).concat(["{me} feels the pain and frowned."].map(action_mapper))
     }, {
         name: "Tickle",
         trigger: {
             mode: "activity",
             allow_activities: DefaultValueV1TriggerActivities.tickle,
         },
-        messages: DefaultValueV1.tickle.map(message_mapper).concat(["PLAYER_NAME squirms from the tickling."].map(action_mapper))
+        messages: DefaultValueV1.tickle.map(message_mapper).concat(["{me} squirms from the tickling."].map(action_mapper))
     }, {
         name: "Masturbate",
         trigger: {
