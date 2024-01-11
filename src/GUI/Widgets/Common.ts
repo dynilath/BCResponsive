@@ -1,4 +1,4 @@
-import { Colors } from "../../Definition";
+import { Styles } from "../../Definition";
 import { AGUIItem, IPoint, IRect, WithinRect as WithinRect } from "./AGUI";
 
 export function ADrawText(rect: IPoint, Text: string, option?: { color?: string, align?: CanvasTextAlign }) {
@@ -13,8 +13,8 @@ export function ADrawText(rect: IPoint, Text: string, option?: { color?: string,
 
 export function ADrawTextFit(rect: IRect, Text: string, args?: { color?: string, padding?: number }) {
     if (!args) args = {};
-    const color = args.color || "Black";
-    const padding = args.padding || 5;
+    const color = args.color || Styles.Text.Base;
+    const padding = args.padding || Styles.Text.padding;
 
     const actualWidth = rect.width - padding * 2;
 
@@ -57,9 +57,9 @@ export function ADrawFramedRect(rect: IRect, fill: string, line: string = 'black
 
 export function ADrawTextButton(rect: IRect, Text: string, active: boolean = true, background?: { idle?: string, hover?: string, stroke?: string, strokeWidth?: number }) {
     if (!background) background = {};
-    const idle = background.idle || "White";
-    const hover = background.hover || Colors.Hover;
-    const stroke = background.stroke || "Black";
+    const idle = background.idle || Styles.Button.idle;
+    const hover = background.hover || Styles.Button.hover;
+    const stroke = background.stroke || Styles.Button.text;
     const strokeWidth = background.strokeWidth || 2;
 
     MainCanvas.textAlign = "center";
@@ -69,10 +69,10 @@ export function ADrawTextButton(rect: IRect, Text: string, active: boolean = tru
 
 export function ADrawIconButton(rect: IRect, Icon: string, active: boolean = true, background?: { idle?: string, hover?: string, stroke?: string, strokeWidth?: number }) {
     if (!background) background = {};
-    const idle = background.idle || "White";
-    const hover = background.hover || Colors.Hover;
-    const stroke = background.stroke || "Black";
-    const strokeWidth = background.strokeWidth || 2;
+    const idle = background.idle || Styles.Button.idle;
+    const hover = background.hover || Styles.Button.hover;
+    const stroke = background.stroke || Styles.Button.text;
+    const strokeWidth = background.strokeWidth || Styles.strokeWidth;
     ADrawFramedRect(rect, active && WithinRect({ x: MouseX, y: MouseY }, rect) ? hover : idle, stroke, strokeWidth);
     DrawImage(Icon, rect.x + 2, rect.y + 2);
 }
@@ -82,8 +82,10 @@ export function ADrawCircleRect(rect: IRect, style?: { fill?: string, stroke?: s
     const radius = rect.height / 2;
     const xLeft = rect.x + radius;
     const xRight = rect.x + rect.width - radius;
-    MainCanvas.strokeStyle = style.stroke || "Black";
-    MainCanvas.lineWidth = style.strokeWidth || 2;
+    style.stroke = style.stroke || Styles.Button.text;
+
+    if (style.stroke !== 'none') MainCanvas.strokeStyle = style.stroke;
+    MainCanvas.lineWidth = style.strokeWidth || Styles.strokeWidth;
     if (style.fill) MainCanvas.fillStyle = style.fill;
     MainCanvas.beginPath();
     MainCanvas.moveTo(xLeft, rect.y);
@@ -93,7 +95,20 @@ export function ADrawCircleRect(rect: IRect, style?: { fill?: string, stroke?: s
     MainCanvas.arc(xLeft, rect.y + radius, radius, Math.PI * 0.5, -Math.PI * 0.5);
     MainCanvas.closePath();
     if (style.fill) MainCanvas.fill();
-    MainCanvas.stroke();
+    if (style.stroke !== 'none') MainCanvas.stroke();
+}
+
+export function ADrawCricleTextButton(rect: IRect, text: string, active: boolean = true, style?: { hover?: string, idle?: string }) {
+    if (!style) style = {};
+    const hover = style.hover || Styles.Button.hover;
+    const idle = style.idle || Styles.Button.idle;
+
+    if (active && WithinRect({ x: MouseX, y: MouseY }, rect)) {
+        ADrawCircleRect(rect, { fill: hover });
+    } else {
+        ADrawCircleRect(rect, { fill: idle });
+    }
+    ADrawTextFit(rect, text);
 }
 
 export function ADrawRoundRect(rect: IRect, radius: number, style?: { fill?: string, stroke?: string, strokeWidth?: number }) {
@@ -135,6 +150,23 @@ export class FramedRect extends AGUIItem {
 
     Draw() {
         ADrawFramedRect(this._rect, this._color);
+    }
+}
+
+export class RoundFramedRect extends AGUIItem {
+    private _rect: IRect;
+    private _radius: number;
+    private _fill: string;
+
+    constructor(rect: IRect, radius: number, fill: string) {
+        super();
+        this._rect = rect;
+        this._radius = radius;
+        this._fill = fill;
+    }
+
+    Draw() {
+        ADrawRoundRect(this._rect, this._radius, { fill: this._fill });
     }
 }
 

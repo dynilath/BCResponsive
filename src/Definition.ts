@@ -18,11 +18,40 @@ export const SettingName = "BCResponsiveSetting";
 
 export const CUSTOM_ACTION_TAG = "BCR_CustomAction";
 
-export const Colors = {
+export const Styles = {
     Active: "#CCC",
     Hover: "#80FFFF",
-    SwitchOn: "#80FFFF",
-    SwitchOff: "#9A9A9A",
+    strokeWidth: 2,
+    Dialog: {
+        roundRadius: 15,
+    },
+    Text: {
+        Base: "Black",
+        Lesser: "#808080",
+        padding: 5
+    },
+    Button: {
+        text: "Black",
+        hover: "rgba(128, 255, 255, 1)",
+        idle: "rgba(255, 255, 255, 1)"
+    },
+    Input: {
+        height: 60,
+    },
+    SegmentButton: {
+        active: "rgba(160, 255, 255, 1)",
+        hover: "rgba(204, 204, 204, 0.5)",
+        border: 5,
+    },
+    Tab: {
+        active: "rgba(160, 255, 255, 1)",
+        hover: "rgba(204, 204, 204, 0.5)",
+        border: 5,
+    },
+    Switch: {
+        on: "#80FFFF",
+        off: "#9A9A9A"
+    }
 }
 
 export const DefaultPersonaName = "Default";

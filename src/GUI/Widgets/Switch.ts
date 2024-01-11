@@ -1,4 +1,4 @@
-import { Colors } from "../../Definition";
+import { Styles } from "../../Definition";
 import { AGUIItem, IPoint, IRect, WithinRect } from "./AGUI";
 import { Binding } from "./Binding";
 import { ADrawCircleRect } from "./Common";
@@ -62,7 +62,7 @@ export class Switch extends AGUIItem {
 
         ADrawCircleRect(this._rect);
 
-        ctx.fillStyle = this._state.value ? Colors.SwitchOn : Colors.SwitchOff;
+        ctx.fillStyle = this._state.value ? Styles.Switch.on : Styles.Switch.off;
         ctx.beginPath();
         ctx.arc(circle_pos.x, circle_pos.y, this._radius + 5, 0, 2 * Math.PI);
         ctx.fill();

@@ -1,5 +1,6 @@
+import { Styles } from "../../Definition";
 import { AGUIItem, IPoint, IRect, WithinRect as WithinRect } from "./AGUI";
-import { ADrawTextButton } from "./Common";
+import { ADrawCircleRect, ADrawTextButton, ADrawTextFit } from "./Common";
 import { ADrawIconTextButton, ADrawIconButton } from "./Common";
 
 
@@ -28,6 +29,32 @@ export class StdButton extends AGUIItem {
     }
 
     Click(mouse: IPoint) {
+        if (WithinRect(mouse, this._rect)) this._callback();
+    }
+}
+
+export class TextRoundButton extends AGUIItem {
+    readonly _rect: IRect;
+    readonly _text: string;
+    readonly _callback: () => void;
+
+    constructor(rect: IRect, text: string, callback: () => void) {
+        super();
+        this._rect = rect;
+        this._text = text;
+        this._callback = callback;
+    }
+
+    Draw(hasFocus: boolean): void {
+        if (hasFocus && WithinRect({ x: MouseX, y: MouseY }, this._rect)) {
+            ADrawCircleRect(this._rect, { fill: Styles.Button.hover });
+        } else {
+            ADrawCircleRect(this._rect, { fill: Styles.Button.idle });
+        }
+        ADrawTextFit(this._rect, this._text);
+    }
+
+    Click(mouse: IPoint): void {
         if (WithinRect(mouse, this._rect)) this._callback();
     }
 }
