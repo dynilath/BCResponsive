@@ -1,10 +1,10 @@
 import { isTriggerActivity } from "../../../Data";
-import { Colors } from "../../../Definition";
+import { Styles } from "../../../Definition";
 import { AGUIItem, IPoint, IRect, WithinRect } from "../../Widgets/AGUI";
 import { ADrawFramedRect } from "../../Widgets/Common";
 import { ResponseMenuState } from "../ResponseMenuState";
 
-export class ActivityAreaInfo extends AGUIItem {
+export class ActivityAreaDisplay extends AGUIItem {
     private readonly _state: ResponseMenuState;
     private readonly _translate: IPoint;
     private readonly _scale: number;
@@ -56,8 +56,8 @@ export class ActivityAreaInfo extends AGUIItem {
             const isHover = v.Zone.some(v => WithinRect({ x: MouseX, y: MouseY }, this.RectTuple2Rect(v)));
             const isActive = allowParts && allowParts.includes(v.Name);
             const color = (() => {
-                if (isHover) return Colors.Hover;
-                if (isActive) return Colors.Active;
+                if (isHover) return Styles.Hover;
+                if (isActive) return Styles.Active;
                 return "White";
             })();
             v.Zone.forEach((v, i) => {

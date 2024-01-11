@@ -10,8 +10,8 @@ import { ActivityModeInfo } from "./TriggerMode/ActivityModeInfo";
 import { ResponseMenuState } from "./ResponseMenuState";
 import { ResponseMessageList } from "./MessageList/ResponseMessageList";
 import { SpicerModeInfo } from "./TriggerMode/SpicerModeInfo";
-import { TriggerModeInfo } from "./TriggerMode/TriggerModeInfo";
 import { TriggerTab } from "./TriggerTab";
+import { SegmentButton } from "../Widgets/SegmentButton";
 
 export class TriggerSetting extends AGUIScreen {
     private readonly _state: ResponseMenuState;
@@ -44,7 +44,12 @@ export class TriggerSetting extends AGUIScreen {
                 height: 660
             }),
             new BasicText({ x: TriggerInfoBaseX, y: MenuBaseY + MenuBaseItemHeight + TriggerInfoHeight / 2 }, GetText("Mode:")),
-            new TriggerModeInfo(this._state, { x: TriggerInfoNextX, y: MenuBaseY + MenuBaseItemHeight, width: TriggerInfoNextWidth, height: TriggerInfoHeight }),
+            new SegmentButton(this._state.TriggerMode(), {
+                x: TriggerInfoNextX,
+                y: MenuBaseY + MenuBaseItemHeight,
+                width: TriggerInfoNextWidth,
+                height: TriggerInfoHeight
+            }),
             new ActivityModeInfo(this._state, {
                 x: TriggerInfoBaseX,
                 y: MenuBaseY + MenuBaseItemHeight * 2 + TriggerInfoHeight / 2,

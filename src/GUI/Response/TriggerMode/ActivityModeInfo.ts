@@ -1,7 +1,7 @@
 import { isTriggerActivity } from "../../../Data";
 import { GetText } from "../../../i18n";
 import { AGUIItem, IPoint, IRect } from "../../Widgets/AGUI";
-import { ADrawText, ADrawTextButton } from "../../Widgets/Common";
+import { ADrawCricleTextButton, ADrawText, ADrawTextButton } from "../../Widgets/Common";
 import { ResponseMenuState } from "../ResponseMenuState";
 
 
@@ -39,7 +39,7 @@ export class ActivityModeInfo extends AGUIItem {
     Draw(hasFocus: boolean): void {
         this._state.asActivity(v => {
             ADrawText(this._activity_text, GetText("On Activity:"));
-            ADrawTextButton(this._activity_state, (v => {
+            ADrawCricleTextButton(this._activity_state, (v => {
                 if (v === undefined || v.length === 0)
                     return GetText("All Activities");
 
@@ -51,7 +51,7 @@ export class ActivityModeInfo extends AGUIItem {
             })(v.allow_activities), hasFocus);
 
             ADrawText(this._bodypart_text, GetText("On Bodyparts:"));
-            ADrawTextButton(this._bodypart_state, (v => {
+            ADrawCricleTextButton(this._bodypart_state, (v => {
                 if (v === undefined || v.length === 0)
                     return GetText("All Bodyparts");
 
@@ -66,7 +66,7 @@ export class ActivityModeInfo extends AGUIItem {
             })(v.allow_bodyparts), hasFocus);
 
             ADrawText(this._allow_ids_text, GetText("On Members:"));
-            ADrawTextButton(this._allow_ids_state, (v => v ? v.join(", ") : GetText("All IDs"))(v.allow_ids), hasFocus);
+            ADrawCricleTextButton(this._allow_ids_state, (v => v ? v.join(", ") : GetText("All IDs"))(v.allow_ids), hasFocus);
         });
     }
 }

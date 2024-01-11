@@ -1,7 +1,7 @@
-import { isTriggerSpicer } from "../../../Data";
-import { AGUIItem, IPoint, IRect, WithinRect } from "../../Widgets/AGUI";
+import { Styles } from "../../../Definition";
+import { AGUIItem, IPoint, IRect } from "../../Widgets/AGUI";
 import { ButtonEdit } from "../../Widgets/ButtonEdit";
-import { ADrawText, ADrawTextButton } from "../../Widgets/Common";
+import { ADrawCricleTextButton, ADrawText } from "../../Widgets/Common";
 import { Switch } from "../../Widgets/Switch";
 import { ResponseMenuState } from "../ResponseMenuState";
 
@@ -33,23 +33,23 @@ export class SpicerModeInfo extends AGUIItem {
         const arousalTextWidth = 250;
 
         let lineY = rect.y;
-        const nl = (v: number) => v + spacing + itemHeight;
+        const nl = (v: number) => v + spacing + Styles.Input.height;
 
-        this._min_arousal_text = { x: rect.x, y: lineY + itemHeight / 2 };
-        this._min_arousal_input = { x: rect.x + arousalTextWidth, y: lineY, width: rect.width - arousalTextWidth, height: itemHeight };
-
-        lineY = nl(lineY);
-        this._max_arousal_text = { x: rect.x, y: lineY + itemHeight / 2 };
-        this._max_arousal_input = { x: rect.x + arousalTextWidth, y: lineY, width: rect.width - arousalTextWidth, height: itemHeight };
+        this._min_arousal_text = { x: rect.x, y: lineY + Styles.Input.height / 2 };
+        this._min_arousal_input = { x: rect.x + arousalTextWidth, y: lineY, width: rect.width - arousalTextWidth, height: Styles.Input.height };
 
         lineY = nl(lineY);
-        this._apply_fav_text = { x: rect.x, y: lineY + itemHeight / 2 };
-        this._apply_fav_switch = { x: rect.x + +rect.width - itemHeight * 2, y: lineY, width: itemHeight * 2, height: itemHeight };
+        this._max_arousal_text = { x: rect.x, y: lineY + Styles.Input.height / 2 };
+        this._max_arousal_input = { x: rect.x + arousalTextWidth, y: lineY, width: rect.width - arousalTextWidth, height: Styles.Input.height };
 
         lineY = nl(lineY);
-        this._allow_ids_text = { x: rect.x, y: lineY + itemHeight / 2 };
+        this._apply_fav_text = { x: rect.x, y: lineY + Styles.Input.height / 2 };
+        this._apply_fav_switch = { x: rect.x + +rect.width - itemHeight * 2, y: lineY, width: itemHeight * 2, height: Styles.Input.height };
+
         lineY = nl(lineY);
-        this._allow_ids_state = { x: rect.x, y: lineY, width: rect.width, height: itemHeight };
+        this._allow_ids_text = { x: rect.x, y: lineY + Styles.Input.height / 2 };
+        lineY = nl(lineY);
+        this._allow_ids_state = { x: rect.x, y: lineY, width: rect.width, height: Styles.Input.height };
 
         this._editList = [
             new ButtonEdit(this._state.SpicerMinArousal(), "MinArousal", this._min_arousal_input),
@@ -71,7 +71,7 @@ export class SpicerModeInfo extends AGUIItem {
             //ADrawTextButton(this._apply_fav_switch, (v => v ? 'Yes' : 'No')(v.apply_favorite), hasFocus);
 
             ADrawText(this._allow_ids_text, "On Members:");
-            ADrawTextButton(this._allow_ids_state, (v => v ? v.join(", ") : "All IDs")(v.allow_ids), hasFocus);
+            ADrawCricleTextButton(this._allow_ids_state, (v => v ? v.join(", ") : "All IDs")(v.allow_ids), hasFocus);
 
         }, () => {
             this._editList.forEach(v => v.Draw(false));

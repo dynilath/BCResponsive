@@ -1,6 +1,7 @@
-import { Colors } from "../../Definition";
+import { Styles } from "../../Definition";
+import { GetText } from "../../i18n";
 import { AGUIItem, IPoint, IRect, WithinRect } from "../Widgets/AGUI";
-import { ADrawFramedRect, ADrawTextButton, ADrawTextFit } from "../Widgets/Common";
+import { ADrawCircleRect, ADrawRoundRect, ADrawTextFit } from "../Widgets/Common";
 import { ResponseMenuState } from "./ResponseMenuState";
 
 
@@ -14,12 +15,16 @@ export class TriggerTab extends AGUIItem {
     private _page: number = 0;
     private _max_page: number = 0;
 
-    private _layout_items: IRect[];
-    private _layout_prev_button: IRect;
-    private _layout_next_button: IRect;
-    private _layout_page_text: IRect;
+    readonly _layout_items: IRect[];
+    readonly _layout_prev_button: IRect;
+    readonly _layout_next_button: IRect;
+    readonly _layout_page_text: IRect;
 
-    private _expansion_size = 5;
+    readonly item_height = 60;
+    readonly item_border = 5;
+
+    readonly _upper_rect: IRect;
+    readonly _lower_rect: IRect;
 
     constructor(parent: ResponseMenuState, rect: IRect) {
         super();
@@ -27,46 +32,59 @@ export class TriggerTab extends AGUIItem {
         this._last_update = Date.now();
 
         const button_spacing = 5;
-        const item_height = 70;
 
-        const button_height = 50;
-        const button_width = 50;
+        const button_height = 60;
+        const button_width = 120;
         const page_text_width = 100;
 
-        const item_width = rect.width;
-        const item_count = Math.max(1, Math.floor((rect.height - button_height + button_spacing) / (item_height + button_spacing)));
-
-        this._layout_prev_button = {
-            x: rect.x,
-            y: rect.y + rect.height - button_height,
-            width: button_width,
-            height: button_height
-        };
-
-        this._layout_next_button = {
-            x: rect.x + rect.width - button_width,
-            y: rect.y + rect.height - button_height,
-            width: button_width,
-            height: button_height
-        };
-
-        this._layout_page_text = {
-            x: rect.x + rect.width / 2 - page_text_width / 2,
-            y: rect.y + rect.height - button_height,
-            width: page_text_width,
-            height: button_height
-        };
+        const item_width = rect.width - this.item_border * 2;
+        const item_count = Math.max(1, Math.floor((rect.height - button_height - this.item_border * 2) / (this.item_height + button_spacing)));
 
         this._active_rect_state = Array.from({ length: item_count }, _ => { return { state: 'idle', value: 0 }; });
 
         this._layout_items = Array.from({ length: item_count }, (_, index) => {
             return {
-                x: rect.x + this._expansion_size,
-                y: rect.y + index * (item_height + button_spacing) + this._expansion_size,
-                width: item_width - this._expansion_size * 2,
-                height: item_height - this._expansion_size * 2
+                x: rect.x + this.item_border,
+                y: rect.y + this.item_border + index * (this.item_height + button_spacing),
+                width: item_width,
+                height: this.item_height
             };
         });
+
+        this._upper_rect = {
+            x: rect.x,
+            y: rect.y,
+            width: rect.width,
+            height: this.item_border * 2 + item_count * (this.item_height + button_spacing) - button_spacing
+        };
+
+        this._lower_rect = {
+            x: rect.x,
+            y: rect.y + rect.height - button_height,
+            width: rect.width,
+            height: button_height
+        };
+
+        this._layout_prev_button = {
+            x: this._lower_rect.x + this.item_border,
+            y: this._lower_rect.y + this.item_border,
+            width: button_width - this.item_border * 2,
+            height: button_height - this.item_border * 2
+        };
+
+        this._layout_next_button = {
+            x: this._lower_rect.x + this._lower_rect.width - button_width + this.item_border,
+            y: this._layout_prev_button.y,
+            width: this._layout_prev_button.width,
+            height: this._layout_prev_button.height
+        };
+
+        this._layout_page_text = {
+            x: rect.x + rect.width / 2 - page_text_width / 2,
+            y: this._layout_prev_button.y,
+            width: page_text_width,
+            height: this._layout_prev_button.height
+        };
 
         this.calPage();
     }
@@ -105,41 +123,43 @@ export class TriggerTab extends AGUIItem {
     }
 
     Draw(hasFocus: boolean): void {
-        ADrawTextButton(this._layout_prev_button, "<", hasFocus);
+        const mouse = { x: MouseX, y: MouseY };
+        ADrawRoundRect(this._upper_rect, this.item_height / 2 + this.item_border, { fill: "White", stroke: "Black" });
+        ADrawCircleRect(this._lower_rect, { fill: "White", stroke: "Black" });
+
+        ADrawCircleRect(this._layout_prev_button, { fill: hasFocus && WithinRect(mouse, this._layout_prev_button) ? Styles.Button.hover : "White", stroke: "none" });
+        ADrawTextFit(this._layout_prev_button, "<");
+
+        ADrawCircleRect(this._layout_next_button, { fill: hasFocus && WithinRect(mouse, this._layout_next_button) ? Styles.Button.hover : "White", stroke: "none" });
+        ADrawTextFit(this._layout_next_button, ">");
+
         ADrawTextFit(this._layout_page_text, `${this._page + 1}/${this._max_page + 1}`);
-        ADrawTextButton(this._layout_next_button, ">", hasFocus);
+
         let focusing = -1;
 
         if (hasFocus) {
             this._layout_items.forEach((rect, index) => {
-                if (WithinRect({ x: MouseX, y: MouseY }, rect)) focusing = index;
+                if (WithinRect(mouse, rect)) focusing = index;
             });
             this.update_state(focusing);
         }
 
         this._layout_items.forEach((rect, index) => {
             const state = this._active_rect_state[index];
-            const expansion = this._expansion_size * state.value;
-            const frect = {
-                x: rect.x - expansion,
-                y: rect.y - expansion,
-                width: rect.width + expansion * 2,
-                height: rect.height + expansion * 2
-            };
 
             const targetIdx = index + this._page * this._layout_items.length;
 
-            const bgcolor = (() => {
-                if (focusing === index) return Colors.Hover;
-                else if (state.state === 'active') return Colors.Active;
-                else return 'White';
-            })();
+            if (state.state === 'active') {
+                ADrawCircleRect(rect, { fill: Styles.Tab.active })
+            }
+
+            if (focusing === index && targetIdx <= this._parent.targetPersona.responses.length) {
+                ADrawCircleRect(rect, { fill: Styles.Tab.hover, stroke: "none" })
+            }
 
             if (targetIdx == this._parent.targetPersona.responses.length) {
-                ADrawFramedRect(frect, bgcolor, "Grey");
-                ADrawTextFit(rect, "Add New");
+                ADrawTextFit(rect, GetText("Add New"), { color: Styles.Text.Lesser });
             } else if (targetIdx < this._parent.targetPersona.responses.length) {
-                ADrawFramedRect(frect, bgcolor);
                 ADrawTextFit(rect, this._parent.targetPersona.responses[targetIdx].name);
             }
         });

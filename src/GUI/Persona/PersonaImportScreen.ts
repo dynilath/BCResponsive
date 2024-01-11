@@ -1,13 +1,13 @@
 import { DataManager } from "../../Data";
 import { GUISettingScreen, hasFocus } from "../GUI";
-import { IPoint, IRect } from "../Widgets/AGUI";
-import { ADrawFramedRect, ADrawText, FramedRect } from "../Widgets/Common";
-import { TextButton } from "../Widgets/Button";
+import { RoundFramedRect } from "../Widgets/Common";
+import { TextRoundButton } from "../Widgets/Button";
 import { DynamicText } from "../Widgets/Text";
-import { BasicText } from "../Widgets/Text";
 import { InputTextArea } from "../Widgets/InputText";
 import { Popup } from "../Widgets/Popup";
 import { LZStringToPersona, PersonaToLZString } from "./PersonaCompress";
+import { GetText } from "../../i18n";
+import { Styles } from "../../Definition";
 
 
 export class PersonaImportScreen extends Popup {
@@ -45,30 +45,35 @@ export class PersonaImportScreen extends Popup {
         }
 
         this._items = [
-            new FramedRect({ x: centerX - totalWidth / 2 - padding, y: centerY - totalHeight / 2 - padding, width: totalWidth + padding * 2, height: totalHeight + padding * 2 }, "White"),
+            new RoundFramedRect({
+                x: centerX - totalWidth / 2 - padding,
+                y: centerY - totalHeight / 2 - padding,
+                width: totalWidth + padding * 2,
+                height: totalHeight + padding * 2
+            }, Styles.Dialog.roundRadius, "White"),
             new DynamicText(() => {
                 if (this._lastInputInvalid) {
                     return {
                         where: { x: centerX, y: centerY - totalHeight / 2 + FontSize / 2 },
-                        text: "Invalid Persona Data",
+                        text: GetText("Invalid Persona Data"),
                         align: "center",
                         color: "Red"
                     }
                 }
                 return {
                     where: { x: centerX, y: centerY - totalHeight / 2 + FontSize / 2 },
-                    text: "Import/Export Persona",
+                    text: GetText("Import/Export Persona"),
                     align: "center",
                     color: "Black"
                 }
             }),
             new InputTextArea({ x: centerX - inputWidth / 2, y: centerY - totalHeight / 2 + FontSize + padding, width: inputWidth, height: inputHeight }, "InputPersonaData", this._bind),
-            new TextButton({
+            new TextRoundButton({
                 x: centerX - buttonTotalWidth / 2,
                 y: centerY + totalHeight / 2 - buttonHeight,
                 width: buttonWidth,
                 height: buttonHeight
-            }, "Save", () => {
+            }, GetText("Save"), () => {
                 console.log("saving");
                 const newPersonsa = LZStringToPersona(this._bind.text);
                 if (newPersonsa) {
@@ -78,12 +83,12 @@ export class PersonaImportScreen extends Popup {
                 } else {
                     this._lastInputInvalid = true;
                 }
-            }), new TextButton({
+            }), new TextRoundButton({
                 x: centerX + buttonTotalWidth / 2 - buttonWidth,
                 y: centerY + totalHeight / 2 - buttonHeight,
                 width: buttonWidth,
                 height: buttonHeight
-            }, "Cancel", () => this.Exit())
+            }, GetText("Cancel"), () => this.Exit())
         ]
     }
 

@@ -1,8 +1,8 @@
 import { DataManager } from "../../Data";
-import { Colors } from "../../Definition";
+import { Styles } from "../../Definition";
 import { GUISettingScreen, setSubscreen } from "../GUI";
 import { AGUIItem, IPoint, IRect, WithinRect } from "../Widgets/AGUI";
-import { ADrawFramedRect, ADrawText, ADrawTextButton } from "../Widgets/Common";
+import { ADrawCricleTextButton, ADrawFramedRect, ADrawText } from "../Widgets/Common";
 import { PersonaImportScreen } from "./PersonaImportScreen";
 
 export class PersonaItem extends AGUIItem {
@@ -98,7 +98,7 @@ export class PersonaItem extends AGUIItem {
         if (hasFocus && WithinRect({ x: MouseX, y: MouseY }, adjusted_rect)) {
             this._focusState.state = 'focused';
             this._focusState.value = Math.min(1, this._focusState.value + delta / 100);
-            bgcolor = Colors.Hover;
+            bgcolor = Styles.Hover;
         }
         else {
             this._focusState.state = 'idle';
@@ -107,14 +107,14 @@ export class PersonaItem extends AGUIItem {
 
         if (persona && DataManager.active_personality === persona) {
             this._focusState.state = 'active';
-            if (bgcolor === 'White') bgcolor = Colors.Active;
+            if (bgcolor === 'White') bgcolor = Styles.Active;
         }
 
         if (persona) {
             const mouse = { x: MouseX, y: MouseY };
 
             if (this._focusState.state === 'active') {
-                if (WithinRect(mouse, this._import_rect)) bgcolor = Colors.Active;
+                if (WithinRect(mouse, this._import_rect)) bgcolor = Styles.Active;
             } else {
                 if (WithinRect(mouse, this._import_rect) || WithinRect(mouse, this._delete_rect)) bgcolor = 'White';
             }
@@ -123,13 +123,13 @@ export class PersonaItem extends AGUIItem {
             else ADrawFramedRect(adjusted_rect, bgcolor);
 
             ADrawText(this._name_point, persona.name, { align: "center" });
-            ADrawTextButton(this._import_rect, "Import/Export", hasFocus);
+            ADrawCricleTextButton(this._import_rect, "Import/Export", hasFocus);
 
             if (this._focusState.state === 'active')
                 DrawImage("Icons/Checked.png", this._activated_img_pos.x, this._activated_img_pos.y);
             else {
-                if (this.deleteState === 0) ADrawTextButton(this._delete_rect, "Delete", hasFocus);
-                else ADrawTextButton(this._delete_rect, "Confirm?", hasFocus, { idle: 'Pink', hover: 'Red' });
+                if (this.deleteState === 0) ADrawCricleTextButton(this._delete_rect, "Delete", hasFocus);
+                else ADrawCricleTextButton(this._delete_rect, "Confirm?", hasFocus, { idle: 'Pink', hover: 'Red' });
             }
         } else {
             ADrawFramedRect(adjusted_rect, bgcolor, 'DarkGrey');

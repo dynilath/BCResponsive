@@ -1,12 +1,12 @@
 import { GetText } from "../../../i18n";
 import { GUISettingScreen } from "../../GUI";
 import { IPoint, IRect } from "../../Widgets/AGUI";
-import { FramedRect } from "../../Widgets/Common";
+import { RoundFramedRect } from "../../Widgets/Common";
 import { TextButton } from "../../Widgets/Button";
 import { BasicText } from "../../Widgets/Text";
-import { SegmentButton } from "../../Widgets/SegmentButton";
 import { InputTextArea } from "../../Widgets/InputText";
 import { Popup } from "../../Widgets/Popup";
+import { Styles } from "../../../Definition";
 
 
 export class MessageSettinPopup extends Popup {
@@ -93,16 +93,16 @@ export class MessageSettinPopup extends Popup {
         this._text_input = new InputTextArea(this._input, "InputMessage", { text: this._input_state.content });
 
         this._items = [
-            new FramedRect(this._dialog, "White"),
+            new RoundFramedRect(this._dialog, Styles.Dialog.roundRadius, "White"),
             new BasicText(this._title, GetText("Edit Message"), { align: "center" }),
             this._text_input,
-            new SegmentButton(this._type_segbutton, {
-                text: ["message", "action"].map(type => ({ display: GetText(type), value: type })),
-                init: this._input_state.type,
-                callback: (text) => {
-                    this._input_state.type = text as ResponsiveMessage["type"];
-                }
-            }),
+            // new SegmentButton(this._type_segbutton, {
+            //     text: ["message", "action"].map(type => ({ display: GetText(type), value: type })),
+            //     init: this._input_state.type,
+            //     callback: (text) => {
+            //         this._input_state.type = text as ResponsiveMessage["type"];
+            //     }
+            // }),
             new TextButton(this._insert_me_button, GetText("Insert Me"), () => {
                 this._text_input.InsertAtCursor("{me}");
             }),
