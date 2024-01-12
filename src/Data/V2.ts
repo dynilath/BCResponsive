@@ -104,7 +104,7 @@ export function V2ValidatePersonality(arg: any): ResponsivePersonality | undefin
             return { type: k.type, content: k.content };
         }).filter((_: any) => _ !== undefined) as ResponsiveMessage[];
 
-        return { name: j.name, trigger: trigger, messages: messages };
+        return { name: j.name, enabled: true, trigger: trigger, messages: messages };
     }).filter((_: any) => _ !== undefined) as ResponsiveItem[];
 
     return { name: arg.name, index: arg.index, responses: responses };

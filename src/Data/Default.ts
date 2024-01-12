@@ -10,6 +10,7 @@ export function getDefaultPersonaList() {
 
     const default_personality: ResponsiveItem[] = [{
         name: "Pain",
+        enabled: true,
         trigger: {
             mode: "activity",
             allow_activities: DefaultValueV1TriggerActivities.pain
@@ -17,6 +18,7 @@ export function getDefaultPersonaList() {
         messages: DefaultValueV1.pain.map(message_mapper).concat(["{me} feels the pain and frowned."].map(action_mapper))
     }, {
         name: "Tickle",
+        enabled: true,
         trigger: {
             mode: "activity",
             allow_activities: DefaultValueV1TriggerActivities.tickle,
@@ -24,6 +26,7 @@ export function getDefaultPersonaList() {
         messages: DefaultValueV1.tickle.map(message_mapper).concat(["{me} squirms from the tickling."].map(action_mapper))
     }, {
         name: "Masturbate",
+        enabled: true,
         trigger: {
             mode: "activity",
             allow_activities: DefaultValueV1TriggerActivities.masturbate,
@@ -31,12 +34,14 @@ export function getDefaultPersonaList() {
         messages: DefaultValueV1.hot.map(message_mapper)
     }, {
         name: "Orgasm",
+        enabled: true,
         trigger: {
             mode: "orgasm",
         },
         messages: DefaultValueV1.orgasm.map(message_mapper)
     }, {
         name: "High Arousal",
+        enabled: true,
         trigger: {
             mode: "spicer",
             min_arousal: 80
@@ -44,6 +49,7 @@ export function getDefaultPersonaList() {
         messages: DefaultValueV1.hot.map(message_mapper)
     }, {
         name: "Mid Arousal",
+        enabled: true,
         trigger: {
             mode: "spicer",
             max_arousal: 80,
@@ -52,6 +58,7 @@ export function getDefaultPersonaList() {
         messages: DefaultValueV1.medium.map(message_mapper)
     }, {
         name: "Low Arousal",
+        enabled: true,
         trigger: {
             mode: "spicer",
             max_arousal: 50,

@@ -49,6 +49,7 @@ interface ResponsiveMessage {
 
 interface ResponsiveItem {
     name: string;
+    enabled: boolean;
     trigger: ResponsiveTrigger;
     messages: ResponsiveMessage[];
 }
