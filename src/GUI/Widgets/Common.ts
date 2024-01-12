@@ -127,10 +127,10 @@ export function ADrawCricleIconButton(rect: IRect, icon: keyof typeof Icons, act
         ADrawCircleRect(rect, { fill: idle, stroke, strokeWidth });
     }
     ADrawIcon({
-        x: rect.x + rect.width * 0.2,
-        y: rect.y + rect.height * 0.2,
-        width: rect.width * 0.6,
-        height: rect.height * 0.6
+        x: rect.x + rect.width * 0.12,
+        y: rect.y + rect.height * 0.12,
+        width: rect.width * 0.76,
+        height: rect.height * 0.76
     }, icon);
 }
 

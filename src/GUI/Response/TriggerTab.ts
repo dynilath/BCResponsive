@@ -1,18 +1,19 @@
 import { Styles } from "../../Definition";
 import { GetText } from "../../i18n";
-import { AGUIItem, IPoint, IRect, WithinRect } from "../Widgets/AGUI";
+import { AGUIItem, IPoint, IRect, ISize, WithinRect } from "../Widgets/AGUI";
 import { ADrawCircleRect, ADrawRoundRect, ADrawTextFit } from "../Widgets/Common";
 import { PageDial, PageDialBinding } from "../Widgets/PageDial";
 import { ResponseMenuState } from "./ResponseMenuState";
 
+const ITEM_HEIGHT = 60;
+const ITEM_SPACING = 5;
+const ITEM_BORDER = 5;
+const PAGE_PANEL_HEIGHT = 50;
 
 export class TriggerTab extends AGUIItem {
     private _parent: ResponseMenuState;
 
     readonly _layout_items: IRect[];
-
-    readonly item_height = 60;
-    readonly item_border = 5;
 
     readonly _upper_rect: IRect;
 
@@ -24,22 +25,22 @@ export class TriggerTab extends AGUIItem {
         super();
         this._parent = parent;
 
-        const button_spacing = 5;
+        this._page_rect = {
+            x: rect.x,
+            y: rect.y + rect.height - PAGE_PANEL_HEIGHT,
+            width: rect.width,
+            height: PAGE_PANEL_HEIGHT
+        };
 
-        const button_height = 60;
-        const button_width = 120;
-        const page_text_width = 100;
-
-        const item_width = rect.width - this.item_border * 2;
-        const item_count = Math.max(1, Math.floor((rect.height - button_height - this.item_border * 2) / (this.item_height + button_spacing)));
-
+        const item_width = rect.width - ITEM_BORDER * 2;
+        const item_count = Math.max(1, Math.floor((rect.height - PAGE_PANEL_HEIGHT - ITEM_BORDER * 2 + ITEM_SPACING) / (ITEM_HEIGHT + ITEM_SPACING)));
 
         this._layout_items = Array.from({ length: item_count }, (_, index) => {
             return {
-                x: rect.x + this.item_border,
-                y: rect.y + this.item_border + index * (this.item_height + button_spacing),
+                x: rect.x + ITEM_BORDER,
+                y: rect.y + ITEM_BORDER + index * (ITEM_HEIGHT + ITEM_SPACING),
                 width: item_width,
-                height: this.item_height
+                height: ITEM_HEIGHT
             };
         });
 
@@ -47,14 +48,7 @@ export class TriggerTab extends AGUIItem {
             x: rect.x,
             y: rect.y,
             width: rect.width,
-            height: this.item_border * 2 + item_count * (this.item_height + button_spacing) - button_spacing
-        };
-
-        this._page_rect = {
-            x: rect.x,
-            y: rect.y + rect.height - button_height,
-            width: rect.width,
-            height: button_height
+            height: ITEM_BORDER * 2 + item_count * (ITEM_HEIGHT + ITEM_SPACING) - ITEM_SPACING
         };
 
         this._page_binding = {
@@ -67,12 +61,12 @@ export class TriggerTab extends AGUIItem {
     }
 
     Draw(hasFocus: boolean): void {
-        this._page_binding.maxPage = Math.ceil(this._parent.targetPersona.responses.length / this._layout_items.length);
+        this._page_binding.maxPage = Math.ceil((this._parent.targetPersona.responses.length + 1) / this._layout_items.length);
         const mouse = { x: MouseX, y: MouseY };
 
         this.pageDial.Draw(hasFocus);
 
-        ADrawRoundRect(this._upper_rect, this.item_height / 2 + this.item_border, { fill: "White", stroke: "Black" });
+        ADrawRoundRect(this._upper_rect, ITEM_HEIGHT / 2 + ITEM_BORDER, { fill: "White", stroke: "Black" });
         let focusing = -1;
         if (hasFocus) {
             this._layout_items.forEach((rect, index) => {
@@ -83,7 +77,7 @@ export class TriggerTab extends AGUIItem {
         this._layout_items.forEach((rect, index) => {
             const targetIdx = index + this._page_binding.page * this._layout_items.length;
 
-            if (targetIdx == this._parent.targetPersona.index) {
+            if (this._parent.targetPersona.responses[targetIdx] == this._parent.targetItem) {
                 ADrawCircleRect(rect, { fill: Styles.Tab.active })
             }
 
@@ -106,7 +100,7 @@ export class TriggerTab extends AGUIItem {
             const targetIdx = index + this._page_binding.page * this._layout_items.length;
             if (WithinRect(mouse, rect)) {
                 if (targetIdx == this._parent.targetPersona.responses.length) {
-                    this._parent.targetPersona.responses.push({ name: GetText("Default::NewResponseName"), trigger: { mode: "activity", allow_activities: [] }, messages: [] });
+                    this._parent.targetPersona.responses.push({ name: GetText("Default::NewResponseName"), enabled: false, trigger: { mode: "activity", allow_activities: [] }, messages: [] });
                     this._parent.targetItem = this._parent.targetPersona.responses[targetIdx];
                 } else if (targetIdx < this._parent.targetPersona.responses.length) {
                     this._parent.targetItem = this._parent.targetPersona.responses[targetIdx];

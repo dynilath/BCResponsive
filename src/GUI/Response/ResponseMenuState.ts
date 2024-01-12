@@ -20,6 +20,23 @@ class NameProperty extends Binding<string> {
     }
 }
 
+class EnabledProperty extends Binding<boolean> {
+    readonly _state: ResponseMenuState;
+    constructor(state: ResponseMenuState) {
+        super();
+        this._state = state;
+    }
+    get value(): boolean {
+        if (this._state.targetItem === null) return false;
+        return this._state.targetItem.enabled;
+    }
+    set value(v: boolean) {
+        if (this._state.targetItem !== null) {
+            this._state.targetItem.enabled = v;
+        }
+    }
+}
+
 class ModeProperty extends Binding<string> {
     readonly _state: ResponseMenuState;
     constructor(state: ResponseMenuState) {
@@ -100,9 +117,13 @@ export class ResponseMenuState {
         return new NameProperty(this);
     }
 
+    TriggerEnabled(): Binding<boolean> {
+        return new EnabledProperty(this);
+    }
+
     TriggerMode() {
         return {
-            text: ["activity", "orgasm", "spicer"].map(t => { return { display: GetText(t), value: t }; }),
+            text: ["activity", "orgasm", "spicer"].map(t => { return { display: GetText(`TriggerMode::${t}`), value: t }; }),
             binding: new ModeProperty(this)
         }
     }

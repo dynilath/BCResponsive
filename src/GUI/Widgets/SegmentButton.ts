@@ -3,17 +3,18 @@ import { AGUIItem, IPoint, IRect, WithinRect as WithinRect } from "./AGUI";
 import { Binding } from "./Binding";
 import { ADrawCircleRect, ADrawFramedRect, ADrawTextFit } from "./Common";
 
+interface SegmentButtonSetting {
+    text: { display: string; value: string; }[];
+    binding: Binding<string>;
+}
 
 export class SegmentButton extends AGUIItem {
     private readonly _rect: IRect;
     private readonly _rects: IRect[];
 
-    private setting: {
-        text: { display: string; value: string; }[];
-        binding: Binding<string>;
-    };
+    private setting: SegmentButtonSetting;
 
-    constructor(setting: SegmentButton['setting'], rect: IRect) {
+    constructor(setting: SegmentButtonSetting, rect: IRect) {
         super();
 
         const textWidths = setting.text.map(t => MainCanvas.measureText(t.display).width + Styles.Text.padding * 2);

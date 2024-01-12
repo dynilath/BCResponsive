@@ -1,17 +1,19 @@
-import { isTriggerActivity } from "../../../Data";
 import { GetText } from "../../../i18n";
 import { GUISettingScreen, setSubscreen } from "../../GUI";
 import { AGUIItem, IPoint, IRect } from "../../Widgets/AGUI";
-import { DynamicTextRoundButton, TextRoundButton } from "../../Widgets/Button";
-import { ADrawCricleTextButton, ADrawText, ADrawTextButton } from "../../Widgets/Common";
+import { DynamicTextRoundButton } from "../../Widgets/Button";
 import { BasicText } from "../../Widgets/Text";
 import { ResponseMenuState } from "../ResponseMenuState";
 import { MemberListPopup } from "./MemberListPopup";
 
+const BASE_FONT_SIZE = 36;
+const ITEM_HEIGHT = 60;
+const ITEM_INNER_SPACING = 10;
+const ITEM_SPACING = 20;
+
 
 export class ActivityModeInfo extends AGUIItem {
     private _state: ResponseMenuState;
-    private _rect: IRect;
 
     private readonly _parent: GUISettingScreen;
     private readonly _activity_text: IPoint;
@@ -29,33 +31,30 @@ export class ActivityModeInfo extends AGUIItem {
         super();
         this._parent = parent;
         this._state = state;
-        this._rect = rect;
 
-        const baseFontSize = 36;
-        const itemHeight = 60;
-        const spacing = 10;
+        const T_ITEM_HEIGHT = BASE_FONT_SIZE + ITEM_INNER_SPACING + ITEM_HEIGHT;
 
         let baseY = rect.y;
-        const nl = (v: number) => v + spacing + itemHeight + baseFontSize;
-        this._activity_text = { x: rect.x, y: baseY + baseFontSize / 2 };
-        this._activity_state = { x: rect.x, y: baseY + baseFontSize, width: rect.width, height: itemHeight };
+        const nl = (v: number) => v + T_ITEM_HEIGHT + ITEM_SPACING;
+        this._activity_text = { x: rect.x, y: baseY + BASE_FONT_SIZE / 2 };
+        this._activity_state = { x: rect.x, y: baseY + BASE_FONT_SIZE + ITEM_INNER_SPACING, width: rect.width, height: ITEM_HEIGHT };
 
         baseY = nl(baseY);
-        this._bodypart_text = { x: rect.x, y: baseY + baseFontSize / 2 };
-        this._bodypart_state = { x: rect.x, y: baseY + baseFontSize, width: rect.width, height: itemHeight };
+        this._bodypart_text = { x: rect.x, y: baseY + BASE_FONT_SIZE / 2 };
+        this._bodypart_state = { x: rect.x, y: baseY + BASE_FONT_SIZE + ITEM_INNER_SPACING, width: rect.width, height: ITEM_HEIGHT };
 
         baseY = nl(baseY);
-        this._allow_ids_text = { x: rect.x, y: baseY + baseFontSize / 2 };
-        this._allow_ids_state = { x: rect.x, y: baseY + baseFontSize, width: rect.width, height: itemHeight };
+        this._allow_ids_text = { x: rect.x, y: baseY + BASE_FONT_SIZE / 2 };
+        this._allow_ids_state = { x: rect.x, y: baseY + BASE_FONT_SIZE + ITEM_INNER_SPACING, width: rect.width, height: ITEM_HEIGHT };
 
         this._components = [
-            new BasicText(this._activity_text, GetText("On Activity:")),
-            new BasicText(this._bodypart_text, GetText("On Bodyparts:")),
-            new BasicText(this._allow_ids_text, GetText("On Members:")),
+            new BasicText(this._activity_text, GetText("TriggerInfo::OnActivity")),
+            new BasicText(this._bodypart_text, GetText("TriggerInfo::OnBodyparts")),
+            new BasicText(this._allow_ids_text, GetText("TriggerInfo::OnMembers")),
             new DynamicTextRoundButton(this._activity_state, () =>
                 this._state.asActivity(v => (act => {
                     if (act === undefined || act.length === 0)
-                        return GetText("All Activities");
+                        return GetText("TriggerInfo::AllActivities");
                     let result = act.slice(0, 3).map(a => ActivityDictionaryText(`Activity${a}`)).join(", ");
                     if (act.length > 3) result += GetText(" and {0} more", [act.length - 3]);
                     return result;
@@ -63,16 +62,22 @@ export class ActivityModeInfo extends AGUIItem {
             new DynamicTextRoundButton(this._bodypart_state, () => {
                 return this._state.asActivity(v => (v => {
                     if (v === undefined || v.length === 0)
-                        return GetText("All Bodyparts");
+                        return GetText("TriggerInfo::AllBodyparts");
                     let result = v.slice(0, 3).map(a => AssetGroupMap.get(a)?.Description ?? a).join(", ");
                     if (v.length > 3) result += GetText(" and {0} more", [v.length - 3]);
                     return result;
                 })(v.allow_bodyparts)) ?? "";
             }, () => { }),
             new DynamicTextRoundButton(this._allow_ids_state, () => {
-                return this._state.asActivity(v => (v => v ? v.join(", ") : GetText("All IDs"))(v.allow_ids)) ?? "";
+                return this._state.asActivity(v => (ids => {
+                    if (ids === undefined || ids.length === 0)
+                        return GetText("TriggerInfo::AllMemberIDs");
+                    let result = ids.slice(0, 3).join(", ");
+                    if (ids.length > 3) result += GetText(" and {0} more", [ids.length - 3]);
+                    return result;
+                })(v.allow_ids)) ?? "";
             }, () => {
-                setSubscreen(new MemberListPopup(this._parent, GetText("Trigger Member List"), this._state.asActivity(v => {
+                setSubscreen(new MemberListPopup(this._parent, GetText("TriggerInfo::MemberListPopup"), this._state.asActivity(v => {
                     if (v.allow_ids === undefined) v.allow_ids = [];
                     return v.allow_ids;
                 }) ?? []));

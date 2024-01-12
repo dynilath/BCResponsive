@@ -33,7 +33,8 @@ export const Styles = {
     Button: {
         text: "Black",
         hover: "rgba(128, 255, 255, 1)",
-        idle: "rgba(255, 255, 255, 1)"
+        idle: "rgba(255, 255, 255, 1)",
+        disabled: "rgba(128, 128, 128, 1)",
     },
     Input: {
         height: 60,

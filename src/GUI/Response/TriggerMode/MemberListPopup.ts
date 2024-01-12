@@ -21,7 +21,7 @@ const memberTableTitleHeight = 50;
 const memberTableRowHeight = 50;
 const memberTableColumnWidth = 260;
 
-const roundButtonWidth = 50;
+const roundButtonWidth = 40;
 
 const memberTableRowsPerPage = 5;
 const tableHeight = memberTableTitleHeight + memberTableRowHeight * memberTableRowsPerPage;

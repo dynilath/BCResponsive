@@ -16,7 +16,7 @@ export class Switch extends AGUIItem {
         value: number;
     };
 
-    constructor(rect: IRect, state: Binding<boolean>) {
+    constructor(state: Binding<boolean>, rect: IRect) {
         super();
 
         const padding = 10;

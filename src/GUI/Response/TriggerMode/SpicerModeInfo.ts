@@ -1,4 +1,5 @@
 import { Styles } from "../../../Definition";
+import { GetText } from "../../../i18n";
 import { GUISettingScreen } from "../../GUI";
 import { AGUIItem, IPoint, IRect } from "../../Widgets/AGUI";
 import { ButtonEdit } from "../../Widgets/ButtonEdit";
@@ -60,7 +61,7 @@ export class SpicerModeInfo extends AGUIItem {
             new ButtonEdit(this._state.SpicerMaxArousal(), "MaxArousal", this._max_arousal_input),
         ];
 
-        this._switch = new Switch(this._apply_fav_switch, this._state.SpicerApplyFavorite());
+        this._switch = new Switch(this._state.SpicerApplyFavorite(), this._apply_fav_switch);
     }
 
     Draw(hasFocus: boolean): void {
@@ -73,8 +74,13 @@ export class SpicerModeInfo extends AGUIItem {
             this._switch.Draw(hasFocus);
 
             ADrawText(this._allow_ids_text, "On Members:");
-            ADrawCricleTextButton(this._allow_ids_state, (v => v ? v.join(", ") : "All IDs")(v.allow_ids), hasFocus);
-
+            ADrawCricleTextButton(this._allow_ids_state, (ids => {
+                if (ids === undefined || ids.length === 0)
+                    return GetText("All IDs");
+                let result = ids.slice(0, 3).join(", ");
+                if (ids.length > 3) result += GetText(" and {0} more", [ids.length - 3]);
+                return result;
+            })(v.allow_ids) ?? "", hasFocus);
         }, () => {
             this._editList.forEach(v => v.Draw(false));
         });

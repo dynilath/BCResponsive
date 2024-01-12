@@ -1,69 +1,66 @@
-import { GetText } from "../../i18n";
 import { GUISettingScreen } from "../GUI";
 import { AGUIScreen } from "../Widgets/AGUI";
-import { Binding } from "../Widgets/Binding";
-import { ButtonEdit } from "../Widgets/ButtonEdit";
 import { ExitButton } from "../Widgets/Button";
-import { BasicText } from "../Widgets/Text";
 import { TitleText } from "../Widgets/Text";
 import { ActivityModeInfo } from "./TriggerMode/ActivityModeInfo";
 import { ResponseMenuState } from "./ResponseMenuState";
 import { ResponseMessageList } from "./MessageList/ResponseMessageList";
 import { SpicerModeInfo } from "./TriggerMode/SpicerModeInfo";
 import { TriggerTab } from "./TriggerTab";
-import { SegmentButton } from "../Widgets/SegmentButton";
+import { TriggerBaseInfo } from "./TriggerBaseInfo";
+
+const MENU_BASE_Y = 200;
+const MENU_TOTAL_HEIGHT = 660;
+
+const TRIGGER_TAB_BASE_X = 200;
+const TRIGGER_TAB_WIDTH = 300;
+
+const TRIGGER_INFO_BASE_X = 550;
+const TRIGGER_INFO_SPACING = 30;
+
+const TRIGGER_MESSAGE_BASE_X = 1200;
+const TRIGGER_MESSAGE_WIDTH = 600;
 
 export class TriggerSetting extends AGUIScreen {
     private readonly _state: ResponseMenuState;
     constructor(prev: GUISettingScreen | null = null, persona: ResponsivePersonality) {
-        const CommonFontSize = 36;
+        const TriggerTabRect = {
+            x: TRIGGER_TAB_BASE_X,
+            y: MENU_BASE_Y,
+            width: TRIGGER_TAB_WIDTH,
+            height: MENU_TOTAL_HEIGHT
+        }
 
-        const MenuBaseY = 200;
-        const MenuBaseItemHeight = 70;
+        const TriggerBaseInfoRect = {
+            x: TRIGGER_INFO_BASE_X,
+            y: MENU_BASE_Y,
+            ...TriggerBaseInfo.Metrics()
+        }
 
-        const TriggerTabBaseX = 200;
+        const TriggerExtendedInfoRect = {
+            x: TRIGGER_INFO_BASE_X,
+            y: MENU_BASE_Y + TriggerBaseInfoRect.height + TRIGGER_INFO_SPACING,
+            width: TriggerBaseInfoRect.width,
+            height: MENU_TOTAL_HEIGHT - TriggerBaseInfoRect.height - TRIGGER_INFO_SPACING
+        }
 
-        const TriggerInfoBaseX = 550;
-        const TriggerInfoNextX = TriggerInfoBaseX + 150;
-        const TriggerInfoNextWidth = 450;
-        const TriggerInfoHeight = 60;
-
-        const TriggerMessageBaseX = 1200;
-        const TriggerMessageWidth = 600;
+        const TriggerMessageRect = {
+            x: TRIGGER_MESSAGE_BASE_X,
+            y: MENU_BASE_Y,
+            width: TRIGGER_MESSAGE_WIDTH,
+            height: MENU_TOTAL_HEIGHT
+        }
 
         super(prev);
         this._state = new ResponseMenuState(persona);
         this._items = [
             new TitleText(),
-            new BasicText({ x: TriggerInfoBaseX, y: MenuBaseY + TriggerInfoHeight / 2 }, GetText("Name:")),
-            new ButtonEdit(this._state.TriggerName(), "TriggerName", { x: TriggerInfoNextX, y: MenuBaseY, width: TriggerInfoNextWidth, height: TriggerInfoHeight }),
-            new ResponseMessageList(this, this._state, {
-                x: TriggerMessageBaseX,
-                y: MenuBaseY,
-                width: TriggerMessageWidth,
-                height: 660
-            }),
-            new BasicText({ x: TriggerInfoBaseX, y: MenuBaseY + MenuBaseItemHeight + TriggerInfoHeight / 2 }, GetText("Mode:")),
-            new SegmentButton(this._state.TriggerMode(), {
-                x: TriggerInfoNextX,
-                y: MenuBaseY + MenuBaseItemHeight,
-                width: TriggerInfoNextWidth,
-                height: TriggerInfoHeight
-            }),
-            new ActivityModeInfo(this, this._state, {
-                x: TriggerInfoBaseX,
-                y: MenuBaseY + MenuBaseItemHeight * 2 + TriggerInfoHeight / 2,
-                width: TriggerInfoNextWidth + TriggerInfoNextX - TriggerInfoBaseX,
-                height: 450
-            }),
-            new SpicerModeInfo(this, this._state, {
-                x: TriggerInfoBaseX,
-                y: MenuBaseY + MenuBaseItemHeight * 2 + TriggerInfoHeight / 2,
-                width: TriggerInfoNextWidth + TriggerInfoNextX - TriggerInfoBaseX,
-                height: 450
-            }),
+            new ResponseMessageList(this, this._state, TriggerMessageRect),
+            new ActivityModeInfo(this, this._state, TriggerExtendedInfoRect),
+            new SpicerModeInfo(this, this._state, TriggerExtendedInfoRect),
+            new TriggerBaseInfo(this._state, TriggerBaseInfoRect),
+            new TriggerTab(this._state, TriggerTabRect),
             new ExitButton(() => this.Exit()),
-            new TriggerTab(this._state, { x: TriggerTabBaseX, y: MenuBaseY, width: 300, height: 660 }),
         ];
     }
 }
