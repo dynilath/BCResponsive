@@ -33,25 +33,67 @@ export class StdButton extends AGUIItem {
     }
 }
 
+export class DynamicTextRoundButton extends AGUIItem {
+    readonly _rect: IRect;
+    readonly _text: () => string;
+    readonly _callback: () => void;
+
+    enabled: (() => boolean) | undefined;
+
+    constructor(rect: IRect, text: () => string, callback: () => void, enabled?: () => boolean) {
+        super();
+        this._rect = rect;
+        this._text = text;
+        this._callback = callback;
+        this.enabled = enabled;
+    }
+
+    Draw(hasFocus: boolean): void {
+        if (!this.enabled || this.enabled()) {
+            if (hasFocus && WithinRect({ x: MouseX, y: MouseY }, this._rect)) {
+                ADrawCircleRect(this._rect, { fill: Styles.Button.hover });
+            } else {
+                ADrawCircleRect(this._rect, { fill: Styles.Button.idle });
+            }
+            ADrawTextFit(this._rect, this._text());
+        } else {
+            ADrawCircleRect(this._rect, { stroke: Styles.Button.disabled });
+            ADrawTextFit(this._rect, this._text(), { color: Styles.Button.disabled });
+        }
+    }
+
+    Click(mouse: IPoint): void {
+        if (WithinRect(mouse, this._rect)) this._callback();
+    }
+}
+
 export class TextRoundButton extends AGUIItem {
     readonly _rect: IRect;
     readonly _text: string;
     readonly _callback: () => void;
 
-    constructor(rect: IRect, text: string, callback: () => void) {
+    enabled: (() => boolean) | undefined;
+
+    constructor(rect: IRect, text: string, callback: () => void, enabled?: () => boolean) {
         super();
         this._rect = rect;
         this._text = text;
         this._callback = callback;
+        this.enabled = enabled;
     }
 
     Draw(hasFocus: boolean): void {
-        if (hasFocus && WithinRect({ x: MouseX, y: MouseY }, this._rect)) {
-            ADrawCircleRect(this._rect, { fill: Styles.Button.hover });
+        if (!this.enabled || this.enabled()) {
+            if (hasFocus && WithinRect({ x: MouseX, y: MouseY }, this._rect)) {
+                ADrawCircleRect(this._rect, { fill: Styles.Button.hover });
+            } else {
+                ADrawCircleRect(this._rect, { fill: Styles.Button.idle });
+            }
+            ADrawTextFit(this._rect, this._text);
         } else {
-            ADrawCircleRect(this._rect, { fill: Styles.Button.idle });
+            ADrawCircleRect(this._rect, { stroke: Styles.Button.disabled });
+            ADrawTextFit(this._rect, this._text, { color: Styles.Button.disabled });
         }
-        ADrawTextFit(this._rect, this._text);
     }
 
     Click(mouse: IPoint): void {

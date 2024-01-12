@@ -1,4 +1,5 @@
 import { Styles } from "../../Definition";
+import { GetIcon, Icons } from "../Icons";
 import { AGUIItem, IPoint, IRect, WithinRect as WithinRect } from "./AGUI";
 
 export function ADrawText(rect: IPoint, Text: string, option?: { color?: string, align?: CanvasTextAlign }) {
@@ -98,17 +99,39 @@ export function ADrawCircleRect(rect: IRect, style?: { fill?: string, stroke?: s
     if (style.stroke !== 'none') MainCanvas.stroke();
 }
 
-export function ADrawCricleTextButton(rect: IRect, text: string, active: boolean = true, style?: { hover?: string, idle?: string }) {
+export function ADrawCricleTextButton(rect: IRect, text: string, active: boolean = true, style?: { hover?: string, idle?: string, stroke?: string, strokeWidth?: number }) {
     if (!style) style = {};
     const hover = style.hover || Styles.Button.hover;
     const idle = style.idle || Styles.Button.idle;
+    const stroke = style.stroke || "Black";
+    const strokeWidth = style.strokeWidth || Styles.strokeWidth;
 
     if (active && WithinRect({ x: MouseX, y: MouseY }, rect)) {
-        ADrawCircleRect(rect, { fill: hover });
+        ADrawCircleRect(rect, { fill: hover, stroke, strokeWidth });
     } else {
-        ADrawCircleRect(rect, { fill: idle });
+        ADrawCircleRect(rect, { fill: idle, stroke, strokeWidth });
     }
     ADrawTextFit(rect, text);
+}
+
+export function ADrawCricleIconButton(rect: IRect, icon: keyof typeof Icons, active: boolean = true, style?: { hover?: string, idle?: string, stroke?: string, strokeWidth?: number }) {
+    if (!style) style = {};
+    const hover = style.hover || Styles.Button.hover;
+    const idle = style.idle || Styles.Button.idle;
+    const stroke = style.stroke || "Black";
+    const strokeWidth = style.strokeWidth || Styles.strokeWidth;
+
+    if (active && WithinRect({ x: MouseX, y: MouseY }, rect)) {
+        ADrawCircleRect(rect, { fill: hover, stroke, strokeWidth });
+    } else {
+        ADrawCircleRect(rect, { fill: idle, stroke, strokeWidth });
+    }
+    ADrawIcon({
+        x: rect.x + rect.width * 0.2,
+        y: rect.y + rect.height * 0.2,
+        width: rect.width * 0.6,
+        height: rect.height * 0.6
+    }, icon);
 }
 
 export function ADrawRoundRect(rect: IRect, radius: number, style?: { fill?: string, stroke?: string, strokeWidth?: number }) {
@@ -136,6 +159,10 @@ export function ADrawRoundRect(rect: IRect, radius: number, style?: { fill?: str
 
     if (style.fill) MainCanvas.fill();
     MainCanvas.stroke();
+}
+
+export function ADrawIcon(rect: IRect, icon: keyof typeof Icons) {
+    MainCanvas.drawImage(GetIcon(icon), rect.x, rect.y, rect.width, rect.height);
 }
 
 export class FramedRect extends AGUIItem {
