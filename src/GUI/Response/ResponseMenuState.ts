@@ -119,23 +119,23 @@ export class ResponseMenuState {
         return new SpicerApplyFavoriteProperty(this);
     }
 
-    asSpicer(op: (t: ResponsiveTriggerSpicer) => void, el?: () => void): void {
+    asSpicer<T>(op: (t: ResponsiveTriggerSpicer) => T, el?: () => void) {
         if (this.targetItem !== null && isTriggerSpicer(this.targetItem.trigger))
-            op(this.targetItem.trigger);
+            return op(this.targetItem.trigger);
         else if (el !== undefined)
             el();
     }
 
-    asActivity(op: (t: ResponsiveTriggerActivity) => void, el?: () => void): void {
+    asActivity<T>(op: (t: ResponsiveTriggerActivity) => T, el?: () => void) {
         if (this.targetItem !== null && isTriggerActivity(this.targetItem.trigger))
-            op(this.targetItem.trigger);
+            return op(this.targetItem.trigger);
         else if (el !== undefined)
             el();
     }
 
-    asOrgasm(op: (t: ResponsiveTriggerOrgasm) => void, el?: () => void): void {
+    asOrgasm<T>(op: (t: ResponsiveTriggerOrgasm) => T, el?: () => T) {
         if (this.targetItem !== null && isTriggerOrgasm(this.targetItem.trigger))
-            op(this.targetItem.trigger);
+            return op(this.targetItem.trigger);
         else if (el !== undefined)
             el();
     }

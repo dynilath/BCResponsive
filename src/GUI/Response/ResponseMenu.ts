@@ -50,13 +50,13 @@ export class TriggerSetting extends AGUIScreen {
                 width: TriggerInfoNextWidth,
                 height: TriggerInfoHeight
             }),
-            new ActivityModeInfo(this._state, {
+            new ActivityModeInfo(this, this._state, {
                 x: TriggerInfoBaseX,
                 y: MenuBaseY + MenuBaseItemHeight * 2 + TriggerInfoHeight / 2,
                 width: TriggerInfoNextWidth + TriggerInfoNextX - TriggerInfoBaseX,
                 height: 450
             }),
-            new SpicerModeInfo(this._state, {
+            new SpicerModeInfo(this, this._state, {
                 x: TriggerInfoBaseX,
                 y: MenuBaseY + MenuBaseItemHeight * 2 + TriggerInfoHeight / 2,
                 width: TriggerInfoNextWidth + TriggerInfoNextX - TriggerInfoBaseX,
