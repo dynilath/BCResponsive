@@ -1,7 +1,7 @@
 import { ModSDKModAPI } from "bondage-club-mod-sdk";
 import { DebugMode, HTMLIDPrefix, SettingName } from "../Definition";
 import { Localization } from "../Lang";
-import { icons } from "./icons";
+import { Icons } from "./Icons";
 import { GetText } from "../i18n";
 
 export function HTMLID(id: string): string {
@@ -133,7 +133,7 @@ export class GUISetting {
         }
 
         mod.hookFunction("DrawButton", 2, (args: string[], next: (arg0: any) => any) => {
-            if (args[6] == `Icons/${SettingName}.png`) args[6] = icons.responsive_main;
+            if (args[6] == `Icons/${SettingName}.png`) args[6] = Icons.responsive_main;
             return next(args);
         });
     }

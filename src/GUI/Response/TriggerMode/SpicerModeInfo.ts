@@ -1,4 +1,5 @@
 import { Styles } from "../../../Definition";
+import { GUISettingScreen } from "../../GUI";
 import { AGUIItem, IPoint, IRect } from "../../Widgets/AGUI";
 import { ButtonEdit } from "../../Widgets/ButtonEdit";
 import { ADrawCricleTextButton, ADrawText } from "../../Widgets/Common";
@@ -24,9 +25,12 @@ export class SpicerModeInfo extends AGUIItem {
 
     private _editList: AGUIItem[] = [];
 
-    constructor(state: ResponseMenuState, rect: IRect) {
+    private _parent: GUISettingScreen;
+
+    constructor(parent: GUISettingScreen, state: ResponseMenuState, rect: IRect) {
         super();
         this._state = state;
+        this._parent = parent;
 
         const itemHeight = 60;
         const spacing = 10;
@@ -67,8 +71,6 @@ export class SpicerModeInfo extends AGUIItem {
 
             ADrawText(this._apply_fav_text, "Apply Favorites:");
             this._switch.Draw(hasFocus);
-
-            //ADrawTextButton(this._apply_fav_switch, (v => v ? 'Yes' : 'No')(v.apply_favorite), hasFocus);
 
             ADrawText(this._allow_ids_text, "On Members:");
             ADrawCricleTextButton(this._allow_ids_state, (v => v ? v.join(", ") : "All IDs")(v.allow_ids), hasFocus);

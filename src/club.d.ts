@@ -9,6 +9,7 @@ interface Character {
     GhostList?: number[];
     BlackList?: number[];
     FriendList?: number[];
+    FriendNames?: Map<number, string>;
     Name: string;
     Nickname: string;
     ActivePose: string[] | null;
