@@ -4,7 +4,7 @@ import { IPoint, IRect } from "../../Widgets/AGUI";
 import { RoundFramedRect } from "../../Widgets/Common";
 import { TextButton } from "../../Widgets/Button";
 import { BasicText } from "../../Widgets/Text";
-import { InputTextArea } from "../../Widgets/InputText";
+import { TextAreaItem } from "../../Widgets/InputText";
 import { Popup } from "../../Widgets/Popup";
 import { Styles } from "../../../Definition";
 
@@ -21,7 +21,7 @@ export class MessageSettinPopup extends Popup {
 
 
     private _input_state: ResponsiveMessage;
-    private _text_input: InputTextArea;
+    private _text_input: TextAreaItem;
 
     constructor(prev: GUISettingScreen | null, target: ResponsiveMessage | undefined) {
         super(prev);
@@ -90,7 +90,7 @@ export class MessageSettinPopup extends Popup {
         if (target) this._input_state = { ...target };
         else this._input_state = { type: "message", content: GetText("Example Message") };
 
-        this._text_input = new InputTextArea(this._input, "InputMessage", { text: this._input_state.content });
+        this._text_input = new TextAreaItem(this._input, "InputMessage", { text: this._input_state.content });
 
         this._items = [
             new RoundFramedRect(this._dialog, Styles.Dialog.roundRadius, "White"),

@@ -3,7 +3,7 @@ import { GUISettingScreen, hasFocus } from "../GUI";
 import { RoundFramedRect } from "../Widgets/Common";
 import { TextRoundButton } from "../Widgets/Button";
 import { DynamicText } from "../Widgets/Text";
-import { InputTextArea } from "../Widgets/InputText";
+import { TextAreaItem } from "../Widgets/InputText";
 import { Popup } from "../Widgets/Popup";
 import { LZStringToPersona, PersonaToLZString } from "./PersonaCompress";
 import { GetText } from "../../i18n";
@@ -67,7 +67,7 @@ export class PersonaImportScreen extends Popup {
                     color: "Black"
                 }
             }),
-            new InputTextArea({ x: centerX - inputWidth / 2, y: centerY - totalHeight / 2 + FontSize + padding, width: inputWidth, height: inputHeight }, "InputPersonaData", this._bind),
+            new TextAreaItem({ x: centerX - inputWidth / 2, y: centerY - totalHeight / 2 + FontSize + padding, width: inputWidth, height: inputHeight }, "InputPersonaData", this._bind),
             new TextRoundButton({
                 x: centerX - buttonTotalWidth / 2,
                 y: centerY + totalHeight / 2 - buttonHeight,
