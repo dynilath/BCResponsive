@@ -11,4 +11,10 @@ export const ENTextMap = new Map<string, string>([
     ["setting_title_pain", "Pain"],
     ["setting_title_tickle", "Tickle"],
     ["setting_input_invalid", "Syntax Error"],
+    ["General::Confirm", "Confirm"],
+    ["General::Cancel", "Cancel"],
+    ["General::Add", "Add"],
+    ["CharaInfo::MemberID", "Member ID"],
+    ["CharaInfo::Name", "Member Name"],
+    ["Default::NewResponseName", "New Response"],
 ]);

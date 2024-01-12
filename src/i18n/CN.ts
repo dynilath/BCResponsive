@@ -11,4 +11,10 @@ export const CNTextMap = new Map<string, string>([
     ["setting_title_pain", "痛苦"],
     ["setting_title_tickle", "瘙痒"],
     ["setting_input_invalid", "格式错误"],
+    ["General::Confirm", "确定"],
+    ["General::Cancel", "取消"],
+    ["General::Add", "添加"],
+    ["CharaInfo::MemberID", "玩家ID"],
+    ["CharaInfo::Name", "玩家名称"],
+    ["Default::NewResponseName", "新响应"],
 ]);
