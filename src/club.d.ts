@@ -96,7 +96,7 @@ interface Item {
 }
 
 interface Activity {
-    Name: String;
+    Name: string;
 }
 
 declare var Player: Character | undefined;
@@ -188,6 +188,7 @@ declare function ChatRoomMessage(data: IChatRoomMessage): void;
 
 // Activity.js
 declare function ActivityDictionaryText(Tag: string): string;
+declare var ActivityFemale3DCG: Activity[];
 
 // Preference.js
 declare function PreferenceIsPlayerInSensDep(bypassblindness: boolean): boolean;
