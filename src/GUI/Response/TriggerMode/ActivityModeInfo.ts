@@ -4,6 +4,8 @@ import { AGUIItem, IPoint, IRect } from "../../Widgets/AGUI";
 import { DynamicTextRoundButton } from "../../Widgets/Button";
 import { BasicText } from "../../Widgets/Text";
 import { ResponseMenuState } from "../ResponseMenuState";
+import { ActivityPopup } from "./ActivityPopup";
+import { BodypartsPopup } from "./BodypartsPopup";
 import { MemberListPopup } from "./MemberListPopup";
 
 const BASE_FONT_SIZE = 36;
@@ -53,31 +55,35 @@ export class ActivityModeInfo extends AGUIItem {
             new BasicText(this._allow_ids_text, GetText("TriggerInfo::OnMembers")),
             new DynamicTextRoundButton(this._activity_state, () =>
                 this._state.asActivity(v => (act => {
-                    if (act === undefined || act.length === 0)
+                    if (act === undefined)
                         return GetText("TriggerInfo::AllActivities");
+                    if (act.length === 0)
+                        return GetText("TriggerInfo::NoActivity");
                     let result = act.slice(0, 3).map(a => ActivityDictionaryText(`Activity${a}`)).join(", ");
-                    if (act.length > 3) result += GetText(" and {0} more", [act.length - 3]);
+                    if (act.length > 3) result += GetText("TriggerInfo::AndMore", [act.length - 3]);
                     return result;
-                })(v.allow_activities)) ?? "", () => { }),
+                })(v.allow_activities)) ?? "", () => setSubscreen(new ActivityPopup(this._parent, this._state))),
             new DynamicTextRoundButton(this._bodypart_state, () => {
-                return this._state.asActivity(v => (v => {
-                    if (v === undefined || v.length === 0)
+                return this._state.asActivity(v => (bparts => {
+                    if (bparts === undefined)
                         return GetText("TriggerInfo::AllBodyparts");
-                    let result = v.slice(0, 3).map(a => AssetGroupMap.get(a)?.Description ?? a).join(", ");
-                    if (v.length > 3) result += GetText(" and {0} more", [v.length - 3]);
+                    if (bparts.length === 0)
+                        return GetText("TriggerInfo::NoBodyparts");
+                    let result = bparts.slice(0, 3).map(a => AssetGroupMap.get(a)?.Description ?? a).join(", ");
+                    if (bparts.length > 3) result += GetText("TriggerInfo::AndMore", [bparts.length - 3]);
                     return result;
                 })(v.allow_bodyparts)) ?? "";
-            }, () => { }),
+            }, () => setSubscreen(new BodypartsPopup(this._parent, this._state))),
             new DynamicTextRoundButton(this._allow_ids_state, () => {
                 return this._state.asActivity(v => (ids => {
                     if (ids === undefined || ids.length === 0)
                         return GetText("TriggerInfo::AllMemberIDs");
                     let result = ids.slice(0, 3).join(", ");
-                    if (ids.length > 3) result += GetText(" and {0} more", [ids.length - 3]);
+                    if (ids.length > 3) result += GetText("TriggerInfo::AndMore", [ids.length - 3]);
                     return result;
                 })(v.allow_ids)) ?? "";
             }, () => {
-                setSubscreen(new MemberListPopup(this._parent, GetText("TriggerInfo::MemberListPopup"), this._state.asActivity(v => {
+                setSubscreen(new MemberListPopup(this._parent, this._state.asActivity(v => {
                     if (v.allow_ids === undefined) v.allow_ids = [];
                     return v.allow_ids;
                 }) ?? []));

@@ -1,8 +1,9 @@
 import { DataManager } from "../../Data";
 import { Styles } from "../../Definition";
+import { GetText } from "../../i18n";
 import { GUISettingScreen, setSubscreen } from "../GUI";
 import { AGUIItem, IPoint, IRect, WithinRect } from "../Widgets/AGUI";
-import { ADrawCricleTextButton, ADrawFramedRect, ADrawText } from "../Widgets/Common";
+import { ADrawCricleTextButton, ADrawFramedRect, ADrawRoundRect, ADrawText, AFillRect, AStrokeRect } from "../Widgets/Common";
 import { PersonaImportScreen } from "./PersonaImportScreen";
 
 export class PersonaItem extends AGUIItem {
@@ -93,47 +94,43 @@ export class PersonaItem extends AGUIItem {
             height: this._rect.height - expand_margin * 2
         };
 
-        let bgcolor = 'White';
-
-        if (hasFocus && WithinRect({ x: MouseX, y: MouseY }, adjusted_rect)) {
+        if (hasFocus && WithinRect({ x: MouseX, y: MouseY }, adjusted_rect)
+            && !((persona && WithinRect({ x: MouseX, y: MouseY }, this._import_rect))
+                || (persona && DataManager.active_personality !== persona && WithinRect({ x: MouseX, y: MouseY }, this._delete_rect)))) {
             this._focusState.state = 'focused';
             this._focusState.value = Math.min(1, this._focusState.value + delta / 100);
-            bgcolor = Styles.Hover;
         }
         else {
             this._focusState.state = 'idle';
             this._focusState.value = Math.max(0, this._focusState.value - delta / 100);
         }
 
-        if (persona && DataManager.active_personality === persona) {
-            this._focusState.state = 'active';
-            if (bgcolor === 'White') bgcolor = Styles.Active;
-        }
-
         if (persona) {
             const mouse = { x: MouseX, y: MouseY };
 
-            if (this._focusState.state === 'active') {
-                if (WithinRect(mouse, this._import_rect)) bgcolor = Styles.Active;
-            } else {
-                if (WithinRect(mouse, this._import_rect) || WithinRect(mouse, this._delete_rect)) bgcolor = 'White';
+            if (DataManager.active_personality === persona) {
+                ADrawRoundRect(adjusted_rect, Styles.Dialog.roundRadius, { fill: Styles.SegmentButton.active, stroke: "none" });
             }
 
-            if (this._focusState.state === 'active') ADrawFramedRect(adjusted_rect, bgcolor, 'Black', 3);
-            else ADrawFramedRect(adjusted_rect, bgcolor);
+            if (this._focusState.state === 'focused')
+                ADrawRoundRect(adjusted_rect, Styles.Dialog.roundRadius, { fill: Styles.SegmentButton.hover });
+            else
+                ADrawRoundRect(adjusted_rect, Styles.Dialog.roundRadius);
+
 
             ADrawText(this._name_point, persona.name, { align: "center" });
-            ADrawCricleTextButton(this._import_rect, "Import/Export", hasFocus);
+            ADrawCricleTextButton(this._import_rect, GetText("PersonaMenu::Edit"), hasFocus);
 
-            if (this._focusState.state === 'active')
+            if (DataManager.active_personality === persona)
                 DrawImage("Icons/Checked.png", this._activated_img_pos.x, this._activated_img_pos.y);
             else {
-                if (this.deleteState === 0) ADrawCricleTextButton(this._delete_rect, "Delete", hasFocus);
-                else ADrawCricleTextButton(this._delete_rect, "Confirm?", hasFocus, { idle: 'Pink', hover: 'Red' });
+                if (this.deleteState === 0) ADrawCricleTextButton(this._delete_rect, GetText("PersonaMenu::Delete"), hasFocus);
+                else ADrawCricleTextButton(this._delete_rect, GetText("PersonaMenu::Confirm?"), hasFocus, { idle: 'Pink', hover: 'Red' });
             }
         } else {
-            ADrawFramedRect(adjusted_rect, bgcolor, 'DarkGrey');
-            ADrawText({ x: this._rect.x + this._rect.width / 2, y: this._rect.y + this._rect.height / 2 }, "Create New", { align: "center" });
+            if (this._focusState.state === 'focused') ADrawRoundRect(adjusted_rect, Styles.Dialog.roundRadius, { fill: Styles.SegmentButton.hover, stroke: 'DarkGrey' });
+            else ADrawRoundRect(adjusted_rect, Styles.Dialog.roundRadius, { stroke: 'DarkGrey' });
+            ADrawText({ x: this._rect.x + this._rect.width / 2, y: this._rect.y + this._rect.height / 2 }, GetText("PersonaMenu::CreateNew"), { align: "center" });
         }
     }
 
@@ -168,7 +165,7 @@ export class PersonaItem extends AGUIItem {
         } else {
             if (WithinRect(mouse, adjusted_rect)) {
                 DataManager.instance.data.personalities[this._index] = {
-                    name: "New Personality",
+                    name: GetText("Default::NewPersonality"),
                     index: this._index,
                     responses: [],
                 };

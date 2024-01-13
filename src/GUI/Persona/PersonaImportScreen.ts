@@ -55,14 +55,14 @@ export class PersonaImportScreen extends Popup {
                 if (this._lastInputInvalid) {
                     return {
                         where: { x: centerX, y: centerY - totalHeight / 2 + FontSize / 2 },
-                        text: GetText("Invalid Persona Data"),
+                        text: GetText("PersonaEdit::InvalidInput"),
                         align: "center",
                         color: "Red"
                     }
                 }
                 return {
                     where: { x: centerX, y: centerY - totalHeight / 2 + FontSize / 2 },
-                    text: GetText("Import/Export Persona"),
+                    text: GetText("PersonaEdit::Title"),
                     align: "center",
                     color: "Black"
                 }
@@ -73,8 +73,7 @@ export class PersonaImportScreen extends Popup {
                 y: centerY + totalHeight / 2 - buttonHeight,
                 width: buttonWidth,
                 height: buttonHeight
-            }, GetText("Save"), () => {
-                console.log("saving");
+            }, GetText("General::Confirm"), () => {
                 const newPersonsa = LZStringToPersona(this._bind.text);
                 if (newPersonsa) {
                     newPersonsa.index = index;
@@ -88,7 +87,7 @@ export class PersonaImportScreen extends Popup {
                 y: centerY + totalHeight / 2 - buttonHeight,
                 width: buttonWidth,
                 height: buttonHeight
-            }, GetText("Cancel"), () => this.Exit())
+            }, GetText("General::Cancel"), () => this.Exit())
         ]
     }
 

@@ -1,40 +1,62 @@
-import { isTriggerActivity } from "../../../Data";
 import { Styles } from "../../../Definition";
-import { AGUIItem, IPoint, IRect, WithinRect } from "../../Widgets/AGUI";
-import { ADrawFramedRect } from "../../Widgets/Common";
-import { ResponseMenuState } from "../ResponseMenuState";
+import { AGUIItem, IPoint, IRect, ISize, WithinRect } from "../../Widgets/AGUI";
+import { ADrawFramedRect, AFillRect } from "../../Widgets/Common";
 
 export class ActivityAreaDisplay extends AGUIItem {
-    private readonly _state: ResponseMenuState;
     private readonly _translate: IPoint;
     private readonly _scale: number;
 
-    constructor(state: ResponseMenuState, rect: IRect) {
-        super();
-        this._state = state;
+    private readonly source: Set<string>;
 
+    private readonly _bodypart_rects: {
+        group: string;
+        rects: IRect[];
+    }[];
+
+    private readonly _callback: (v: string) => void;
+
+    constructor(source: Set<string>, rect: IRect, callback: (v: string) => void) {
+        super();
+        this.source = source;
+        this._callback = callback;
+
+        const am = ActivityAreaDisplay.AbsoluteMetrics();
+        const expectRatio = am.width / am.height;
+        const givenRatio = rect.width / rect.height;
+
+        if (expectRatio < givenRatio) {
+            const centerX = rect.x + rect.width / 2;
+            this._scale = rect.height / am.height;
+            this._translate = { x: centerX - (am.x + am.width / 2) * this._scale, y: rect.y - am.y * this._scale };
+        } else {
+            const centerY = rect.y + rect.height / 2;
+            this._scale = rect.width / am.width;
+            this._translate = { x: rect.x - am.x * this._scale, y: centerY - (am.y + am.height / 2) * this._scale };
+        }
+
+        this._bodypart_rects = AssetGroup.map(v => {
+            if (!v.Zone) return undefined;
+            return { group: v.Name, rects: v.Zone.map(v => this.RectTuple2Rect(v)) };
+        }).filter(v => v !== undefined) as { group: string; rects: IRect[] }[];
+    }
+
+    static AbsoluteMetrics(): IRect {
         const expectRange = AssetGroup.map(i => i.Zone).flat().reduce((prev, cur) => {
             if (!cur) return prev;
             return {
                 left: Math.min(prev.left, cur[0]),
+                right: Math.max(prev.right, cur[0] + cur[2]),
                 top: Math.min(prev.top, cur[1]),
-                bottom: Math.max(prev.bottom, cur[0] + cur[2]),
-                right: Math.max(prev.right, cur[1] + cur[3])
+                bottom: Math.max(prev.bottom, cur[1] + cur[3]),
             };
         }, { left: 2000, top: 1000, bottom: 0, right: 0 });
         const expectWH = { width: expectRange.right - expectRange.left, height: expectRange.bottom - expectRange.top };
-        const expectRatio = expectWH.width / expectWH.height;
-        const givenRatio = rect.width / rect.height;
+        return { x: expectRange.left, y: expectRange.top, width: expectWH.width, height: expectWH.height };
+    }
 
-        if (expectRatio < givenRatio) {
-            const tX = rect.x + rect.width / 2 - expectWH.width / 2;
-            this._scale = rect.height / expectWH.height;
-            this._translate = { x: tX - expectRange.left * this._scale, y: rect.y - expectRange.top * this._scale };
-        } else {
-            const tY = rect.y + rect.height / 2 - expectWH.height / 2;
-            this._scale = rect.width / expectWH.width;
-            this._translate = { x: rect.x - expectRange.left * this._scale, y: tY - expectRange.top * this._scale };
-        }
+    static Metrics(): ISize {
+        const am = ActivityAreaDisplay.AbsoluteMetrics();
+        return { width: am.width, height: am.height };
     }
 
     RectTuple2Rect(rect: [number, number, number, number]): IRect {
@@ -47,22 +69,25 @@ export class ActivityAreaDisplay extends AGUIItem {
     }
 
     Draw(hasFocus: boolean): void {
-        if (this._state.targetItem === null || !isTriggerActivity(this._state.targetItem.trigger)) return;
+        this._bodypart_rects.forEach((v, i) => {
+            if (v.rects.length === 0) return;
+            const isHover = hasFocus && v.rects.some(v => WithinRect({ x: MouseX, y: MouseY }, v));
+            const isActive = this.source.has(v.group);
+            v.rects.forEach((v) => {
+                if (isActive) ADrawFramedRect(v, Styles.Chips.active, "Black");
+                else ADrawFramedRect(v, "White", "Black");
+                if (isHover) AFillRect(v, Styles.Chips.hover);
 
-        const allowParts = this._state.targetItem.trigger.allow_bodyparts;
-
-        AssetGroup.forEach((v, i) => {
-            if (!v.Zone) return;
-            const isHover = v.Zone.some(v => WithinRect({ x: MouseX, y: MouseY }, this.RectTuple2Rect(v)));
-            const isActive = allowParts && allowParts.includes(v.Name);
-            const color = (() => {
-                if (isHover) return Styles.Hover;
-                if (isActive) return Styles.Active;
-                return "White";
-            })();
-            v.Zone.forEach((v, i) => {
-                ADrawFramedRect(this.RectTuple2Rect(v), color, "Black");
             });
+        });
+    }
+
+    Click(mouse: IPoint): void {
+        this._bodypart_rects.forEach((v, i) => {
+            if (v.rects.length === 0) return;
+            if (v.rects.some(v => WithinRect(mouse, v))) {
+                this._callback(v.group);
+            }
         });
     }
 }

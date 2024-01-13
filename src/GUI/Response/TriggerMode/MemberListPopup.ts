@@ -3,50 +3,37 @@ import { GetText } from "../../../i18n";
 import { GUISettingScreen } from "../../GUI";
 import { AGUIItem, IPoint, IRect, WithinRect } from "../../Widgets/AGUI";
 import { TextRoundButton } from "../../Widgets/Button";
-import { ADrawCircleRect, ADrawCricleIconButton, ADrawCricleTextButton, ADrawRoundRect, ADrawTextFit, RoundFramedRect } from "../../Widgets/Common";
-import { InputItem, TextAreaItem } from "../../Widgets/InputText";
+import { ADrawCricleIconButton, ADrawRoundRect, ADrawTextFit, RoundFramedRect } from "../../Widgets/Common";
+import { InputItem } from "../../Widgets/InputText";
 import { PageDial, PageDialBinding } from "../../Widgets/PageDial";
 import { Popup } from "../../Widgets/Popup";
 import { BasicText } from "../../Widgets/Text";
 
-const centerX = 1000;
-const centerY = 500;
+const TITLE_FONT_SIZE = 36;
 
-const dialogPadding = 35;
+const TABLE_INNER_SPACING = 5;
+const MEMBER_TABLE_TITLE_HEIGHT = 50;
+const MEMBER_TABLE_ROW_HEIGHT = 50;
+const MEMBER_TABLE_COLUMN_WIDTH = 260;
 
-const titleFontSize = 36;
+const REMOVE_BUTTON_DIAMETER = 40;
 
-const tableInnerSpacing = 5;
-const memberTableTitleHeight = 50;
-const memberTableRowHeight = 50;
-const memberTableColumnWidth = 260;
+const MEMBER_TABLE_ROWS_PER_PAGE = 5;
+const MEMBER_TABLE_HEIGHT = MEMBER_TABLE_TITLE_HEIGHT + MEMBER_TABLE_ROW_HEIGHT * MEMBER_TABLE_ROWS_PER_PAGE;
+const MEMBER_TABLE_WIDTH = MEMBER_TABLE_COLUMN_WIDTH * 2;
 
-const roundButtonWidth = 40;
+const PAGE_PANEL_WIDTH = 300;
 
-const memberTableRowsPerPage = 5;
-const tableHeight = memberTableTitleHeight + memberTableRowHeight * memberTableRowsPerPage;
-const tableWidth = memberTableColumnWidth * 2;
+const TOTAL_MEMBER_TABLE_HEIGHT = MEMBER_TABLE_HEIGHT + TABLE_INNER_SPACING + Styles.Dialog.control_button_height;
+const TOTAL_MEMBER_TABLE_WIDTH = Math.max(MEMBER_TABLE_WIDTH + (TABLE_INNER_SPACING + REMOVE_BUTTON_DIAMETER) * 2, PAGE_PANEL_WIDTH);
 
-const pageButtonWidth = 100;
-const pagePanelWidth = 300;
-const pageDisplayWidth = 120;
-
-const buttonWidth = 200;
-const buttonHeight = 50;
-
-const memberTableTotalHeight = tableHeight + tableInnerSpacing + buttonHeight;
-const memberTableTotalWidth = Math.max(tableWidth + (tableInnerSpacing + roundButtonWidth) * 2, pagePanelWidth);
-
-const confirmCancelTotalWidth = buttonWidth * 2 + dialogPadding;
-
-const dialogTotalWidth = Math.max(memberTableTotalWidth, buttonWidth * 2 + dialogPadding);
-const dialogTotalHeight = titleFontSize + dialogPadding + Styles.Input.height + dialogPadding + memberTableTotalHeight + dialogPadding + buttonHeight;
+const TOTAL_DIALOG_WIDTH = Math.max(TOTAL_MEMBER_TABLE_WIDTH, Styles.Dialog.control_button_width * 2 + Styles.Dialog.padding);
+const TOTAL_DIALOG_HEIGHT = TITLE_FONT_SIZE + Styles.Dialog.padding + Styles.Input.height + Styles.Dialog.padding + TOTAL_MEMBER_TABLE_HEIGHT + Styles.Dialog.padding + Styles.Dialog.control_button_height;
 
 class MemberList extends AGUIItem {
     private readonly _table: IRect;
 
     private readonly _page_panel: IRect;
-    private readonly _page_display: IRect;
 
     private readonly memberList: number[];
 
@@ -59,24 +46,17 @@ class MemberList extends AGUIItem {
         this.memberList = memberList;
 
         this._table = {
-            x: rect.x + tableInnerSpacing + roundButtonWidth,
+            x: rect.x + TABLE_INNER_SPACING + REMOVE_BUTTON_DIAMETER,
             y: rect.y,
-            width: tableWidth,
-            height: memberTableTitleHeight + memberTableRowHeight * memberTableRowsPerPage
+            width: MEMBER_TABLE_WIDTH,
+            height: MEMBER_TABLE_TITLE_HEIGHT + MEMBER_TABLE_ROW_HEIGHT * MEMBER_TABLE_ROWS_PER_PAGE
         };
 
         this._page_panel = {
-            x: rect.x + rect.width / 2 - pagePanelWidth / 2,
-            y: rect.y + this._table.height + tableInnerSpacing,
-            width: pagePanelWidth,
-            height: buttonHeight
-        };
-
-        this._page_display = {
-            x: rect.x + rect.width / 2 - pageDisplayWidth / 2,
-            y: this._page_panel.y,
-            width: pageDisplayWidth,
-            height: buttonHeight
+            x: rect.x + rect.width / 2 - PAGE_PANEL_WIDTH / 2,
+            y: rect.y + this._table.height + TABLE_INNER_SPACING,
+            width: PAGE_PANEL_WIDTH,
+            height: Styles.Dialog.control_button_height
         };
 
         this.pageBinding = {
@@ -89,18 +69,18 @@ class MemberList extends AGUIItem {
     }
 
     Draw(hasFocus: boolean): void {
-        this.pageBinding.maxPage = Math.ceil(this.memberList.length / memberTableRowsPerPage);
+        this.pageBinding.maxPage = Math.ceil(this.memberList.length / MEMBER_TABLE_ROWS_PER_PAGE);
 
         ADrawRoundRect(this._table, Styles.Dialog.roundRadius);
 
         MainCanvas.strokeStyle = "Gray";
         MainCanvas.lineWidth = 2;
         MainCanvas.beginPath();
-        MainCanvas.moveTo(this._table.x, this._table.y + memberTableTitleHeight);
-        MainCanvas.lineTo(this._table.x + this._table.width, this._table.y + memberTableTitleHeight);
+        MainCanvas.moveTo(this._table.x, this._table.y + MEMBER_TABLE_TITLE_HEIGHT);
+        MainCanvas.lineTo(this._table.x + this._table.width, this._table.y + MEMBER_TABLE_TITLE_HEIGHT);
         MainCanvas.stroke();
-        Array.from({ length: memberTableRowsPerPage }, (_, i) => i).forEach(i => {
-            const y = this._table.y + memberTableTitleHeight + memberTableRowHeight * i;
+        Array.from({ length: MEMBER_TABLE_ROWS_PER_PAGE }, (_, i) => i).forEach(i => {
+            const y = this._table.y + MEMBER_TABLE_TITLE_HEIGHT + MEMBER_TABLE_ROW_HEIGHT * i;
             MainCanvas.beginPath();
             MainCanvas.moveTo(this._table.x, y);
             MainCanvas.lineTo(this._table.x + this._table.width, y);
@@ -110,32 +90,32 @@ class MemberList extends AGUIItem {
         ADrawTextFit({
             x: this._table.x,
             y: this._table.y,
-            width: memberTableColumnWidth,
-            height: memberTableTitleHeight
+            width: MEMBER_TABLE_COLUMN_WIDTH,
+            height: MEMBER_TABLE_TITLE_HEIGHT
         }, GetText("CharaInfo::MemberID"));
 
         ADrawTextFit({
-            x: this._table.x + tableInnerSpacing + memberTableColumnWidth,
+            x: this._table.x + TABLE_INNER_SPACING + MEMBER_TABLE_COLUMN_WIDTH,
             y: this._table.y,
-            width: memberTableColumnWidth,
-            height: memberTableTitleHeight
+            width: MEMBER_TABLE_COLUMN_WIDTH,
+            height: MEMBER_TABLE_TITLE_HEIGHT
         }, GetText("CharaInfo::Name"));
 
-        Array.from({ length: memberTableRowsPerPage }, (_, i) => i).forEach(i => {
-            const y = this._table.y + memberTableTitleHeight + memberTableRowHeight * i;
-            const width = memberTableColumnWidth;
-            const height = memberTableRowHeight;
-            const member = this.memberList[this.pageBinding.page * memberTableRowsPerPage + i];
+        Array.from({ length: MEMBER_TABLE_ROWS_PER_PAGE }, (_, i) => i).forEach(i => {
+            const y = this._table.y + MEMBER_TABLE_TITLE_HEIGHT + MEMBER_TABLE_ROW_HEIGHT * i;
+            const width = MEMBER_TABLE_COLUMN_WIDTH;
+            const height = MEMBER_TABLE_ROW_HEIGHT;
+            const member = this.memberList[this.pageBinding.page * MEMBER_TABLE_ROWS_PER_PAGE + i];
             const deleteRect = {
-                x: this._table.x + tableWidth + tableInnerSpacing,
-                y: y + memberTableRowHeight / 2 - roundButtonWidth / 2,
-                width: roundButtonWidth,
-                height: roundButtonWidth
+                x: this._table.x + MEMBER_TABLE_WIDTH + TABLE_INNER_SPACING,
+                y: y + MEMBER_TABLE_ROW_HEIGHT / 2 - REMOVE_BUTTON_DIAMETER / 2,
+                width: REMOVE_BUTTON_DIAMETER,
+                height: REMOVE_BUTTON_DIAMETER
             }
             if (member) {
                 ADrawTextFit({ x: this._table.x, y, width, height }, member.toString());
                 const name = Player?.FriendNames?.get(member) || "???";
-                ADrawTextFit({ x: this._table.x + tableInnerSpacing + memberTableColumnWidth, y, width, height }, name);
+                ADrawTextFit({ x: this._table.x + TABLE_INNER_SPACING + MEMBER_TABLE_COLUMN_WIDTH, y, width, height }, name);
                 ADrawCricleIconButton(deleteRect, "trashbin", hasFocus, { hover: "#FF4040" })
             }
         });
@@ -145,15 +125,15 @@ class MemberList extends AGUIItem {
 
     Click(mouse: IPoint): void {
         this.pageDial.Click(mouse);
-        Array.from({ length: memberTableRowsPerPage }, (_, i) => i).forEach(i => {
-            const y = this._table.y + memberTableTitleHeight + memberTableRowHeight * i;
-            const member = this.memberList[this.pageBinding.page * memberTableRowsPerPage + i];
+        Array.from({ length: MEMBER_TABLE_ROWS_PER_PAGE }, (_, i) => i).forEach(i => {
+            const y = this._table.y + MEMBER_TABLE_TITLE_HEIGHT + MEMBER_TABLE_ROW_HEIGHT * i;
+            const member = this.memberList[this.pageBinding.page * MEMBER_TABLE_ROWS_PER_PAGE + i];
 
             const deleteRect = {
-                x: this._table.x + tableWidth + tableInnerSpacing,
-                y: y + memberTableRowHeight / 2 - roundButtonWidth / 2,
-                width: roundButtonWidth,
-                height: roundButtonWidth
+                x: this._table.x + MEMBER_TABLE_WIDTH + TABLE_INNER_SPACING,
+                y: y + MEMBER_TABLE_ROW_HEIGHT / 2 - REMOVE_BUTTON_DIAMETER / 2,
+                width: REMOVE_BUTTON_DIAMETER,
+                height: REMOVE_BUTTON_DIAMETER
             }
 
             if (member && WithinRect(mouse, deleteRect)) {
@@ -164,92 +144,79 @@ class MemberList extends AGUIItem {
 }
 
 export class MemberListPopup extends Popup {
-    private readonly _dialog: IRect;
-    private readonly _title: IPoint;
-    private readonly _input: IRect;
-    private readonly _input_confirm: IRect;
-
-    private readonly _pageTable: IRect;
-
-    private readonly _cancel_button: IRect;
-    private readonly _confirm_button: IRect;
-
-    private readonly title_text: string;
 
     private readonly source_member_list: number[];
     private readonly editing_member_list: number[];
 
-    private text_input: InputItem;
-
-    constructor(prev: GUISettingScreen | null, title: string, source: number[]) {
+    constructor(prev: GUISettingScreen | null, source: number[]) {
         super(prev);
-        this.title_text = title;
         this.source_member_list = source;
-        this.editing_member_list = source.slice();
+        this.editing_member_list = [...source];
 
-        this._dialog = {
-            x: centerX - dialogTotalWidth / 2 - dialogPadding,
-            y: centerY - dialogTotalHeight / 2 - dialogPadding,
-            width: dialogTotalWidth + dialogPadding * 2,
-            height: dialogTotalHeight + dialogPadding * 2
+        const _dialog = {
+            x: Styles.Screen.center_x - TOTAL_DIALOG_WIDTH / 2 - Styles.Dialog.padding,
+            y: Styles.Screen.center_y - TOTAL_DIALOG_HEIGHT / 2 - Styles.Dialog.padding,
+            width: TOTAL_DIALOG_WIDTH + Styles.Dialog.padding * 2,
+            height: TOTAL_DIALOG_HEIGHT + Styles.Dialog.padding * 2
         };
 
-        this._title = { x: centerX, y: centerY - dialogTotalHeight / 2 + titleFontSize / 2 };
+        const _title = { x: Styles.Screen.center_x, y: Styles.Screen.center_y - TOTAL_DIALOG_HEIGHT / 2 + TITLE_FONT_SIZE / 2 };
 
-        this._input = {
-            x: centerX - dialogTotalWidth / 2,
-            y: centerY - dialogTotalHeight / 2 + titleFontSize + dialogPadding,
-            width: dialogTotalWidth - buttonWidth - dialogPadding,
+        const _input = {
+            x: Styles.Screen.center_x - TOTAL_DIALOG_WIDTH / 2,
+            y: Styles.Screen.center_y - TOTAL_DIALOG_HEIGHT / 2 + TITLE_FONT_SIZE + Styles.Dialog.padding,
+            width: TOTAL_DIALOG_WIDTH - Styles.Dialog.control_button_width - Styles.Dialog.padding,
             height: Styles.Input.height
         };
 
-        this._input_confirm = {
-            x: centerX + dialogTotalWidth / 2 - buttonWidth,
-            y: this._input.y + Styles.Input.height / 2 - buttonHeight / 2,
-            width: buttonWidth,
-            height: buttonHeight
+        const _input_confirm = {
+            x: Styles.Screen.center_x + TOTAL_DIALOG_WIDTH / 2 - Styles.Dialog.control_button_width,
+            y: _input.y + Styles.Input.height / 2 - Styles.Dialog.control_button_height / 2,
+            width: Styles.Dialog.control_button_width,
+            height: Styles.Dialog.control_button_height
         };
 
-        this._pageTable = {
-            x: centerX - memberTableTotalWidth / 2,
-            y: this._input.y + this._input.height + dialogPadding,
-            width: memberTableTotalWidth,
-            height: memberTableTotalHeight
+        const _pageTable = {
+            x: Styles.Screen.center_x - TOTAL_MEMBER_TABLE_WIDTH / 2,
+            y: _input.y + _input.height + Styles.Dialog.padding,
+            width: TOTAL_MEMBER_TABLE_WIDTH,
+            height: TOTAL_MEMBER_TABLE_HEIGHT
         };
 
-        this._cancel_button = {
-            x: centerX + confirmCancelTotalWidth / 2 - buttonWidth,
-            y: centerY + dialogTotalHeight / 2 - buttonHeight,
-            width: buttonWidth,
-            height: buttonHeight
+
+        const _confirm_button = {
+            x: Styles.Screen.center_x - Styles.Dialog.padding / 2 - Styles.Dialog.control_button_width,
+            y: _pageTable.y + _pageTable.height + Styles.Dialog.padding,
+            width: Styles.Dialog.control_button_width,
+            height: Styles.Dialog.control_button_height
         };
 
-        this._confirm_button = {
-            x: centerX - confirmCancelTotalWidth / 2,
-            y: this._cancel_button.y,
-            width: buttonWidth,
-            height: buttonHeight
+        const _cancel_button = {
+            x: Styles.Screen.center_x + Styles.Dialog.padding / 2,
+            y: _confirm_button.y,
+            width: Styles.Dialog.control_button_width,
+            height: Styles.Dialog.control_button_height
         };
 
-        this.text_input = new InputItem(this._input, "MemberNumberInput", "", GetText("Input ID"));
+        const text_input = new InputItem(_input, "MemberNumberInput", "", GetText("MemberListPopup::InputID"));
 
         this._items = [
-            new RoundFramedRect(this._dialog, Styles.Dialog.roundRadius, "White"),
-            new BasicText(this._title, this.title_text, { align: "center" }),
-            this.text_input,
-            new TextRoundButton(this._input_confirm, GetText("General::Add"), () => {
-                const member_number = parseInt(this.text_input.text);
+            new RoundFramedRect(_dialog, Styles.Dialog.roundRadius, "White"),
+            new BasicText(_title, GetText("MemberListPopup::Title"), { align: "center" }),
+            text_input,
+            new TextRoundButton(_input_confirm, GetText("General::Add"), () => {
+                const member_number = parseInt(text_input.text);
                 if (!isNaN(member_number) && member_number > 0 && !this.editing_member_list.includes(member_number)) {
                     this.editing_member_list.push(member_number);
-                    this.text_input.Clear();
+                    text_input.Clear();
                 }
             }, () => {
-                const v = parseInt(this.text_input.text);
+                const v = parseInt(text_input.text);
                 return !isNaN(v) && v > 0 && !this.editing_member_list.includes(v);
             }),
-            new MemberList(this._pageTable, this.editing_member_list),
-            new TextRoundButton(this._cancel_button, GetText("General::Cancel"), () => this.Exit()),
-            new TextRoundButton(this._confirm_button, GetText("General::Confirm"), () => {
+            new MemberList(_pageTable, this.editing_member_list),
+            new TextRoundButton(_cancel_button, GetText("General::Cancel"), () => this.Exit()),
+            new TextRoundButton(_confirm_button, GetText("General::Confirm"), () => {
                 this.source_member_list.splice(0, this.source_member_list.length, ...this.editing_member_list);
                 this.Exit();
             })

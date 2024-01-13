@@ -26,10 +26,6 @@ export class MessageSettinPopup extends Popup {
     constructor(prev: GUISettingScreen | null, target: ResponsiveMessage | undefined) {
         super(prev);
 
-        const centerX = 1000;
-        const centerY = 500;
-
-        const dialogPadding = 35;
         const FontSize = 36;
 
         const inputWidth = 800;
@@ -43,48 +39,48 @@ export class MessageSettinPopup extends Popup {
         const dialogTotalWidth = Math.max(inputWidth, buttonWidth * 3 + spacing * 2);
         const dialogTotalHeight = FontSize + inputHeight + buttonHeight * 2 + spacing * 3;
         this._dialog = {
-            x: centerX - dialogTotalWidth / 2 - dialogPadding,
-            y: centerY - dialogTotalHeight / 2 - dialogPadding,
-            width: dialogTotalWidth + dialogPadding * 2,
-            height: dialogTotalHeight + dialogPadding * 2
+            x: Styles.Screen.center_x - dialogTotalWidth / 2 - Styles.Dialog.padding,
+            y: Styles.Screen.center_y - dialogTotalHeight / 2 - Styles.Dialog.padding,
+            width: dialogTotalWidth + Styles.Dialog.padding * 2,
+            height: dialogTotalHeight + Styles.Dialog.padding * 2
         };
 
-        this._title = { x: centerX, y: this._dialog.y + dialogPadding + FontSize / 2 };
+        this._title = { x: Styles.Screen.center_x, y: this._dialog.y + Styles.Dialog.padding + FontSize / 2 };
 
         this._type_segbutton = {
-            x: centerX - dialogTotalWidth / 2,
-            y: centerY - dialogTotalHeight / 2 + FontSize + spacing,
+            x: Styles.Screen.center_x - dialogTotalWidth / 2,
+            y: Styles.Screen.center_y - dialogTotalHeight / 2 + FontSize + spacing,
             width: buttonWidth, height: buttonHeight
         };
 
         this._insert_me_button = {
-            x: centerX + dialogTotalWidth / 2 - buttonWidth * 2 - spacing,
+            x: Styles.Screen.center_x + dialogTotalWidth / 2 - buttonWidth * 2 - spacing,
             y: this._type_segbutton.y,
             width: buttonWidth, height: buttonHeight
         };
 
         this._insert_other_button = {
-            x: centerX + dialogTotalWidth / 2 - buttonWidth,
+            x: Styles.Screen.center_x + dialogTotalWidth / 2 - buttonWidth,
             y: this._type_segbutton.y,
             width: buttonWidth, height: buttonHeight
         };
 
         this._input = {
-            x: centerX - inputWidth / 2,
+            x: Styles.Screen.center_x - inputWidth / 2,
             y: this._type_segbutton.y + spacing + buttonHeight,
             width: inputWidth, height: inputHeight
         };
 
         this._confirm_button = {
-            x: centerX + dialogTotalWidth / 2 - buttonWidth,
+            x: Styles.Screen.center_x - Styles.Dialog.padding / 2 - Styles.Dialog.control_button_width,
             y: this._input.y + inputHeight + spacing,
-            width: buttonWidth, height: buttonHeight
+            width: Styles.Dialog.control_button_width, height: Styles.Dialog.control_button_height
         }
 
         this._cancel_button = {
-            x: centerX + dialogTotalWidth / 2 - buttonWidth * 2 - spacing,
+            x: Styles.Screen.center_x + Styles.Dialog.padding / 2,
             y: this._input.y + inputHeight + spacing,
-            width: buttonWidth, height: buttonHeight
+            width: Styles.Dialog.control_button_width, height: Styles.Dialog.control_button_height
         };
 
         if (target) this._input_state = { ...target };

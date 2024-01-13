@@ -105,6 +105,10 @@ class SpicerApplyFavoriteProperty extends Binding<boolean> {
 
 }
 
+export interface ExpandList<T> {
+    value: T[] | undefined; // undefined means all
+}
+
 export class ResponseMenuState {
     private _target: ResponsivePersonality;
     targetItem: ResponsiveItem | null = null;
@@ -149,6 +153,13 @@ export class ResponseMenuState {
 
     asActivity<T>(op: (t: ResponsiveTriggerActivity) => T, el?: () => void) {
         if (this.targetItem !== null && isTriggerActivity(this.targetItem.trigger))
+            return op(this.targetItem.trigger);
+        else if (el !== undefined)
+            el();
+    }
+
+    asHasAllowIds<T>(op: (t: ResponsiveTriggerActivity | ResponsiveTriggerSpicer) => T, el?: () => void) {
+        if (this.targetItem !== null && (isTriggerActivity(this.targetItem.trigger) || isTriggerSpicer(this.targetItem.trigger)))
             return op(this.targetItem.trigger);
         else if (el !== undefined)
             el();

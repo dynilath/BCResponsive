@@ -99,6 +99,27 @@ export function ADrawCircleRect(rect: IRect, style?: { fill?: string, stroke?: s
     if (style.stroke !== 'none') MainCanvas.stroke();
 }
 
+export function ADrawVerticalCircleRect(rect: IRect, style?: { fill?: string, stroke?: string, strokeWidth?: number }) {
+    if (!style) style = {};
+    const radius = rect.width / 2;
+    const yTop = rect.y + radius;
+    const yDown = rect.y + rect.height - radius;
+    style.stroke = style.stroke || Styles.Button.text;
+
+    if (style.stroke !== 'none') MainCanvas.strokeStyle = style.stroke;
+    MainCanvas.lineWidth = style.strokeWidth || Styles.strokeWidth;
+    if (style.fill) MainCanvas.fillStyle = style.fill;
+    MainCanvas.beginPath();
+    MainCanvas.moveTo(rect.x, yDown);
+    MainCanvas.lineTo(rect.x, yTop);
+    MainCanvas.arc(rect.x + radius, yTop, radius, -Math.PI, 0);
+    MainCanvas.lineTo(rect.x + rect.width, yDown);
+    MainCanvas.arc(rect.x + radius, yDown, radius, 0, Math.PI);
+    MainCanvas.closePath();
+    if (style.fill) MainCanvas.fill();
+    if (style.stroke !== 'none') MainCanvas.stroke();
+}
+
 export function ADrawCricleTextButton(rect: IRect, text: string, active: boolean = true, style?: { hover?: string, idle?: string, stroke?: string, strokeWidth?: number }) {
     if (!style) style = {};
     const hover = style.hover || Styles.Button.hover;

@@ -77,7 +77,7 @@ export class TriggerTab extends AGUIItem {
         this._layout_items.forEach((rect, index) => {
             const targetIdx = index + this._page_binding.page * this._layout_items.length;
 
-            if (this._parent.targetPersona.responses[targetIdx] == this._parent.targetItem) {
+            if (this._parent.targetItem && this._parent.targetPersona.responses[targetIdx] == this._parent.targetItem) {
                 ADrawCircleRect(rect, { fill: Styles.Tab.active })
             }
 
@@ -86,7 +86,7 @@ export class TriggerTab extends AGUIItem {
             }
 
             if (targetIdx == this._parent.targetPersona.responses.length) {
-                ADrawTextFit(rect, GetText("Add New"), { color: Styles.Text.Lesser });
+                ADrawTextFit(rect, GetText("TriggerInfo::AddNew"), { color: Styles.Text.Lesser });
             } else if (targetIdx < this._parent.targetPersona.responses.length) {
                 ADrawTextFit(rect, this._parent.targetPersona.responses[targetIdx].name);
             }

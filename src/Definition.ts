@@ -22,8 +22,15 @@ export const Styles = {
     Active: "#CCC",
     Hover: "#80FFFF",
     strokeWidth: 2,
+    Screen: {
+        center_x: 1000,
+        center_y: 500,
+    },
     Dialog: {
         roundRadius: 15,
+        padding: 35,
+        control_button_width: 200,
+        control_button_height: 50,
     },
     Text: {
         Base: "Black",
@@ -38,6 +45,11 @@ export const Styles = {
     },
     Input: {
         height: 60,
+    },
+    Chips: {
+        active: "rgba(128, 255, 255, 1)",
+        hover: "rgba(204, 204, 204, 0.5)",
+        border: 5,
     },
     SegmentButton: {
         active: "rgba(160, 255, 255, 1)",
