@@ -1,115 +1,131 @@
 import { GetText } from "../../../i18n";
 import { GUISettingScreen } from "../../GUI";
-import { IPoint, IRect } from "../../Widgets/AGUI";
 import { RoundFramedRect } from "../../Widgets/Common";
-import { TextButton } from "../../Widgets/Button";
+import { TextButton, TextRoundButton } from "../../Widgets/Button";
 import { BasicText } from "../../Widgets/Text";
 import { TextAreaItem } from "../../Widgets/InputText";
 import { Popup } from "../../Widgets/Popup";
 import { Styles } from "../../../Definition";
+import { SegmentButton } from "../../Widgets/SegmentButton";
+import { Binding } from "../../Widgets/Binding";
 
+class MessageTypeBinding extends Binding<string> {
+    private _rmessage: ResponsiveMessage;
+    constructor(message: ResponsiveMessage) {
+        super();
+        this._rmessage = message;
+    }
+    get value(): string {
+        return this._rmessage.type;
+    }
+    set value(v: string) {
+        this._rmessage.type = v as ResponsiveMessageType;
+    }
+}
+
+
+const FONT_SIZE = 36;
+const INPUT_WIDTH = 800;
+const INPUT_HEIGHT = 500;
+const SPACING = 15;
 
 export class MessageSettinPopup extends Popup {
-    private readonly _dialog: IRect;
-    private readonly _title: IPoint;
-    private readonly _input: IRect;
-    private readonly _type_segbutton: IRect;
-    private readonly _insert_me_button: IRect;
-    private readonly _insert_other_button: IRect;
-    private readonly _cancel_button: IRect;
-    private readonly _confirm_button: IRect;
-
-
     private _input_state: ResponsiveMessage;
     private _text_input: TextAreaItem;
 
-    constructor(prev: GUISettingScreen | null, target: ResponsiveMessage | undefined) {
+    private _confirm_callback: (message: ResponsiveMessage) => void;
+    private _delete_callback: (message: ResponsiveMessage) => void;
+
+    constructor(prev: GUISettingScreen | null, target: ResponsiveMessage, confirm: (message: ResponsiveMessage) => void, del: (message: ResponsiveMessage) => void) {
         super(prev);
 
-        const FontSize = 36;
+        if (target) this._input_state = { ...target };
+        else this._input_state = { type: "message", content: GetText("Default::ExampleMessage") };
 
-        const inputWidth = 800;
-        const inputHeight = 500;
+        this._confirm_callback = confirm;
+        this._delete_callback = del;
 
-        const spacing = 15;
-
-        const buttonWidth = 200;
-        const buttonHeight = 50;
-
-        const dialogTotalWidth = Math.max(inputWidth, buttonWidth * 3 + spacing * 2);
-        const dialogTotalHeight = FontSize + inputHeight + buttonHeight * 2 + spacing * 3;
-        this._dialog = {
+        const dialogTotalWidth = Math.max(INPUT_WIDTH, Styles.Dialog.control_button_width * 3 + SPACING * 2);
+        const dialogTotalHeight = FONT_SIZE + INPUT_HEIGHT + Styles.Dialog.control_button_height * 2 + SPACING * 3;
+        const _dialog = {
             x: Styles.Screen.center_x - dialogTotalWidth / 2 - Styles.Dialog.padding,
             y: Styles.Screen.center_y - dialogTotalHeight / 2 - Styles.Dialog.padding,
             width: dialogTotalWidth + Styles.Dialog.padding * 2,
             height: dialogTotalHeight + Styles.Dialog.padding * 2
         };
 
-        this._title = { x: Styles.Screen.center_x, y: this._dialog.y + Styles.Dialog.padding + FontSize / 2 };
+        const _title = { x: Styles.Screen.center_x, y: _dialog.y + Styles.Dialog.padding + FONT_SIZE / 2 };
 
-        this._type_segbutton = {
+        const _type_segbutton = {
             x: Styles.Screen.center_x - dialogTotalWidth / 2,
-            y: Styles.Screen.center_y - dialogTotalHeight / 2 + FontSize + spacing,
-            width: buttonWidth, height: buttonHeight
+            y: Styles.Screen.center_y - dialogTotalHeight / 2 + FONT_SIZE + SPACING,
+            width: Styles.Dialog.control_button_width, height: Styles.Dialog.control_button_height
         };
 
-        this._insert_me_button = {
-            x: Styles.Screen.center_x + dialogTotalWidth / 2 - buttonWidth * 2 - spacing,
-            y: this._type_segbutton.y,
-            width: buttonWidth, height: buttonHeight
+        const _insert_me_button = {
+            x: Styles.Screen.center_x + dialogTotalWidth / 2 - Styles.Dialog.control_button_width * 2 - SPACING,
+            y: _type_segbutton.y,
+            width: Styles.Dialog.control_button_width, height: Styles.Dialog.control_button_height
         };
 
-        this._insert_other_button = {
-            x: Styles.Screen.center_x + dialogTotalWidth / 2 - buttonWidth,
-            y: this._type_segbutton.y,
-            width: buttonWidth, height: buttonHeight
+        const _insert_other_button = {
+            x: Styles.Screen.center_x + dialogTotalWidth / 2 - Styles.Dialog.control_button_width,
+            y: _type_segbutton.y,
+            width: Styles.Dialog.control_button_width, height: Styles.Dialog.control_button_height
         };
 
-        this._input = {
-            x: Styles.Screen.center_x - inputWidth / 2,
-            y: this._type_segbutton.y + spacing + buttonHeight,
-            width: inputWidth, height: inputHeight
+        const _input = {
+            x: Styles.Screen.center_x - INPUT_WIDTH / 2,
+            y: _type_segbutton.y + SPACING + Styles.Dialog.control_button_height,
+            width: INPUT_WIDTH, height: INPUT_HEIGHT
         };
 
-        this._confirm_button = {
-            x: Styles.Screen.center_x - Styles.Dialog.padding / 2 - Styles.Dialog.control_button_width,
-            y: this._input.y + inputHeight + spacing,
+        // left align delete button
+        const _delete_button = {
+            x: Styles.Screen.center_x - dialogTotalWidth / 2,
+            y: _input.y + INPUT_HEIGHT + SPACING,
+            width: Styles.Dialog.control_button_width, height: Styles.Dialog.control_button_height
+        };
+
+        // right align confirm and cancel button
+        const _confirm_button = {
+            x: Styles.Screen.center_x + dialogTotalWidth / 2 - Styles.Dialog.control_button_width * 2 - SPACING,
+            y: _input.y + INPUT_HEIGHT + SPACING,
             width: Styles.Dialog.control_button_width, height: Styles.Dialog.control_button_height
         }
 
-        this._cancel_button = {
-            x: Styles.Screen.center_x + Styles.Dialog.padding / 2,
-            y: this._input.y + inputHeight + spacing,
+        const _cancel_button = {
+            x: _confirm_button.x + Styles.Dialog.control_button_width + SPACING,
+            y: _input.y + INPUT_HEIGHT + SPACING,
             width: Styles.Dialog.control_button_width, height: Styles.Dialog.control_button_height
         };
 
-        if (target) this._input_state = { ...target };
-        else this._input_state = { type: "message", content: GetText("Example Message") };
-
-        this._text_input = new TextAreaItem(this._input, "InputMessage", { text: this._input_state.content });
+        this._text_input = new TextAreaItem(_input, "InputMessage", { text: this._input_state.content });
 
         this._items = [
-            new RoundFramedRect(this._dialog, Styles.Dialog.roundRadius, "White"),
-            new BasicText(this._title, GetText("Edit Message"), { align: "center" }),
+            new RoundFramedRect(_dialog, Styles.Dialog.roundRadius, "White"),
+            new BasicText(_title, GetText("MessagePopup::EditMessage"), { align: "center" }),
             this._text_input,
-            // new SegmentButton(this._type_segbutton, {
-            //     text: ["message", "action"].map(type => ({ display: GetText(type), value: type })),
-            //     init: this._input_state.type,
-            //     callback: (text) => {
-            //         this._input_state.type = text as ResponsiveMessage["type"];
-            //     }
-            // }),
-            new TextButton(this._insert_me_button, GetText("Insert Me"), () => {
+            new SegmentButton({
+                text: ["message", "action"].map(v => ({ display: GetText(`MessagePopup::Type::${v}`), value: v })),
+                binding: new MessageTypeBinding(this._input_state)
+            }, _type_segbutton),
+            new TextRoundButton(_insert_me_button, GetText("MessagePopup::InsertMe"), () => {
                 this._text_input.InsertAtCursor("{me}");
             }),
-            new TextButton(this._insert_other_button, GetText("Insert Other"), () => {
+            new TextRoundButton(_insert_other_button, GetText("MessagePopup::InsertOther"), () => {
                 this._text_input.InsertAtCursor("{other}");
             }),
-            new TextButton(this._confirm_button, GetText("Confirm"), () => {
-                target = { ... this._input_state };
+            new TextRoundButton(_delete_button, GetText("General::Delete"), () => {
+                this.Exit();
+                this._delete_callback(this._input_state);
+            }),
+            new TextRoundButton(_confirm_button, GetText("General::Confirm"), () => {
+                this._input_state.content = this._text_input.text;
+                this._confirm_callback(this._input_state);
                 this.Exit();
             }),
-            new TextButton(this._cancel_button, GetText("Cancel"), () => this.Exit())
+            new TextRoundButton(_cancel_button, GetText("General::Cancel"), () => this.Exit())
         ]
     }
 }

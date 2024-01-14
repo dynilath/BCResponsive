@@ -1,4 +1,5 @@
 import { DefaultPersonaIndex, DefaultPersonaName, MaxPersonalities } from "../Definition";
+import { GetText } from "../i18n";
 import { DefaultValueV1TriggerActivities } from "./V1";
 import { DefaultValueV1 } from "./V1";
 import { FirstOr } from "./types";
@@ -9,23 +10,23 @@ export function getDefaultPersonaList() {
     const action_mapper = (_: string) => { return { type: "action", content: _ } as ResponsiveMessage; };
 
     const default_personality: ResponsiveItem[] = [{
-        name: "Pain",
+        name: GetText("Default::ItemName::Pain"),
         enabled: true,
         trigger: {
             mode: "activity",
             allow_activities: DefaultValueV1TriggerActivities.pain
         },
-        messages: DefaultValueV1.pain.map(message_mapper).concat(["{me} feels the pain and frowned."].map(action_mapper))
+        messages: DefaultValueV1.pain.map(message_mapper).concat([GetText("Default::Message::PainAction")].map(action_mapper))
     }, {
-        name: "Tickle",
+        name: GetText("Default::ItemName::Tickle"),
         enabled: true,
         trigger: {
             mode: "activity",
             allow_activities: DefaultValueV1TriggerActivities.tickle,
         },
-        messages: DefaultValueV1.tickle.map(message_mapper).concat(["{me} squirms from the tickling."].map(action_mapper))
+        messages: DefaultValueV1.tickle.map(message_mapper).concat([GetText("Default::Message::TickleAction")].map(action_mapper))
     }, {
-        name: "Masturbate",
+        name: GetText("Default::ItemName::Masturbate"),
         enabled: true,
         trigger: {
             mode: "activity",
@@ -33,14 +34,14 @@ export function getDefaultPersonaList() {
         },
         messages: DefaultValueV1.hot.map(message_mapper)
     }, {
-        name: "Orgasm",
+        name: GetText("Default::ItemName::Orgasm"),
         enabled: true,
         trigger: {
             mode: "orgasm",
         },
         messages: DefaultValueV1.orgasm.map(message_mapper)
     }, {
-        name: "High Arousal",
+        name: GetText("Default::ItemName::HighArousal"),
         enabled: true,
         trigger: {
             mode: "spicer",
@@ -48,7 +49,7 @@ export function getDefaultPersonaList() {
         },
         messages: DefaultValueV1.hot.map(message_mapper)
     }, {
-        name: "Mid Arousal",
+        name: GetText("Default::ItemName::MidArousal"),
         enabled: true,
         trigger: {
             mode: "spicer",
@@ -57,7 +58,7 @@ export function getDefaultPersonaList() {
         },
         messages: DefaultValueV1.medium.map(message_mapper)
     }, {
-        name: "Low Arousal",
+        name: GetText("Default::ItemName::LowArousal"),
         enabled: true,
         trigger: {
             mode: "spicer",

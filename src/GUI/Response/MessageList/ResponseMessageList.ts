@@ -1,89 +1,140 @@
-import { setSubscreen } from "../../GUI";
+import { GUISettingScreen, setSubscreen } from "../../GUI";
 import { AGUIItem, IPoint, IRect, WithinRect } from "../../Widgets/AGUI";
-import { ADrawText, ADrawTextButton } from "../../Widgets/Common";
+import { ADrawCircleRect, ADrawCricleTextButton, ADrawIcon, ADrawRoundRect, ADrawText, ADrawTextButton, ADrawTextFit } from "../../Widgets/Common";
 import { MessageSettinPopup } from "./MessageSettingPopup";
 import { ResponseMenuState } from "../ResponseMenuState";
 import { TriggerSetting } from "../ResponseMenu";
+import { GetText } from "../../../i18n";
+import { Styles } from "../../../Definition";
+import { PageDial, PageDialBinding } from "../../Widgets/PageDial";
+
+const ROUND_BUTTON_DIAMETER = 40;
+
+function DrawMessageItem(message: ResponsiveMessage, active: boolean, mouse: IPoint, rect: IRect) {
+    if (active && WithinRect(mouse, rect))
+        ADrawCircleRect(rect, { fill: Styles.Button.hover });
+    else ADrawCircleRect(rect);
+
+    const _icon_rect = {
+        x: rect.x + rect.height / 2 - ROUND_BUTTON_DIAMETER / 2,
+        y: rect.y + rect.height / 2 - ROUND_BUTTON_DIAMETER / 2,
+        width: ROUND_BUTTON_DIAMETER,
+        height: ROUND_BUTTON_DIAMETER
+    };
+
+    const _text_rect = {
+        x: rect.x + rect.height,
+        y: rect.y,
+        width: rect.width - rect.height,
+        height: rect.height
+    };
+
+    if (message.type === "message")
+        ADrawIcon(_icon_rect, "chat");
+    else if (message.type === "action")
+        ADrawIcon(_icon_rect, "gesture");
+
+    ADrawTextFit(_text_rect, message.content);
+}
+
+
+const ITEM_HEIGHT = 60;
+const ITEM_SPACING = 10;
 
 export class ResponseMessageList extends AGUIItem {
     private readonly _state: ResponseMenuState;
 
+    private readonly _items_per_page: number;
+    private readonly _list_rect: IRect;
     private readonly _itemRects: IRect[];
 
-    private readonly _prevButton: IRect;
-    private readonly _nextButton: IRect;
-    private readonly _pageText: IPoint;
-
     private readonly _parent: TriggerSetting;
+
+    private pageBinding: PageDialBinding = {
+        page: 0,
+        maxPage: 0,
+        update: () => { }
+    };
+
+    private pageDial: PageDial;
 
     constructor(parent: TriggerSetting, state: ResponseMenuState, rect: IRect) {
         super();
         this._parent = parent;
         this._state = state;
 
-        const itemHeight = 60;
-        const spacing = 10;
+        this._items_per_page = Math.floor((rect.height - ITEM_SPACING - ITEM_HEIGHT) / (ITEM_HEIGHT + ITEM_SPACING));
 
-        const itemWidth = rect.width;
-        const itemBaseY = rect.y + spacing + itemHeight;
-        const itemBaseHeight = itemHeight;
+        this._list_rect = {
+            x: rect.x,
+            y: rect.y,
+            width: rect.width,
+            height: ITEM_SPACING + (ITEM_HEIGHT + ITEM_SPACING) * this._items_per_page
+        };
 
-        this._itemRects = Array.from({ length: 8 }, (_, index) => {
+        this._itemRects = Array.from({ length: this._items_per_page }, (_, index) => {
             return {
-                x: rect.x,
-                y: itemBaseY + (itemBaseHeight + spacing) * index,
-                width: itemWidth,
-                height: itemBaseHeight
+                x: rect.x + ITEM_SPACING,
+                y: rect.y + ITEM_SPACING + (ITEM_HEIGHT + ITEM_SPACING) * index,
+                width: rect.width - ITEM_SPACING * 2,
+                height: ITEM_HEIGHT
             };
         });
 
-        this._prevButton = { x: rect.x, y: rect.y, width: itemHeight, height: itemHeight };
-        this._nextButton = { x: rect.x + rect.width - itemHeight, y: rect.y, width: itemHeight, height: itemHeight };
-        this._pageText = { x: rect.x + rect.width / 2, y: rect.y + 30 };
-    }
+        const _page_dial = {
+            x: rect.x,
+            y: rect.y + rect.height - ITEM_HEIGHT,
+            width: rect.width,
+            height: ITEM_HEIGHT
+        };
 
-    private curPage: number = 0;
-    private maxPage: number = 0;
+        this.pageDial = new PageDial(_page_dial, this.pageBinding);
+    }
 
     Draw(hasFocus: boolean): void {
         if (this._state.targetItem === null) return;
 
-        const messages = this._state.targetItem.messages;
-        const itemPerPage = this._itemRects.length;
+        this.pageBinding.maxPage = Math.ceil((this._state.targetItem.messages.length + 1) / this._itemRects.length);
 
-        this.maxPage = Math.max(0, Math.ceil(messages.length / itemPerPage) - 1);
-        this.curPage = Math.max(0, Math.min(this.curPage, this.maxPage));
+        const mouse = { x: MouseX, y: MouseY };
+        const t_item = this._state.targetItem;
+
+        ADrawRoundRect(this._list_rect, ITEM_HEIGHT / 2 + ITEM_SPACING);
 
         this._itemRects.forEach((v, i) => {
-            const targetIndex = this.curPage * itemPerPage + i;
-            if (messages.length > targetIndex && targetIndex >= 0) {
-                const message = messages[targetIndex];
-                ADrawTextButton({ x: v.x, y: v.y, width: 100, height: v.height }, message.type, hasFocus);
-                ADrawTextButton({ x: v.x + 120, y: v.y, width: v.width - 120, height: v.height }, message.content, hasFocus);
-            } else if (messages.length === targetIndex) {
-                ADrawTextButton(v, "New Responses", hasFocus, { stroke: "DarkGrey" });
+            const targetIndex = this.pageBinding.page * this._items_per_page + i;
+            const tmessage = t_item.messages[targetIndex];
+
+            if (tmessage) {
+                DrawMessageItem(tmessage, hasFocus, mouse, v);
+            } else if (t_item.messages.length === targetIndex) {
+                ADrawCricleTextButton(v, "New Responses", hasFocus, { stroke: "DarkGrey" });
             }
         });
 
-        if (hasFocus) {
-            ADrawTextButton(this._prevButton, "<", hasFocus && this.curPage > 0, { stroke: hasFocus && this.curPage > 0 ? "Black" : "DarkGrey" });
-            ADrawTextButton(this._nextButton, ">", hasFocus && this.curPage < this.maxPage, { stroke: hasFocus && this.curPage < this.maxPage ? "Black" : "DarkGrey" });
-        }
-        ADrawText(this._pageText, `${this.curPage + 1}/${this.maxPage + 1}`, { align: "center" });
+        this.pageDial.Draw(hasFocus);
     }
 
     Click(mouse: IPoint): void {
         if (this._state.targetItem === null) return;
+        const t_item = this._state.targetItem;
 
-        if (WithinRect(mouse, this._prevButton)) {
-            this.curPage = Math.max(this.curPage - 1, 0);
-        } else if (WithinRect(mouse, this._nextButton)) {
-            this.curPage = Math.min(this.curPage + 1, this.maxPage);
-        } else {
+        this.pageDial.Click(mouse);
+
+        if (WithinRect(mouse, this._list_rect)) {
             this._itemRects.forEach((v, i) => {
-                const targetIndex = this.curPage * this._itemRects.length + i;
-                if (WithinRect(mouse, v) && this._state.targetItem !== null) {
-                    setSubscreen(new MessageSettinPopup(this._parent, this._state.targetItem.messages[targetIndex]));
+                const targetIndex = this.pageBinding.page * this._items_per_page + i;
+                const tmessage = t_item.messages[targetIndex];
+                if (tmessage && WithinRect(mouse, v)) {
+                    setSubscreen(new MessageSettinPopup(this._parent, tmessage, msg => {
+                        t_item.messages[targetIndex] = msg;
+                    }, _ => {
+                        t_item.messages.splice(targetIndex, 1);
+                    }));
+                } else if (t_item.messages.length === targetIndex && WithinRect(mouse, v)) {
+                    setSubscreen(new MessageSettinPopup(this._parent, { type: "message", content: GetText("Default::ExampleMessage") }, msg => {
+                        t_item.messages.push(msg);
+                    }, () => { }));
                 }
             });
         }

@@ -2,10 +2,32 @@ import { HTMLID } from "../GUI";
 import { AGUIItem, IRect } from "./AGUI";
 
 export class TextAreaItem extends AGUIItem {
-    _text: HTMLTextAreaElement;
-    _rect: IRect;
-    _id: string;
-    _bind: { text: string; };
+    private _text: HTMLTextAreaElement | undefined;
+    private _rect: IRect;
+    private _id: string;
+    private _bind: { text: string; };
+
+    get text() {
+        return this._text?.value ?? "";
+    }
+
+    private CreateTextArea() {
+        let text = document.createElement("textarea");
+        text.id = this._id;
+        text.name = this._id;
+        text.value = this._bind.text;
+        text.setAttribute("screen-generated", CurrentScreen);
+
+        text.className = "HideOnPopup";
+
+        text.onchange = () => {
+            this._bind.text = this.text;
+        };
+
+        document.body.appendChild(text);
+
+        return text;
+    }
 
     constructor(rect: IRect, id: string, bind: { text: string; }, hint?: string) {
         super();
@@ -13,27 +35,17 @@ export class TextAreaItem extends AGUIItem {
         this._id = HTMLID(id);
         this._bind = bind;
 
-        this._text = document.createElement("textarea");
-        this._text.id = this._id;
-        this._text.name = this._id;
-        this._text.value = bind.text;
-        this._text.setAttribute("screen-generated", CurrentScreen);
-
-        this._text.className = "HideOnPopup";
-
-        this._text.onchange = () => {
-            this._bind.text = this._text.value;
-        };
-
-        document.body.appendChild(this._text);
+        this._text = this.CreateTextArea();
     }
 
     Clear() {
+        if (!this._text) return;
         this._text.value = "";
         this._bind.text = "";
     }
 
     InsertAtCursor(text: string) {
+        if (!this._text) return;
         const start = this._text.selectionStart;
         const end = this._text.selectionEnd;
         const oldText = this._text.value;
@@ -43,6 +55,15 @@ export class TextAreaItem extends AGUIItem {
     }
 
     Draw(hasFocus: boolean): void {
+        if (!hasFocus) {
+            if (this._text) this._text.remove();
+            this._text = undefined;
+        }
+
+        if (!this._text) {
+            this._text = this.CreateTextArea();
+        }
+
         const HRatio = MainCanvas.canvas.clientHeight / 1000;
         const WRatio = MainCanvas.canvas.clientWidth / 2000;
         const Font = Math.min(MainCanvas.canvas.clientWidth / 50, MainCanvas.canvas.clientHeight / 25);
@@ -62,12 +83,11 @@ export class TextAreaItem extends AGUIItem {
             height: Height + "px",
             display: "inline"
         });
-
-        this._text.disabled = !hasFocus;
     }
 
     Unload() {
-        this._text.remove();
+        if (this._text) this._text.remove();
+        this._text = undefined;
     }
 }
 

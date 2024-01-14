@@ -86,7 +86,7 @@ export class SpicerModeInfo extends AGUIItem {
 
     Draw(hasFocus: boolean): void {
         this._state.asSpicer(v => {
-            this._components.forEach(v => v.Draw(false));
+            this._components.forEach(v => v.Draw(hasFocus));
         }, () => {
             this._editList.forEach(v => v.Draw(false));
         });

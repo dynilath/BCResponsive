@@ -1,6 +1,6 @@
 import { Styles } from "../../Definition";
 import { AGUIItem, IRect, WithinRect, IPoint } from "./AGUI";
-import { ADrawCircleRect, ADrawRoundRect, ADrawTextFit, ADrawVerticalCircleRect } from "./Common";
+import { ADrawCircleRect, ADrawIcon, ADrawRoundRect, ADrawTextFit, ADrawVerticalCircleRect } from "./Common";
 
 const CHIPS_HEIGHT = 50;
 const CHIPS_SPACING = 10;
@@ -162,19 +162,38 @@ export class ChipsPark extends AGUIItem {
             if (hasFocus && WithinRect(mouse, this.scrollbar.up))
                 ADrawVerticalCircleRect(this.scrollbar.up, { fill: Styles.Button.hover });
             else ADrawVerticalCircleRect(this.scrollbar.up);
+
+            ADrawIcon({
+                x: this.scrollbar.up.x,
+                y: this.scrollbar.up.y + this.scrollbar.up.height / 2 - this.scrollbar.up.width / 2,
+                width: this.scrollbar.up.width,
+                height: this.scrollbar.up.width
+            }, "arrow_up");
+
             if (hasFocus && WithinRect(mouse, this.scrollbar.down))
                 ADrawVerticalCircleRect(this.scrollbar.down, { fill: Styles.Button.hover });
             else ADrawVerticalCircleRect(this.scrollbar.down);
 
+            ADrawIcon({
+                x: this.scrollbar.down.x,
+                y: this.scrollbar.down.y + this.scrollbar.down.height / 2 - this.scrollbar.down.width / 2,
+                width: this.scrollbar.down.width,
+                height: this.scrollbar.down.width
+            }, "arrow_down");
+
             ADrawVerticalCircleRect(this.scrollbar.scroll);
 
             const bar_y = this.scrollbar.scroll.y + SCROLLBAR_SPACING + this.scrollbar.bar_offset;
-            ADrawVerticalCircleRect({
+            const bar_rect = {
                 x: this.scrollbar.scroll.x + SCROLLBAR_SPACING,
                 y: bar_y,
                 width: this.scrollbar.scroll.width - SCROLLBAR_SPACING * 2,
                 height: this.scrollbar.bar_height
-            });
+            };
+
+            if (hasFocus && WithinRect(mouse, this.scrollbar.scroll))
+                ADrawVerticalCircleRect(bar_rect, { fill: Styles.Button.hover });
+            else ADrawVerticalCircleRect(bar_rect);
         }
     }
 

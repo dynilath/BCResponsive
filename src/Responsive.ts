@@ -15,7 +15,7 @@ import { GUIMainMenu } from './GUI/MainMenu';
 
     mod.hookFunction('ChatRoomMessage', 9, (args, next) => {
         next(args);
-        ActivityHandle(Player, args[0] as IChatRoomMessage);
+        ActivityHandle(Player, args[0] as ServerChatRoomMessage);
     });
 
     mod.hookFunction('ActivityOrgasmStart', 9, (args, next) => {

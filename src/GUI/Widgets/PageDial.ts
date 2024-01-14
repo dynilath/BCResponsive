@@ -79,9 +79,9 @@ export class PageDial extends AGUIItem {
             } else {
                 ADrawCircleRect(this._prev_page_button, { fill: Styles.Button.idle, stroke: "none" });
             }
-            ADrawIcon(this._prev_page_button_icon, "prev");
+            ADrawIcon(this._prev_page_button_icon, "arrow_left");
         } else {
-            ADrawIcon(this._prev_page_button_icon, "prev");
+            ADrawIcon(this._prev_page_button_icon, "arrow_left");
             AFillRect(this._prev_page_button_icon, "#FFFFFF80");
         }
 
@@ -91,9 +91,9 @@ export class PageDial extends AGUIItem {
             } else {
                 ADrawCircleRect(this._next_page_button, { fill: Styles.Button.idle, stroke: "none" });
             }
-            ADrawIcon(this._next_page_button_icon, "next");
+            ADrawIcon(this._next_page_button_icon, "arrow_right");
         } else {
-            ADrawIcon(this._next_page_button_icon, "next");
+            ADrawIcon(this._next_page_button_icon, "arrow_right");
             AFillRect(this._next_page_button_icon, "#FFFFFF80");
         }
 
