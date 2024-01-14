@@ -18,6 +18,7 @@ export function InvokeResponse(data: TriggerData, player: Character | undefined,
 function InvokeResponseForActivity(persona: ResponsivePersonality, data: TriggerDataActivity, player: Character | undefined, target: Character | undefined) {
     let selected = (() => {
         let actived_messages = persona.responses.filter(i => {
+            if (!i.enabled) return false;
             const trigger = i.trigger;
             if (trigger.mode !== "activity") return false;
             if (trigger.allow_activities !== undefined && !trigger.allow_activities.includes(data.activity)) return false;
@@ -34,6 +35,7 @@ function InvokeResponseForActivity(persona: ResponsivePersonality, data: Trigger
     if (selected.type === "message") {
         let selected_spicer = (() => {
             let actived_spicers = persona.responses.filter(i => {
+                if (!i.enabled) return false;
                 const trigger = i.trigger;
                 if (trigger.mode !== "spicer") return false;
                 if (trigger.min_arousal !== undefined && data.arousal < trigger.min_arousal) return false;
@@ -57,6 +59,7 @@ function InvokeResponseForActivity(persona: ResponsivePersonality, data: Trigger
 function InvokeResponseForOrgasm(persona: ResponsivePersonality, data: TriggerDataOrgasm, player: Character | undefined) {
     let selected = (() => {
         let actived_messages = persona.responses.filter(i => {
+            if (!i.enabled) return false;
             const trigger = i.trigger;
             if (trigger.mode !== "orgasm") return false;
             return true;
