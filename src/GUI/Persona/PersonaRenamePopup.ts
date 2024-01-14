@@ -1,11 +1,11 @@
-import { Styles } from "../../Definition";
+import { MaxNameLength, Styles } from "../../Definition";
 import { GetText } from "../../i18n";
 import { GUISettingScreen } from "../GUI";
 import { TextRoundButton } from "../Widgets/Button";
 import { RoundFramedRect } from "../Widgets/Common";
-import { TextAreaItem, TextInput } from "../Widgets/InputText";
+import { TextInput } from "../Widgets/InputText";
 import { Popup } from "../Widgets/Popup";
-import { BasicText, DynamicText } from "../Widgets/Text";
+import { BasicText } from "../Widgets/Text";
 
 const FONT_SIZE = 36;
 const INPUT_HEIGHT = 100;
@@ -60,7 +60,7 @@ export class PersonaRemamePopup extends Popup {
             new BasicText(_title, GetText("PersonaRename::Title"), { align: "center" }),
             this._input,
             new TextRoundButton(_confirm_button, GetText("General::Confirm"), () => {
-                confirm(this._input.text);
+                confirm(this._input.text.substring(0, MaxNameLength));
                 this.Exit();
             }),
             new TextRoundButton(_cancel_button, GetText("General::Cancel"), () => {

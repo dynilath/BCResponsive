@@ -1,5 +1,5 @@
 import { DataManager, isTriggerActivity, isTriggerOrgasm, isTriggerSpicer } from "../../Data";
-import { MaxTriggerNameLength } from "../../Definition";
+import { MaxNameLength } from "../../Definition";
 import { GetText } from "../../i18n";
 import { Binding } from "../Widgets/Binding";
 
@@ -15,7 +15,7 @@ class NameProperty extends Binding<string> {
     }
     set value(v: string) {
         if (this._state.targetItem !== null) {
-            this._state.targetItem.name = v.substring(0, MaxTriggerNameLength);
+            this._state.targetItem.name = v.substring(0, MaxNameLength);
             DataManager.save();
         }
     }
