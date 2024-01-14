@@ -1,3 +1,4 @@
+import { DataManager } from "../../../Data";
 import { DefaultValueV1TriggerActivities } from "../../../Data/V1";
 import { Styles } from "../../../Definition";
 import { GetText } from "../../../i18n";
@@ -151,6 +152,7 @@ export class ActivityPopup extends Popup {
                     if (this.editing.size === _chips_value.length) v.allow_activities = undefined;
                     else v.allow_activities = [...this.editing]
                 });
+                DataManager.save();
                 this.Exit();
             }),
             new TextRoundButton(_dialog_cancel, GetText("General::Cancel"), () => this.Exit()),

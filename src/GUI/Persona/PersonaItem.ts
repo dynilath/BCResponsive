@@ -3,17 +3,22 @@ import { Styles } from "../../Definition";
 import { GetText } from "../../i18n";
 import { GUISettingScreen, setSubscreen } from "../GUI";
 import { AGUIItem, IPoint, IRect, WithinRect } from "../Widgets/AGUI";
-import { ADrawCricleTextButton, ADrawFramedRect, ADrawRoundRect, ADrawText, AFillRect, AStrokeRect } from "../Widgets/Common";
+import { ADrawCricleTextButton, ADrawRoundRect, ADrawText, ADrawTextFit } from "../Widgets/Common";
 import { PersonaImportScreen } from "./PersonaImportScreen";
+import { PersonaRemamePopup } from "./PersonaRenamePopup";
+
+const EXPAND_MARGIN = 10;
 
 export class PersonaItem extends AGUIItem {
     private readonly _index: number;
     private readonly _rect: IRect;
 
+    private readonly _rename_rect: IRect;
     private readonly _import_rect: IRect;
-    private readonly _activated_img_pos: IPoint
     private readonly _delete_rect: IRect;
-    private readonly _name_point: IPoint;
+    private readonly _name_rect: IRect;
+
+    private readonly _new_rect: IRect;
 
     private readonly _parent: GUISettingScreen | null;
 
@@ -23,44 +28,52 @@ export class PersonaItem extends AGUIItem {
         this._rect = rect;
         this._parent = parent;
 
-        const centerX = this._rect.x + this._rect.width / 2;
-        const centerY = this._rect.y + this._rect.height / 2;
+        const button_width = Math.max(rect.width * 0.8, 120);
+        const button_height = Math.max(rect.height * 0.1, 60);
+        const spacing = Math.min(rect.height * 0.1, 10);
 
-        const fontSize = 36;
+        const center_x = rect.x + rect.width / 2;
+        const center_y = rect.y + rect.height / 2;
 
-        const upperPartHeight = Math.max(this._rect.height * 0.618, fontSize);
-        const upperPartCenterY = this._rect.y + upperPartHeight / 2;
-        const lowerPartCenterY = upperPartCenterY + this._rect.height / 2;
+        const text_area_height = 60;
 
-        const verticalSpacing = Math.min(this._rect.height * 0.1, 10);
-        const buttonWidth = Math.max(this._rect.width * 0.8, 120);
-        const buttonHeight = Math.max(this._rect.height * 0.1, 60);
+        const lower_part_height = button_height * 3 + spacing * 2;
 
-        const baseButtonX = centerX - buttonWidth / 2;
-        const baseButtonY = lowerPartCenterY - buttonHeight;
+        const upper_center_y = rect.y + (rect.height - lower_part_height - spacing) / 2;
+
+        this._rename_rect = {
+            x: rect.x + rect.width / 2 - button_width / 2,
+            y: rect.y + rect.height - lower_part_height - spacing - EXPAND_MARGIN,
+            width: button_width,
+            height: button_height
+        };
 
         this._import_rect = {
-            x: baseButtonX,
-            y: baseButtonY,
-            width: buttonWidth,
-            height: buttonHeight
+            x: this._rename_rect.x,
+            y: this._rename_rect.y + (button_height + spacing),
+            width: button_width,
+            height: button_height
         };
 
         this._delete_rect = {
-            x: baseButtonX,
-            y: baseButtonY + (buttonHeight + verticalSpacing),
-            width: buttonWidth,
-            height: buttonHeight
+            x: this._import_rect.x,
+            y: this._import_rect.y + (button_height + spacing),
+            width: button_width,
+            height: button_height
         };
 
-        this._activated_img_pos = {
-            x: centerX - 30,
-            y: baseButtonY + verticalSpacing + buttonHeight
-        }
+        this._name_rect = {
+            x: rect.x,
+            y: upper_center_y - text_area_height / 2,
+            width: rect.width - spacing * 2,
+            height: text_area_height
+        };
 
-        this._name_point = {
-            x: centerX,
-            y: upperPartCenterY - fontSize / 2
+        this._new_rect = {
+            x: rect.x,
+            y: rect.y + rect.height / 2,
+            width: rect.width - spacing * 2,
+            height: text_area_height
         };
     }
 
@@ -86,7 +99,7 @@ export class PersonaItem extends AGUIItem {
         const delta = now - this._focusState.lastUpdate;
         this._focusState.lastUpdate = now;
 
-        const expand_margin = 10 * (1 - this._focusState.value);
+        const expand_margin = EXPAND_MARGIN * (1 - this._focusState.value);
         const adjusted_rect = {
             x: this._rect.x + expand_margin,
             y: this._rect.y + expand_margin,
@@ -94,11 +107,15 @@ export class PersonaItem extends AGUIItem {
             height: this._rect.height - expand_margin * 2
         };
 
-        if (hasFocus && WithinRect({ x: MouseX, y: MouseY }, adjusted_rect)
-            && !((persona && WithinRect({ x: MouseX, y: MouseY }, this._import_rect))
-                || (persona && DataManager.active_personality !== persona && WithinRect({ x: MouseX, y: MouseY }, this._delete_rect)))) {
-            this._focusState.state = 'focused';
+        const mouse = { x: MouseX, y: MouseY };
+
+        if (hasFocus && WithinRect(mouse, adjusted_rect)) {
             this._focusState.value = Math.min(1, this._focusState.value + delta / 100);
+            if (!persona) this._focusState.state = 'focused';
+            else if (DataManager.active_personality !== persona && WithinRect(mouse, this._delete_rect)) { }
+            else if (WithinRect(mouse, this._rename_rect)) { }
+            else if (WithinRect(mouse, this._import_rect)) { }
+            else this._focusState.state = 'focused';
         }
         else {
             this._focusState.state = 'idle';
@@ -106,8 +123,6 @@ export class PersonaItem extends AGUIItem {
         }
 
         if (persona) {
-            const mouse = { x: MouseX, y: MouseY };
-
             if (DataManager.active_personality === persona) {
                 ADrawRoundRect(adjusted_rect, Styles.Dialog.roundRadius, { fill: Styles.SegmentButton.active, stroke: "none" });
             }
@@ -117,20 +132,18 @@ export class PersonaItem extends AGUIItem {
             else
                 ADrawRoundRect(adjusted_rect, Styles.Dialog.roundRadius);
 
+            ADrawTextFit(this._name_rect, persona.name);
+            ADrawCricleTextButton(this._rename_rect, GetText("PersonaMenu::EditName"), hasFocus);
+            ADrawCricleTextButton(this._import_rect, GetText("PersonaMenu::Import"), hasFocus);
 
-            ADrawText(this._name_point, persona.name, { align: "center" });
-            ADrawCricleTextButton(this._import_rect, GetText("PersonaMenu::Edit"), hasFocus);
-
-            if (DataManager.active_personality === persona)
-                DrawImage("Icons/Checked.png", this._activated_img_pos.x, this._activated_img_pos.y);
-            else {
+            if (DataManager.active_personality !== persona) {
                 if (this.deleteState === 0) ADrawCricleTextButton(this._delete_rect, GetText("PersonaMenu::Delete"), hasFocus);
                 else ADrawCricleTextButton(this._delete_rect, GetText("PersonaMenu::Confirm?"), hasFocus, { idle: 'Pink', hover: 'Red' });
             }
         } else {
             if (this._focusState.state === 'focused') ADrawRoundRect(adjusted_rect, Styles.Dialog.roundRadius, { fill: Styles.SegmentButton.hover, stroke: 'DarkGrey' });
             else ADrawRoundRect(adjusted_rect, Styles.Dialog.roundRadius, { stroke: 'DarkGrey' });
-            ADrawText({ x: this._rect.x + this._rect.width / 2, y: this._rect.y + this._rect.height / 2 }, GetText("PersonaMenu::CreateNew"), { align: "center" });
+            ADrawTextFit(this._new_rect, GetText("PersonaMenu::CreateNew"));
         }
     }
 
@@ -148,9 +161,16 @@ export class PersonaItem extends AGUIItem {
         let notdelete = true;
 
         if (persona) {
-            if (WithinRect(mouse, this._import_rect)) {
+            if (WithinRect(mouse, this._rename_rect)) {
+                setSubscreen(new PersonaRemamePopup(this._parent, persona, n => {
+                    persona.name = n;
+                    DataManager.save();
+                }));
+            }
+            else if (WithinRect(mouse, this._import_rect)) {
                 setSubscreen(new PersonaImportScreen(this._parent, this._index));
-            } else if (WithinRect(mouse, this._delete_rect)) {
+            }
+            else if (WithinRect(mouse, this._delete_rect)) {
                 if (this.deleteState === 0) {
                     this.deleteState = 1;
                 } else {
@@ -159,8 +179,10 @@ export class PersonaItem extends AGUIItem {
                 }
                 notdelete = false;
             } else if (WithinRect(mouse, adjusted_rect)) {
-                if (DataManager.active_personality !== persona)
+                if (DataManager.active_personality !== persona) {
                     DataManager.active_personality = persona;
+                    DataManager.save();
+                }
             }
         } else {
             if (WithinRect(mouse, adjusted_rect)) {
@@ -169,6 +191,7 @@ export class PersonaItem extends AGUIItem {
                     index: this._index,
                     responses: [],
                 };
+                DataManager.save();
             }
         }
 

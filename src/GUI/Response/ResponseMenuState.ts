@@ -1,4 +1,4 @@
-import { isTriggerActivity, isTriggerOrgasm, isTriggerSpicer } from "../../Data";
+import { DataManager, isTriggerActivity, isTriggerOrgasm, isTriggerSpicer } from "../../Data";
 import { MaxTriggerNameLength } from "../../Definition";
 import { GetText } from "../../i18n";
 import { Binding } from "../Widgets/Binding";
@@ -16,6 +16,7 @@ class NameProperty extends Binding<string> {
     set value(v: string) {
         if (this._state.targetItem !== null) {
             this._state.targetItem.name = v.substring(0, MaxTriggerNameLength);
+            DataManager.save();
         }
     }
 }
@@ -33,6 +34,7 @@ class EnabledProperty extends Binding<boolean> {
     set value(v: boolean) {
         if (this._state.targetItem !== null) {
             this._state.targetItem.enabled = v;
+            DataManager.save();
         }
     }
 }
@@ -50,6 +52,7 @@ class ModeProperty extends Binding<string> {
     set value(v: string) {
         if (this._state.targetItem !== null) {
             this._state.targetItem.trigger.mode = v as ResponsiveTriggerMode;
+            DataManager.save();
         }
     }
 }
@@ -80,6 +83,7 @@ class TriggerSpicerProperty extends Binding<string> {
                     if (nv < 0) nv = 0;
                     if (nv > 100) nv = 100;
                     (tv[this._property] as number | undefined) = nv;
+                    DataManager.save();
                 }
             }
         }
@@ -100,6 +104,7 @@ class SpicerApplyFavoriteProperty extends Binding<boolean> {
     set value(v: boolean) {
         if (this._state.targetItem !== null) {
             (this._state.targetItem.trigger as ResponsiveTriggerSpicer).apply_favorite = v;
+            DataManager.save();
         }
     }
 

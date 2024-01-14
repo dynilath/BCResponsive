@@ -1,10 +1,11 @@
+import { DataManager } from "../../../Data";
 import { Styles } from "../../../Definition";
 import { GetText } from "../../../i18n";
 import { GUISettingScreen } from "../../GUI";
 import { AGUIItem, IPoint, IRect, WithinRect } from "../../Widgets/AGUI";
 import { TextRoundButton } from "../../Widgets/Button";
 import { ADrawCricleIconButton, ADrawRoundRect, ADrawTextFit, RoundFramedRect } from "../../Widgets/Common";
-import { InputItem } from "../../Widgets/InputText";
+import { TextInput } from "../../Widgets/InputText";
 import { PageDial, PageDialBinding } from "../../Widgets/PageDial";
 import { Popup } from "../../Widgets/Popup";
 import { BasicText } from "../../Widgets/Text";
@@ -198,7 +199,7 @@ export class MemberListPopup extends Popup {
             height: Styles.Dialog.control_button_height
         };
 
-        const text_input = new InputItem(_input, "MemberNumberInput", "", GetText("MemberListPopup::InputID"));
+        const text_input = new TextInput(_input, "MemberNumberInput", "", GetText("MemberListPopup::InputID"));
 
         this._items = [
             new RoundFramedRect(_dialog, Styles.Dialog.roundRadius, "White"),
@@ -218,6 +219,7 @@ export class MemberListPopup extends Popup {
             new TextRoundButton(_cancel_button, GetText("General::Cancel"), () => this.Exit()),
             new TextRoundButton(_confirm_button, GetText("General::Confirm"), () => {
                 this.source_member_list.splice(0, this.source_member_list.length, ...this.editing_member_list);
+                DataManager.save();
                 this.Exit();
             })
         ]

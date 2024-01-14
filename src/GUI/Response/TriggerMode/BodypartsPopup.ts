@@ -1,3 +1,4 @@
+import { DataManager } from "../../../Data";
 import { Styles } from "../../../Definition";
 import { GetText } from "../../../i18n";
 import { GUISettingScreen } from "../../GUI";
@@ -110,6 +111,7 @@ export class BodypartsPopup extends Popup {
                     if (this.editing.size === _chips_value.length) v.allow_bodyparts = undefined;
                     else v.allow_bodyparts = [...this.editing]
                 });
+                DataManager.save();
                 this.Exit();
             }),
             new TextRoundButton(_cancel_button, GetText("General::Cancel"), () => this.Exit())

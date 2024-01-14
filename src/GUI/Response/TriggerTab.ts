@@ -1,3 +1,4 @@
+import { DataManager } from "../../Data";
 import { Styles } from "../../Definition";
 import { GetText } from "../../i18n";
 import { AGUIItem, IPoint, IRect, ISize, WithinRect } from "../Widgets/AGUI";
@@ -102,6 +103,7 @@ export class TriggerTab extends AGUIItem {
                 if (targetIdx == this._parent.targetPersona.responses.length) {
                     this._parent.targetPersona.responses.push({ name: GetText("Default::NewResponseName"), enabled: false, trigger: { mode: "activity", allow_activities: [] }, messages: [] });
                     this._parent.targetItem = this._parent.targetPersona.responses[targetIdx];
+                    DataManager.save();
                 } else if (targetIdx < this._parent.targetPersona.responses.length) {
                     this._parent.targetItem = this._parent.targetPersona.responses[targetIdx];
                 }

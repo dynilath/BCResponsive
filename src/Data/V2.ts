@@ -6,7 +6,9 @@ import { isStringArray, isNumberArray } from "./types";
 
 export function pickV2Setting(data: any): ResponsiveSettingV2 {
     if (!((d: any): d is ResponsiveSettingV2 => {
-        return typeof d === "object" && typeof d.settings === "object" && typeof d.active_personality === "string" && Array.isArray(d.personalities);
+        return typeof d === "object" && typeof d.settings === "object"
+            && (d.active_personality === null || typeof d.active_personality === "number")
+            && Array.isArray(d.personalities);
     })(data)) return getDefaultSettings();
 
     let ret = {};
@@ -60,7 +62,7 @@ export function V1SettingToV2Setting(data: ResponsiveSettingV1): ResponsiveSetti
 }
 export function V2ValidatePersonality(arg: any): ResponsivePersonality | undefined {
     if (!((d: any): d is ResponsivePersonality => {
-        return typeof d === "object" && typeof d.name === "string" && typeof d.index === "number" && Array.isArray(d.responses);
+        return d !== undefined && d !== null && typeof d === "object" && typeof d.name === "string" && typeof d.index === "number" && Array.isArray(d.responses);
     })(arg)) return undefined;
 
     let responses = arg.responses.map((j: any): ResponsiveItem | undefined => {

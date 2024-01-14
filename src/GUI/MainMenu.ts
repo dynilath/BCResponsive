@@ -26,6 +26,7 @@ class MasterSwitch extends Binding<boolean> {
     }
     set value(v: boolean) {
         DataManager.instance.data.settings.enabled = v;
+        DataManager.save();
     }
 
     static instance: MasterSwitch = new MasterSwitch();

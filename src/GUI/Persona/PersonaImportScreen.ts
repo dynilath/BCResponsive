@@ -55,14 +55,14 @@ export class PersonaImportScreen extends Popup {
                 if (this._lastInputInvalid) {
                     return {
                         where: { x: centerX, y: centerY - totalHeight / 2 + FontSize / 2 },
-                        text: GetText("PersonaEdit::InvalidInput"),
+                        text: GetText("PersonaImport::InvalidInput"),
                         align: "center",
                         color: "Red"
                     }
                 }
                 return {
                     where: { x: centerX, y: centerY - totalHeight / 2 + FontSize / 2 },
-                    text: GetText("PersonaEdit::Title"),
+                    text: GetText("PersonaImport::Title"),
                     align: "center",
                     color: "Black"
                 }

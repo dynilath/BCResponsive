@@ -7,6 +7,7 @@ import { TriggerSetting } from "../ResponseMenu";
 import { GetText } from "../../../i18n";
 import { Styles } from "../../../Definition";
 import { PageDial, PageDialBinding } from "../../Widgets/PageDial";
+import { DataManager } from "../../../Data";
 
 const ROUND_BUTTON_DIAMETER = 40;
 
@@ -128,12 +129,15 @@ export class ResponseMessageList extends AGUIItem {
                 if (tmessage && WithinRect(mouse, v)) {
                     setSubscreen(new MessageSettinPopup(this._parent, tmessage, msg => {
                         t_item.messages[targetIndex] = msg;
+                        DataManager.save();
                     }, _ => {
                         t_item.messages.splice(targetIndex, 1);
+                        DataManager.save();
                     }));
                 } else if (t_item.messages.length === targetIndex && WithinRect(mouse, v)) {
                     setSubscreen(new MessageSettinPopup(this._parent, { type: "message", content: GetText("Default::ExampleMessage") }, msg => {
                         t_item.messages.push(msg);
+                        DataManager.save();
                     }, () => { }));
                 }
             });

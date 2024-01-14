@@ -27,7 +27,7 @@ import { GUIMainMenu } from './GUI/MainMenu';
     DataManager.init();
 
     function LoadAndMessage() {
-        DataManager.instance.ServerTakeData();
+        DataManager.load();
         console.log(`${ModName} v${ModVersion} ready.`);
     }
 
