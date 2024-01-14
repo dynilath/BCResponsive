@@ -45,6 +45,7 @@ export const CNTextMap = new Map<string, string>([
     ["PersonaMenu::CreateNew", "创建新人格"],
     ["PersonaImport::Title", "导入/导出人格"],
     ["PersonaImport::InvalidInput", "导入格式错误"],
+    ["PersonaRename::Title", "输入新名称"],
     ["TriggerMode::activity", "互动"],
     ["TriggerMode::orgasm", "高潮"],
     ["TriggerMode::spicer", "趣味"],

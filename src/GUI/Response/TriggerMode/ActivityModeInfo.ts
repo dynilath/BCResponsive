@@ -58,7 +58,7 @@ export class ActivityModeInfo extends AGUIItem {
                     if (act === undefined)
                         return GetText("TriggerInfo::AllActivities");
                     if (act.length === 0)
-                        return GetText("TriggerInfo::NoActivity");
+                        return GetText("TriggerInfo::NoActivities");
                     let result = act.slice(0, 3).map(a => ActivityDictionaryText(`Activity${a}`)).join(", ");
                     if (act.length > 3) result += GetText("TriggerInfo::AndMore", [act.length - 3]);
                     return result;

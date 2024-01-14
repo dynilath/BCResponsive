@@ -57,7 +57,7 @@ export class PersonaRemamePopup extends Popup {
 
         this._items = [
             new RoundFramedRect(_dialog, Styles.Dialog.roundRadius, "White"),
-            new BasicText(_title, GetText("PersonaRename::Title")),
+            new BasicText(_title, GetText("PersonaRename::Title"), { align: "center" }),
             this._input,
             new TextRoundButton(_confirm_button, GetText("General::Confirm"), () => {
                 confirm(this._input.text);

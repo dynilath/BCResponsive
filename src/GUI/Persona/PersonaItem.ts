@@ -63,7 +63,7 @@ export class PersonaItem extends AGUIItem {
         };
 
         this._name_rect = {
-            x: rect.x,
+            x: rect.x + spacing,
             y: upper_center_y - text_area_height / 2,
             width: rect.width - spacing * 2,
             height: text_area_height

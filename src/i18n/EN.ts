@@ -45,6 +45,7 @@ export const ENTextMap = new Map<string, string>([
     ["PersonaMenu::CreateNew", "Create New"],
     ["PersonaImport::Title", "Import/Export Personality"],
     ["PersonaImport::InvalidInput", "Invalid Input"],
+    ["PersonaRename::Title", "Enter New Name"],
     ["TriggerMode::activity", "Activity"],
     ["TriggerMode::orgasm", "Orgasm"],
     ["TriggerMode::spicer", "Spicer"],
