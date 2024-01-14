@@ -65,6 +65,7 @@ export const CNTextMap = new Map<string, string>([
     ["TriggerInfo::MinArousal", "最低性奋："],
     ["TriggerInfo::MaxArousal", "最高性奋："],
     ["TriggerInfo::ApplyFavorite", "应用喜好："],
+    ["TriggerInfo::NewResponses", "新响应消息"],
     ["MemberListPopup::Title", "编辑玩家列表"],
     ["MemberListPopup::InputID", "输入玩家ID"],
     ["BodypartsPopup::Title", "编辑身体部位列表"],

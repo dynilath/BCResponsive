@@ -109,7 +109,7 @@ export class ResponseMessageList extends AGUIItem {
             if (tmessage) {
                 DrawMessageItem(tmessage, hasFocus, mouse, v);
             } else if (t_item.messages.length === targetIndex) {
-                ADrawCricleTextButton(v, "New Responses", hasFocus, { stroke: "DarkGrey" });
+                ADrawCricleTextButton(v, GetText("TriggerInfo::NewResponses"), hasFocus, { stroke: "DarkGrey" });
             }
         });
 
