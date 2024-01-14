@@ -18,7 +18,7 @@ export function pickV2Setting(data: any): ResponsiveSettingV2 {
         Object.assign(ret, { settings: { enabled: true } });
     }
 
-    if (typeof data.active_personality === "string") {
+    if (typeof data.active_personality === "number") {
         Object.assign(ret, { active_personality: data.active_personality });
     } else {
         Object.assign(ret, { active_personality: null });
@@ -33,9 +33,9 @@ export function pickV2Setting(data: any): ResponsiveSettingV2 {
             result_array.push(triggers.find(_ => _.index === i));
         }
 
-        Object.assign(ret, { triggers: result_array });
+        Object.assign(ret, { personalities: result_array });
     } else {
-        Object.assign(ret, { triggers: [] });
+        Object.assign(ret, { personalities: [] });
     }
 
     return ret as ResponsiveSettingV2;
@@ -88,7 +88,7 @@ export function V2ValidatePersonality(arg: any): ResponsivePersonality | undefin
                 if (min_arousal !== undefined && typeof min_arousal !== "number") return undefined;
                 if (max_arousal !== undefined && typeof max_arousal !== "number") return undefined;
                 if (apply_favorite !== undefined && typeof apply_favorite !== "boolean") return undefined;
-                if (!isNumberArray(allow_ids)) return undefined;
+                if (allow_ids !== undefined && !isNumberArray(allow_ids)) return undefined;
                 return { mode: "spicer", min_arousal, max_arousal, apply_favorite, allow_ids };
             }
             return undefined;

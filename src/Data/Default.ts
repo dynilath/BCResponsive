@@ -53,8 +53,8 @@ export function getDefaultPersonaList() {
         enabled: true,
         trigger: {
             mode: "spicer",
+            min_arousal: 50,
             max_arousal: 80,
-            min_arousal: 50
         },
         messages: DefaultValueV1.medium.map(message_mapper)
     }, {
