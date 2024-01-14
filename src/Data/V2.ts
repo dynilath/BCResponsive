@@ -6,7 +6,9 @@ import { isStringArray, isNumberArray } from "./types";
 
 export function pickV2Setting(data: any): ResponsiveSettingV2 {
     if (!((d: any): d is ResponsiveSettingV2 => {
-        return typeof d === "object" && typeof d.settings === "object" && typeof d.active_personality === "string" && Array.isArray(d.personalities);
+        return typeof d === "object" && typeof d.settings === "object"
+            && (d.active_personality === null || typeof d.active_personality === "number")
+            && Array.isArray(d.personalities);
     })(data)) return getDefaultSettings();
 
     let ret = {};
@@ -16,7 +18,7 @@ export function pickV2Setting(data: any): ResponsiveSettingV2 {
         Object.assign(ret, { settings: { enabled: true } });
     }
 
-    if (typeof data.active_personality === "string") {
+    if (typeof data.active_personality === "number") {
         Object.assign(ret, { active_personality: data.active_personality });
     } else {
         Object.assign(ret, { active_personality: null });
@@ -31,9 +33,9 @@ export function pickV2Setting(data: any): ResponsiveSettingV2 {
             result_array.push(triggers.find(_ => _.index === i));
         }
 
-        Object.assign(ret, { triggers: result_array });
+        Object.assign(ret, { personalities: result_array });
     } else {
-        Object.assign(ret, { triggers: [] });
+        Object.assign(ret, { personalities: [] });
     }
 
     return ret as ResponsiveSettingV2;
@@ -60,7 +62,7 @@ export function V1SettingToV2Setting(data: ResponsiveSettingV1): ResponsiveSetti
 }
 export function V2ValidatePersonality(arg: any): ResponsivePersonality | undefined {
     if (!((d: any): d is ResponsivePersonality => {
-        return typeof d === "object" && typeof d.name === "string" && typeof d.index === "number" && Array.isArray(d.responses);
+        return d !== undefined && d !== null && typeof d === "object" && typeof d.name === "string" && typeof d.index === "number" && Array.isArray(d.responses);
     })(arg)) return undefined;
 
     let responses = arg.responses.map((j: any): ResponsiveItem | undefined => {
@@ -86,7 +88,7 @@ export function V2ValidatePersonality(arg: any): ResponsivePersonality | undefin
                 if (min_arousal !== undefined && typeof min_arousal !== "number") return undefined;
                 if (max_arousal !== undefined && typeof max_arousal !== "number") return undefined;
                 if (apply_favorite !== undefined && typeof apply_favorite !== "boolean") return undefined;
-                if (!isNumberArray(allow_ids)) return undefined;
+                if (allow_ids !== undefined && !isNumberArray(allow_ids)) return undefined;
                 return { mode: "spicer", min_arousal, max_arousal, apply_favorite, allow_ids };
             }
             return undefined;
@@ -104,7 +106,7 @@ export function V2ValidatePersonality(arg: any): ResponsivePersonality | undefin
             return { type: k.type, content: k.content };
         }).filter((_: any) => _ !== undefined) as ResponsiveMessage[];
 
-        return { name: j.name, trigger: trigger, messages: messages };
+        return { name: j.name, enabled: true, trigger: trigger, messages: messages };
     }).filter((_: any) => _ !== undefined) as ResponsiveItem[];
 
     return { name: arg.name, index: arg.index, responses: responses };

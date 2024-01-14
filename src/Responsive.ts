@@ -15,7 +15,7 @@ import { GUIMainMenu } from './GUI/MainMenu';
 
     mod.hookFunction('ChatRoomMessage', 9, (args, next) => {
         next(args);
-        ActivityHandle(Player, args[0] as IChatRoomMessage);
+        ActivityHandle(Player, args[0] as ServerChatRoomMessage);
     });
 
     mod.hookFunction('ActivityOrgasmStart', 9, (args, next) => {
@@ -27,7 +27,7 @@ import { GUIMainMenu } from './GUI/MainMenu';
     DataManager.init();
 
     function LoadAndMessage() {
-        DataManager.instance.ServerTakeData();
+        DataManager.load();
         console.log(`${ModName} v${ModVersion} ready.`);
     }
 

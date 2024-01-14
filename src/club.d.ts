@@ -9,6 +9,7 @@ interface Character {
     GhostList?: number[];
     BlackList?: number[];
     FriendList?: number[];
+    FriendNames?: Map<number, string>;
     Name: string;
     Nickname: string;
     ActivePose: string[] | null;
@@ -95,7 +96,7 @@ interface Item {
 }
 
 interface Activity {
-    Name: String;
+    Name: string;
 }
 
 declare var Player: Character | undefined;
@@ -170,21 +171,26 @@ interface ChatMessageDictionaryEntry {
 
 type ChatMessageDictionary = ChatMessageDictionaryEntry[];
 
-interface IChatRoomMessageBasic {
+interface ServerChatRoomMessageBase {
     Content: MessageContentType;
     Sender: number;
 }
 
-type MessageActionType = "Action" | "Chat" | "Whisper" | "Emote" | "Activity" | "Hidden" | "LocalMessage" | "ServerMessage" | "Status";
+type ServerChatRoomMessageType = "Action" | "Chat" | "Whisper" | "Emote" | "Activity" | "Hidden" | "LocalMessage" | "ServerMessage" | "Status";
 
-interface IChatRoomMessage extends IChatRoomMessageBasic {
-    Type: MessageActionType;
+interface ServerChatRoomMessage extends ServerChatRoomMessageBase {
+    Type: ServerChatRoomMessageType;
     Dictionary?: ChatMessageDictionary;
     Timeout?: number;
 }
 
-declare function ChatRoomMessage(data: IChatRoomMessage): void;
+declare function ChatRoomMessage(data: ServerChatRoomMessage): void;
 
+// Activity.js
+declare function ActivityDictionaryText(Tag: string): string;
+declare var ActivityFemale3DCG: Activity[];
+
+// Preference.js
 declare function PreferenceIsPlayerInSensDep(bypassblindness: boolean): boolean;
 declare var PreferenceSubscreenList: string[];
 declare var PreferenceSubscreen: string;
@@ -202,6 +208,7 @@ interface AssetGroup {
     readonly Category: 'Appearance' | 'Item' | 'Script';
 }
 declare var AssetGroup: AssetGroup[];
+declare var AssetGroupMap: Map<string, AssetGroup>;
 
 // Common.js
 declare function CommonGetFontName(): string;

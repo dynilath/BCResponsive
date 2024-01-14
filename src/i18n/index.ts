@@ -6,10 +6,11 @@ const textmap = new Map<string, Map<string, string>>([
     ["EN", ENTextMap],
 ]);
 
-export function Text(srcTag: string) {
+export function GetText(srcTag: string, FormatArgs?: any[]) {
     let target = textmap.get(TranslationLanguage);
-    if (target !== undefined) {
-        return target.get(srcTag) || srcTag;
+    let ret = target?.get(srcTag) || srcTag;
+    if (FormatArgs) {
+        ret = ret.replace(/\{(\d+)\}/g, (m, i) => FormatArgs[i]);
     }
-    return ENTextMap.get(srcTag) || srcTag;
+    return ret;
 }

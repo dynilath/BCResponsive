@@ -1,10 +1,14 @@
 export function ReplaceField(msg: string, player: Character | undefined, target: Character | undefined) {
-    return msg.replace(/(PLAYER_NAME|TARGET_NAME)/g, (match) => {
-        if (match === "PLAYER_NAME" && player) {
+    // replace {me} with CharacterNickname(player)
+    // replace {target} with CharacterNickname(target)
+    return msg.replace(/\{(me|target)\}/g, (match, p1) => {
+        if (p1 === "me") {
+            if (player === undefined) return "???";
             return CharacterNickname(player);
-        } else if (match === "TARGET_NAME" && target) {
+        } else if (p1 === "target") {
+            if (target === undefined) return "???";
             return CharacterNickname(target);
         }
-        return match;
+        return "???";
     });
 }

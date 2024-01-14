@@ -11,7 +11,7 @@ interface ResponsiveSettingV1 {
 
 interface ResponsiveTriggerActivity {
     mode: "activity";
-    allow_activities: string[];
+    allow_activities?: string[];
     allow_bodyparts?: string[];
     allow_ids?: number[];
 }
@@ -30,7 +30,7 @@ interface ResponsiveTriggerSpicer {
 
 type ResponsiveTrigger = ResponsiveTriggerActivity | ResponsiveTriggerOrgasm | ResponsiveTriggerSpicer;
 
-type ResponsiveTriggerMode = "activity" | "orgasm" | "spicer";
+type ResponsiveTriggerMode = ResponsiveTrigger["mode"];
 
 interface ResponsiveTriggerType {
     mode: ResponsiveTriggerMode;
@@ -42,13 +42,16 @@ interface ResponsiveTriggerType {
     allow_ids?: number[];
 }
 
+type ResponsiveMessageType = "action" | "message";
+
 interface ResponsiveMessage {
-    type: "action" | "message",
+    type: ResponsiveMessageType,
     content: string;
 }
 
 interface ResponsiveItem {
     name: string;
+    enabled: boolean;
     trigger: ResponsiveTrigger;
     messages: ResponsiveMessage[];
 }

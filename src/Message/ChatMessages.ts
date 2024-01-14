@@ -1,3 +1,5 @@
+import { CUSTOM_ACTION_TAG } from "../Definition";
+
 interface ActivityInfo {
     SourceCharacter: { MemberNumber: number };
     TargetCharacter: { MemberNumber: number };
@@ -56,14 +58,10 @@ export function ChatRoomAutoInterceptMessage(msg: string) {
 export function ChatRoomSendAction(Content: string) {
     if (!Content || !Player || !Player.MemberNumber) return;
     ServerSend("ChatRoomChat", {
-        Content: "Beep",
+        Content: CUSTOM_ACTION_TAG,
         Type: "Action",
         Dictionary: [
-            { Tag: "Beep", Text: "msg" },
-            { Tag: "Biep", Text: "msg" },
-            { Tag: "Sonner", Text: "msg" },
-            { Tag: "发送私聊", Text: "msg" },
-            { Tag: "msg", Text: Content }
+            { Tag: `MISSING PLAYER DIALOG: ${CUSTOM_ACTION_TAG}`, Text: Content },
         ]
     });
 }

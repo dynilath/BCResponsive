@@ -1,15 +1,17 @@
 import { DataManager } from "../../Data";
 import { GUISettingScreen, hasFocus } from "../GUI";
-import { IPoint, IRect } from "../Widgets/AGUI";
-import { ADrawFramedRect, ADrawText, BasicText, DynamicText, FramedRect, TextButton } from "../Widgets/Common";
-import { InputTextArea } from "../Widgets/InputText";
+import { RoundFramedRect } from "../Widgets/Common";
+import { TextRoundButton } from "../Widgets/Button";
+import { DynamicText } from "../Widgets/Text";
+import { TextAreaItem } from "../Widgets/InputText";
 import { Popup } from "../Widgets/Popup";
 import { LZStringToPersona, PersonaToLZString } from "./PersonaCompress";
+import { GetText } from "../../i18n";
+import { Styles } from "../../Definition";
 
 
 export class PersonaImportScreen extends Popup {
     readonly _bind: { text: string };
-    readonly _input: InputTextArea;
     _lastInputInvalid: boolean = false;
 
     constructor(prev: GUISettingScreen | null = null, index: number) {
@@ -42,34 +44,36 @@ export class PersonaImportScreen extends Popup {
             })()
         }
 
-        this._input = new InputTextArea({ x: centerX - inputWidth / 2, y: centerY - totalHeight / 2 + FontSize + padding, width: inputWidth, height: inputHeight }, "InputPersonaData", this._bind)
-
         this._items = [
-            new FramedRect({ x: centerX - totalWidth / 2 - padding, y: centerY - totalHeight / 2 - padding, width: totalWidth + padding * 2, height: totalHeight + padding * 2 }, "White"),
+            new RoundFramedRect({
+                x: centerX - totalWidth / 2 - padding,
+                y: centerY - totalHeight / 2 - padding,
+                width: totalWidth + padding * 2,
+                height: totalHeight + padding * 2
+            }, Styles.Dialog.roundRadius, "White"),
             new DynamicText(() => {
                 if (this._lastInputInvalid) {
                     return {
                         where: { x: centerX, y: centerY - totalHeight / 2 + FontSize / 2 },
-                        text: "Invalid Persona Data",
+                        text: GetText("PersonaImport::InvalidInput"),
                         align: "center",
                         color: "Red"
                     }
                 }
                 return {
                     where: { x: centerX, y: centerY - totalHeight / 2 + FontSize / 2 },
-                    text: "Import/Export Persona",
+                    text: GetText("PersonaImport::Title"),
                     align: "center",
                     color: "Black"
                 }
             }),
-            this._input,
-            new TextButton({
+            new TextAreaItem({ x: centerX - inputWidth / 2, y: centerY - totalHeight / 2 + FontSize + padding, width: inputWidth, height: inputHeight }, "InputPersonaData", this._bind),
+            new TextRoundButton({
                 x: centerX - buttonTotalWidth / 2,
                 y: centerY + totalHeight / 2 - buttonHeight,
                 width: buttonWidth,
                 height: buttonHeight
-            }, "Save", () => {
-                console.log("saving");
+            }, GetText("General::Confirm"), () => {
                 const newPersonsa = LZStringToPersona(this._bind.text);
                 if (newPersonsa) {
                     newPersonsa.index = index;
@@ -78,12 +82,12 @@ export class PersonaImportScreen extends Popup {
                 } else {
                     this._lastInputInvalid = true;
                 }
-            }), new TextButton({
+            }), new TextRoundButton({
                 x: centerX + buttonTotalWidth / 2 - buttonWidth,
                 y: centerY + totalHeight / 2 - buttonHeight,
                 width: buttonWidth,
                 height: buttonHeight
-            }, "Cancel", () => this.Exit())
+            }, GetText("General::Cancel"), () => this.Exit())
         ]
     }
 
@@ -96,9 +100,5 @@ export class PersonaImportScreen extends Popup {
         MainCanvas.fillRect(0, 0, 2000, 1000);
 
         this._items.forEach(item => item.Draw(hasFocus(this)));
-    }
-
-    Unload(): void {
-        this._input.Unload();
     }
 }

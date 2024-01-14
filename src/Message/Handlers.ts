@@ -2,9 +2,8 @@ import { DataManager } from "../Data";
 import { ActivityDeconstruct } from "./ChatMessages";
 import { InvokeResponse } from "./MoanProvider";
 
-export function ActivityHandle(player: Character | undefined, data: IChatRoomMessage) {
+export function ActivityHandle(player: Character | undefined, data: ServerChatRoomMessage) {
     if (!DataManager.instance.data.settings.enabled) return;
-    if (CurrentScreen !== 'ChatRoom') return;
     if (player === undefined || player.MemberNumber === undefined) return;
     if (data.Type !== "Activity") return;
 
