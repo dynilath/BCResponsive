@@ -1,6 +1,7 @@
 import { HTMLID } from "../GUI";
 import { AGUIItem, IPoint, IRect, WithinRect } from "./AGUI";
 import { Binding } from "./Binding";
+import { StylesRect } from "./CSStyle";
 import { ADrawTextButton } from "./Common";
 
 export class ButtonEdit extends AGUIItem {
@@ -74,28 +75,7 @@ export class ButtonEdit extends AGUIItem {
         } else {
             this._text.hidden = false;
 
-            const Ratio = MainCanvas.canvas.clientWidth / 2000;
-            const Font = Math.min(MainCanvas.canvas.clientWidth / 50, MainCanvas.canvas.clientHeight / 25);
-
-            const BaseBorder = Math.ceil(2 * Ratio);
-            const BasePadding = 2 * Ratio;
-            const Height = this._rect.height * Ratio - (BaseBorder + BasePadding) * 2;
-            const Width = this._rect.width * Ratio - (BaseBorder + BasePadding) * 2;
-            const Top = MainCanvas.canvas.offsetTop + this._rect.y * Ratio;
-            const Left = MainCanvas.canvas.offsetLeft + this._rect.x * Ratio;
-
-            Object.assign(this._text.style, {
-                fontSize: Font + "px",
-                fontFamily: CommonGetFontName(),
-                position: "fixed",
-                left: Left + "px",
-                top: Top + "px",
-                width: Width + "px",
-                height: Height + "px",
-                display: "inline",
-                padding: BasePadding + "px",
-                borderWidth: BaseBorder + "px"
-            });
+            StylesRect(this._rect, this._text);
         }
     }
 

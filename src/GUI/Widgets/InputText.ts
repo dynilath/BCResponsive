@@ -1,5 +1,6 @@
 import { HTMLID } from "../GUI";
 import { AGUIItem, IRect } from "./AGUI";
+import { StylesRect } from "./CSStyle";
 
 export class TextAreaItem extends AGUIItem {
     private _text: HTMLTextAreaElement | undefined;
@@ -64,25 +65,7 @@ export class TextAreaItem extends AGUIItem {
             this._text = this.CreateTextArea();
         }
 
-        const HRatio = MainCanvas.canvas.clientHeight / 1000;
-        const WRatio = MainCanvas.canvas.clientWidth / 2000;
-        const Font = Math.min(MainCanvas.canvas.clientWidth / 50, MainCanvas.canvas.clientHeight / 25);
-
-        const Height = this._rect.height * HRatio;
-        const Width = this._rect.width * WRatio;
-        const Top = MainCanvas.canvas.offsetTop + this._rect.y * HRatio;
-        const Left = MainCanvas.canvas.offsetLeft + this._rect.x * WRatio;
-
-        Object.assign(this._text.style, {
-            fontSize: Font + "px",
-            fontFamily: CommonGetFontName(),
-            position: "fixed",
-            left: Left + "px",
-            top: Top + "px",
-            width: Width + "px",
-            height: Height + "px",
-            display: "inline"
-        });
+        StylesRect(this._rect, this._text);
     }
 
     Unload() {
@@ -157,25 +140,7 @@ export class TextInput extends AGUIItem {
             this._text = this.CreateInput();
         }
 
-        const HRatio = MainCanvas.canvas.clientHeight / 1000;
-        const WRatio = MainCanvas.canvas.clientWidth / 2000;
-        const Font = Math.min(MainCanvas.canvas.clientWidth / 50, MainCanvas.canvas.clientHeight / 25);
-
-        const Height = this._rect.height * HRatio;
-        const Width = this._rect.width * WRatio;
-        const Top = MainCanvas.canvas.offsetTop + this._rect.y * HRatio;
-        const Left = MainCanvas.canvas.offsetLeft + this._rect.x * WRatio;
-
-        Object.assign(this._text.style, {
-            fontSize: Font + "px",
-            fontFamily: CommonGetFontName(),
-            position: "fixed",
-            left: Left + "px",
-            top: Top + "px",
-            width: Width + "px",
-            height: Height + "px",
-            display: "inline"
-        });
+        StylesRect(this._rect, this._text);
     }
 
     Unload() {
