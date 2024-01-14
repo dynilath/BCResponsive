@@ -42,8 +42,10 @@ interface ResponsiveTriggerType {
     allow_ids?: number[];
 }
 
+type ResponsiveMessageType = "action" | "message";
+
 interface ResponsiveMessage {
-    type: "action" | "message",
+    type: ResponsiveMessageType,
     content: string;
 }
 

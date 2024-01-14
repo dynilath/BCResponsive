@@ -58,8 +58,8 @@ export function ChatRoomAutoInterceptMessage(msg: string) {
 export function ChatRoomSendAction(Content: string) {
     if (!Content || !Player || !Player.MemberNumber) return;
     ServerSend("ChatRoomChat", {
-        Content: "Beep",
-        Type: CUSTOM_ACTION_TAG,
+        Content: CUSTOM_ACTION_TAG,
+        Type: "Action",
         Dictionary: [
             { Tag: `MISSING PLAYER DIALOG: ${CUSTOM_ACTION_TAG}`, Text: Content },
         ]

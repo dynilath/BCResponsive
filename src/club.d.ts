@@ -171,20 +171,20 @@ interface ChatMessageDictionaryEntry {
 
 type ChatMessageDictionary = ChatMessageDictionaryEntry[];
 
-interface IChatRoomMessageBasic {
+interface ServerChatRoomMessageBase {
     Content: MessageContentType;
     Sender: number;
 }
 
-type MessageActionType = "Action" | "Chat" | "Whisper" | "Emote" | "Activity" | "Hidden" | "LocalMessage" | "ServerMessage" | "Status";
+type ServerChatRoomMessageType = "Action" | "Chat" | "Whisper" | "Emote" | "Activity" | "Hidden" | "LocalMessage" | "ServerMessage" | "Status";
 
-interface IChatRoomMessage extends IChatRoomMessageBasic {
-    Type: MessageActionType;
+interface ServerChatRoomMessage extends ServerChatRoomMessageBase {
+    Type: ServerChatRoomMessageType;
     Dictionary?: ChatMessageDictionary;
     Timeout?: number;
 }
 
-declare function ChatRoomMessage(data: IChatRoomMessage): void;
+declare function ChatRoomMessage(data: ServerChatRoomMessage): void;
 
 // Activity.js
 declare function ActivityDictionaryText(Tag: string): string;
