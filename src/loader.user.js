@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name BC Responsive
+// @name BC Responsive Loader
 // @namespace https://www.bondageprojects.com/
 // @version 1.1
 // @description An anto response script for Bondage Club
@@ -16,8 +16,7 @@
 (function () {
     "use strict";
     const src = `https://dynilath.gitlab.io/SaotomeToyStoreVendor/Responsive/main.js?v=${Date.now()}`;
-    const loadScript = (url, ok, failed) => fetch(url).then((response) => { 
-            if (response.ok) { ok(response.text()); } 
-            else { setTimeout(() => {failed(url, ok, failed)}, 5000); } });
-    loadScript(src, (text) => {if (typeof BCResponsive_Loaded === "undefined") eval(text);}, loadScript);
+    const loadScript = (url, okay, failed) => fetch(url).then(r => {if(r.ok) return r.text();
+        else throw new Error("Failed to load script")} ).then(okay).catch(() => { setTimeout(() => {failed(url, okay, failed)}, 5000); });
+    loadScript(src, text => {if (typeof BCResponsive_Loaded === "undefined") eval(text);}, loadScript);
 })();
