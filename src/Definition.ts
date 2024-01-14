@@ -12,7 +12,7 @@ export const ModVersion = buildVersion(1, 0, 0);
 export const ModName = 'BondageClub Responsive'
 export const HTMLIDPrefix = "BCR_";
 
-export const DebugMode = true;
+export const DebugMode = false;
 
 export const SettingName = "BCResponsiveSetting";
 
@@ -71,4 +71,6 @@ export const DefaultPersonaName = "Default";
 export const DefaultPersonaIndex = 0;
 export const MaxPersonalities = 5;
 
-export const MaxTriggerNameLength = 20;
+export const MaxNameLength = 20;
+
+export const Repository = "https://github.com/dynilath/BCResponsive"

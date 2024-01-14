@@ -1,6 +1,7 @@
 import { Styles } from "../../Definition";
+import { Icons } from "../Icons";
 import { AGUIItem, IPoint, IRect, WithinRect as WithinRect } from "./AGUI";
-import { ADrawCircleRect, ADrawTextButton, ADrawTextFit } from "./Common";
+import { ADrawCircleRect, ADrawIcon, ADrawRoundRect, ADrawTextButton, ADrawTextFit } from "./Common";
 import { ADrawIconTextButton, ADrawIconButton } from "./Common";
 
 
@@ -146,3 +147,40 @@ export class ExitButton extends AGUIItem {
     }
 }
 
+export class IconRoundButton extends AGUIItem {
+    private _rect: IRect;
+    private _radius: number;
+    private _icon: keyof typeof Icons;
+    private _callback: () => void;
+    private _icon_rect: IRect;
+
+    constructor(rect: IRect, radius: number, icon: keyof typeof Icons, callback: () => void) {
+        super();
+        this._rect = rect;
+        this._radius = radius;
+        this._icon = icon;
+        this._callback = callback;
+
+        const spacing = rect.height * 0.15
+
+        this._icon_rect = {
+            x: rect.x + rect.width / 2 - rect.height / 2 + spacing,
+            y: rect.y + spacing,
+            width: rect.height - spacing * 2,
+            height: rect.height - spacing * 2
+        }
+    }
+
+    Draw(hasFocus: boolean) {
+        if (hasFocus && WithinRect({ x: MouseX, y: MouseY }, this._rect)) {
+            ADrawRoundRect(this._rect, this._radius, { fill: Styles.Button.hover });
+        } else {
+            ADrawRoundRect(this._rect, this._radius, { fill: Styles.Button.idle });
+        }
+        ADrawIcon(this._icon_rect, this._icon);
+    }
+
+    Click(mouse: IPoint) {
+        if (WithinRect(mouse, this._rect)) this._callback();
+    }
+}

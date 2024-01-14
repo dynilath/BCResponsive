@@ -1,15 +1,14 @@
 import bcMod from 'bondage-club-mod-sdk'
 import { ActivityHandle, OrgasmHandle } from './Message/Handlers';
-import { ChatMessageHandler } from './Message/ChatMessageHandler';
 import { DataManager } from './Data/Data';
-import { ModName, ModVersion } from './Definition';
+import { ModName, ModVersion, Repository } from './Definition';
 import { GUISetting } from './GUI/GUI';
 import { GUIMainMenu } from './GUI/MainMenu';
 
 (function () {
     if (window.BCResponsive_Loaded) return;
 
-    let mod = bcMod.registerMod({ name: ModName, fullName: ModName, version: ModVersion, repository: 'https://gitlab.com/dynilath/BCResponsive' });
+    let mod = bcMod.registerMod({ name: ModName, fullName: ModName, version: ModVersion, repository: Repository });
 
     window.BCResponsive_Loaded = false;
 

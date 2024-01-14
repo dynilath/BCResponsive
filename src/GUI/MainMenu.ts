@@ -1,13 +1,13 @@
 
 import { DataManager } from "../Data";
+import { Repository, Styles } from "../Definition";
 import { GetText } from "../i18n";
 import { GUISettingScreen, setSubscreen } from "./GUI";
 import { PersonaSetting } from "./Persona/PersonaMenu";
 import { TriggerSetting } from "./Response/ResponseMenu";
 import { AGUIScreen } from "./Widgets/AGUI";
 import { Binding } from "./Widgets/Binding";
-import { ExitButton, TextRoundButton } from "./Widgets/Button";
-import { TextButton } from "./Widgets/Button";
+import { ExitButton, IconRoundButton, TextRoundButton } from "./Widgets/Button";
 import { Switch } from "./Widgets/Switch";
 import { BasicText, TitleText } from "./Widgets/Text";
 
@@ -59,6 +59,12 @@ export class GUIMainMenu extends AGUIScreen {
                 if (!persona) return;
                 setSubscreen(new TriggerSetting(this, persona));
             }),
+            new IconRoundButton({
+                x: 1700,
+                y: 800,
+                width: 100,
+                height: 100
+            }, Styles.Dialog.roundRadius, "github", () => window.open(Repository))
         ]
     }
 }
