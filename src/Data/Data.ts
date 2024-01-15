@@ -1,8 +1,9 @@
-import { DebugMode } from "../Definition";
+import { DataKeyName, DebugMode, ModName, ModVersion } from "../Definition";
 import { isV1Setting } from "./V1";
 import { pickV2Setting } from "./V2";
 import { V1SettingToV2Setting } from "./V2";
 import { getDefaultSettings } from "./Default";
+import { ModSDKModAPI } from "bondage-club-mod-sdk";
 
 function DeserializeData(str: string | undefined): ResponsiveSettingV2 {
     if (str === undefined) return getDefaultSettings();
@@ -24,24 +25,33 @@ function DeserializeData(str: string | undefined): ResponsiveSettingV2 {
 
 export class DataManager {
     private static _instance: DataManager | undefined;
-
-    static init() {
+    static init(mod: ModSDKModAPI) {
         if (this._instance === undefined)
             this._instance = new DataManager;
+
+        function LoadAndMessage(C: Character | null | undefined) {
+            if (C) DataManager.instance.ServerTakeData(C);
+            console.log(`${ModName} v${ModVersion} ready.`);
+        }
+
         if (DebugMode) {
             (window as any)["ShowResponsiveData"] = () => {
-                return this._instance?.modData;
+                return DataManager.instance.modData;
             }
+        }
+
+        mod.hookFunction('LoginResponse', 0, (args, next) => {
+            next(args);
+            LoadAndMessage(args[0] as Character);
+        });
+
+        if (Player && Player.MemberNumber) {
+            LoadAndMessage(Player);
         }
     }
 
     static get instance() {
-        this.init();
         return DataManager._instance as DataManager;
-    }
-
-    static load() {
-        this.instance.ServerTakeData();
     }
 
     static save() {
@@ -74,24 +84,16 @@ export class DataManager {
     }
 
     ServerStoreData() {
-        if (Player && Player.OnlineSettings) {
-            ((Player.OnlineSettings as any) as ModSetting).BCResponsive = this.EncodeDataStr();
-            if (ServerAccountUpdate) {
-                ServerAccountUpdate.QueueData({ OnlineSettings: Player.OnlineSettings });
-            }
+        if (Player && Player.ExtensionSettings) {
+            Player.ExtensionSettings[DataKeyName] = this.EncodeDataStr();
+            ServerPlayerExtensionSettingsSync(DataKeyName);
         }
     }
 
-    ServerTakeData() {
-        if (Player && Player.OnlineSettings) {
-            let rawData = (Player.OnlineSettings as ModSetting).BCResponsive;
-            if (rawData === undefined) {
-                let oldData = (Player.OnlineSettings as any) as { BCMoanerReloaded?: string };
-                rawData = oldData.BCMoanerReloaded;
-                if (rawData !== undefined) delete oldData.BCMoanerReloaded;
-            }
-            this.DecodeDataStr(rawData);
-        }
+    ServerTakeData(C: Character) {
+        const raw_data = C.ExtensionSettings[DataKeyName]
+            || (C.OnlineSettings as any)[DataKeyName]
+        this.DecodeDataStr(raw_data);
     }
 
     get data() {

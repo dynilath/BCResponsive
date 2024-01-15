@@ -23,21 +23,7 @@ import { GUIMainMenu } from './GUI/MainMenu';
     });
 
     GUISetting.init(mod, () => { return new GUIMainMenu });
-    DataManager.init();
-
-    function LoadAndMessage() {
-        DataManager.load();
-        console.log(`${ModName} v${ModVersion} ready.`);
-    }
-
-    mod.hookFunction('LoginResponse', 0, (args, next) => {
-        next(args);
-        LoadAndMessage();
-    });
-
-    if (Player && Player.MemberNumber) {
-        LoadAndMessage();
-    }
+    DataManager.init(mod);
 
     window.BCResponsive_Loaded = true;
 

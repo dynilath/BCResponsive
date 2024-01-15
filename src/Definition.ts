@@ -8,7 +8,7 @@ export enum MoanType {
     Tickle
 }
 
-export const ModVersion = buildVersion(1, 0, 0);
+export const ModVersion = buildVersion(1, 0, 1);
 export const ModName = 'BondageClub Responsive'
 export const HTMLIDPrefix = "BCR_";
 
@@ -74,3 +74,5 @@ export const MaxPersonalities = 5;
 export const MaxNameLength = 20;
 
 export const Repository = "https://github.com/dynilath/BCResponsive"
+
+export const DataKeyName = "BCResponsiveData";

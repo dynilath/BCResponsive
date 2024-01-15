@@ -36,6 +36,7 @@ interface Character {
         ShowStatus?: boolean;
         EnableAfkTimer: boolean;
     };
+    ExtensionSettings: { [k: string]: any };
     ArousalSettings: {
         Active: string;
         Visible: string;
@@ -111,7 +112,7 @@ declare function CommonTime(): number;
 declare function ChatRoomSendLocal(Content: string, Timeout?: number): void;
 declare function InventoryGet(Character: Character, BodyPart: String): Item | null;
 declare function SpeechGetTotalGagLevel(C: Character, NoDeaf?: boolean): number;
-
+declare function ServerPlayerExtensionSettingsSync(dataKeyName: string): void;
 
 declare function CharacterAppearanceSetColorForGroup(Character: Character, Color: Color, BodyPart: String): void;
 declare function ServerPlayerAppearanceSync(): void;
