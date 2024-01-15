@@ -61,7 +61,7 @@ export const ENTextMap = new Map<string, string>([
     ["TriggerInfo::AllBodyparts", "All Bodyparts"],
     ["TriggerInfo::NoBodyparts", "No Bodyparts"],
     ["TriggerInfo::AllMemberIDs", "All Members"],
-    ["TriggerInfo::AndMore", "and {0} more"],
+    ["TriggerInfo::AndMore", " and {0} more"],
     ["TriggerInfo::MinArousal", "Min Arousal:"],
     ["TriggerInfo::MaxArousal", "Max Arousal:"],
     ["TriggerInfo::ApplyFavorite", "Apply Favorite:"],
