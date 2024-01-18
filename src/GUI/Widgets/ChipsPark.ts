@@ -1,13 +1,10 @@
 import { Styles } from "../../Definition";
 import { AGUIItem, IRect, WithinRect, IPoint } from "./AGUI";
 import { ADrawCircleRect, ADrawIcon, ADrawRoundRect, ADrawTextFit, ADrawVerticalCircleRect } from "./Common";
+import { Scrollbar } from "./Scrollbar";
 
 const CHIPS_HEIGHT = 50;
 const CHIPS_SPACING = 10;
-
-const SCROLLBAR_WIDTH = 50;
-const SCROLLBAR_SPACING = 5;
-const SCROLLBAR_BUTTON_HEIGHT = 100;
 
 interface ChipsValue {
     text: string;
@@ -49,15 +46,7 @@ export class ChipsPark extends AGUIItem {
         });
     }
 
-    private scrollbar: {
-        rect: IRect,
-        up: IRect,
-        down: IRect,
-        scroll: IRect,
-        bar_height: number,
-        bar_offset: number,
-        bar_max_offset: number
-    } | undefined;
+    private scrollbar: Scrollbar | undefined;
 
     constructor(source: Set<string>, values: ChipsValue[], rect: IRect, callback: (v: string) => void) {
         super();
@@ -71,69 +60,31 @@ export class ChipsPark extends AGUIItem {
         const last_chip = this._chips[this._chips.length - 1];
 
         if (last_chip.rect.y + last_chip.rect.height + CHIPS_SPACING > rect.y + rect.height) {
-            this._chips_park.width -= SCROLLBAR_WIDTH + SCROLLBAR_SPACING;
+            this._chips_park.width -= Styles.Scrollbar.width + Styles.Scrollbar.spacing;
             this._chips = this.CalculateChips(values, this._chips_park);
 
             const n_last_chip = this._chips[this._chips.length - 1];
             const n_first_chip = this._chips[0];
 
-            // all chips height with an extra line of chips
-            const content_height = n_last_chip.rect.y + n_last_chip.rect.height - n_first_chip.rect.y + CHIPS_HEIGHT + CHIPS_SPACING;
+            const content_rows = Math.round((n_last_chip.rect.y + n_last_chip.rect.height - n_first_chip.rect.y + CHIPS_SPACING) / (CHIPS_HEIGHT + CHIPS_SPACING)) + 1;
+            const container_rows = Math.floor((rect.height + CHIPS_SPACING) / CHIPS_HEIGHT);
+
 
             const scrollbar_rect = {
-                x: rect.x + rect.width - SCROLLBAR_WIDTH,
+                x: rect.x + rect.width - Styles.Scrollbar.width,
                 y: rect.y,
-                width: SCROLLBAR_WIDTH,
+                width: Styles.Scrollbar.width,
                 height: rect.height
             };
 
-            const scrollbar_up = {
-                x: scrollbar_rect.x,
-                y: scrollbar_rect.y,
-                width: SCROLLBAR_WIDTH,
-                height: SCROLLBAR_BUTTON_HEIGHT
-            };
-
-            const scrollbar_down = {
-                x: scrollbar_up.x,
-                y: scrollbar_rect.y + scrollbar_rect.height - SCROLLBAR_BUTTON_HEIGHT,
-                width: scrollbar_up.width,
-                height: scrollbar_up.height
-            };
-
-            const scroll_area = {
-                x: scrollbar_up.x,
-                y: scrollbar_rect.y + SCROLLBAR_BUTTON_HEIGHT + SCROLLBAR_SPACING,
-                width: scrollbar_up.width,
-                height: rect.height - SCROLLBAR_BUTTON_HEIGHT * 2 - SCROLLBAR_SPACING * 2
-            };
-
-            const available_height = scroll_area.height - SCROLLBAR_SPACING * 2;
-
-            const scrollbar_bar_height = available_height * this._chips_park.height / content_height;
-
-            const scrollbar_bar_max_offset = available_height - scrollbar_bar_height;
-
-            this.scrollbar = {
-                rect: scrollbar_rect,
-                up: scrollbar_up,
-                down: scrollbar_down,
-                scroll: scroll_area,
-                bar_height: scrollbar_bar_height,
-                bar_offset: 0,
-                bar_max_offset: scrollbar_bar_max_offset
-            };
+            this.scrollbar = new Scrollbar({ content_rows, container_rows }, scrollbar_rect)
         }
     }
 
     Draw(hasFocus: boolean): void {
         const mouse = { x: MouseX, y: MouseY };
         ADrawRoundRect(this._chips_park, CHIPS_HEIGHT / 2 + CHIPS_SPACING);
-        let step_yOffset = 0;
-        if (this.scrollbar) {
-            const step = this.scrollbar.bar_max_offset / (this.row_count + 1 - this.display_row_count);
-            step_yOffset = Math.floor(this.scrollbar.bar_offset / step);
-        }
+        const step_yOffset = this.scrollbar?.offset ?? 0;
 
         this._chips.forEach(v => {
             const expect_rect = {
@@ -158,51 +109,11 @@ export class ChipsPark extends AGUIItem {
             }, v.text);
         });
 
-        if (this.scrollbar) {
-            if (hasFocus && WithinRect(mouse, this.scrollbar.up))
-                ADrawVerticalCircleRect(this.scrollbar.up, { fill: Styles.Button.hover });
-            else ADrawVerticalCircleRect(this.scrollbar.up);
-
-            ADrawIcon({
-                x: this.scrollbar.up.x,
-                y: this.scrollbar.up.y + this.scrollbar.up.height / 2 - this.scrollbar.up.width / 2,
-                width: this.scrollbar.up.width,
-                height: this.scrollbar.up.width
-            }, "arrow_up");
-
-            if (hasFocus && WithinRect(mouse, this.scrollbar.down))
-                ADrawVerticalCircleRect(this.scrollbar.down, { fill: Styles.Button.hover });
-            else ADrawVerticalCircleRect(this.scrollbar.down);
-
-            ADrawIcon({
-                x: this.scrollbar.down.x,
-                y: this.scrollbar.down.y + this.scrollbar.down.height / 2 - this.scrollbar.down.width / 2,
-                width: this.scrollbar.down.width,
-                height: this.scrollbar.down.width
-            }, "arrow_down");
-
-            ADrawVerticalCircleRect(this.scrollbar.scroll);
-
-            const bar_y = this.scrollbar.scroll.y + SCROLLBAR_SPACING + this.scrollbar.bar_offset;
-            const bar_rect = {
-                x: this.scrollbar.scroll.x + SCROLLBAR_SPACING,
-                y: bar_y,
-                width: this.scrollbar.scroll.width - SCROLLBAR_SPACING * 2,
-                height: this.scrollbar.bar_height
-            };
-
-            if (hasFocus && WithinRect(mouse, this.scrollbar.scroll))
-                ADrawVerticalCircleRect(bar_rect, { fill: Styles.Button.hover });
-            else ADrawVerticalCircleRect(bar_rect);
-        }
+        this.scrollbar?.Draw(hasFocus);
     }
 
     Click(mouse: IPoint): void {
-        let step_yOffset = 0;
-        if (this.scrollbar) {
-            const step = this.scrollbar.bar_max_offset / (this.row_count + 1 - this.display_row_count);
-            step_yOffset = Math.floor(this.scrollbar.bar_offset / step);
-        }
+        const step_yOffset = this.scrollbar?.offset ?? 0;
         if (WithinRect(mouse, this._chips_park)) {
             this._chips.forEach(v => {
                 const expect_rect = {
@@ -217,29 +128,13 @@ export class ChipsPark extends AGUIItem {
             });
         }
 
-        if (this.scrollbar) {
-            const step = this.scrollbar.bar_max_offset / (this.row_count + 1 - this.display_row_count);
-            if (WithinRect(mouse, this.scrollbar.up)) {
-                this.scrollbar.bar_offset = Math.max(0, this.scrollbar.bar_offset - step);
-            } else if (WithinRect(mouse, this.scrollbar.down)) {
-                this.scrollbar.bar_offset = Math.min(this.scrollbar.bar_max_offset, this.scrollbar.bar_offset + step);
-            } else if (WithinRect(mouse, this.scrollbar.scroll)) {
-                // try to center bar on mouse
-                const expected_offset = mouse.y - this.scrollbar.scroll.y - this.scrollbar.bar_height / 2;
-                this.scrollbar.bar_offset = Math.max(0, Math.min(this.scrollbar.bar_max_offset, expected_offset));
-            }
-        }
+        this.scrollbar?.Click(mouse);
     }
 
     MouseWheel(event: WheelEvent): void {
-        const mouse = { x: MouseX, y: MouseY };
-        if (this.scrollbar && (WithinRect(mouse, this._chips_park) || WithinRect(mouse, this.scrollbar.scroll))) {
-            const step = this.scrollbar.bar_max_offset / (this.row_count + 1 - this.display_row_count);
-            if (event.deltaY < 0) {
-                this.scrollbar.bar_offset = Math.max(0, this.scrollbar.bar_offset - step);
-            } else if (event.deltaY > 0) {
-                this.scrollbar.bar_offset = Math.min(this.scrollbar.bar_max_offset, this.scrollbar.bar_offset + step);
-            }
+        this.scrollbar?.MouseWheel(event);
+        if (this.scrollbar && WithinRect({ x: MouseX, y: MouseY }, this._chips_park)) {
+            this.scrollbar.RawMouseWheel(event);
         }
     }
 }

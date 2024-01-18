@@ -2,14 +2,14 @@ import { DataManager } from "../../Data";
 import { Styles } from "../../Definition";
 import { GetText } from "../../i18n";
 import { AGUIItem, IPoint, IRect, ISize, WithinRect } from "../Widgets/AGUI";
-import { ADrawCircleRect, ADrawRoundRect, ADrawTextFit } from "../Widgets/Common";
+import { ADrawCircleRect, ADrawIcon, ADrawRoundRect, ADrawTextFit, ADrawVerticalCircleRect } from "../Widgets/Common";
 import { PageDial, PageDialBinding } from "../Widgets/PageDial";
+import { Scrollbar } from "../Widgets/Scrollbar";
 import { ResponseMenuState } from "./ResponseMenuState";
 
 const ITEM_HEIGHT = 60;
 const ITEM_SPACING = 5;
 const ITEM_BORDER = 5;
-const PAGE_PANEL_HEIGHT = 50;
 
 export class TriggerTab extends AGUIItem {
     private _parent: ResponseMenuState;
@@ -18,23 +18,17 @@ export class TriggerTab extends AGUIItem {
 
     readonly _upper_rect: IRect;
 
-    readonly _page_rect: IRect;
-    private _page_binding: PageDialBinding;
-    private pageDial: PageDial;
+
+    readonly scroll: Scrollbar;
 
     constructor(parent: ResponseMenuState, rect: IRect) {
         super();
         this._parent = parent;
 
-        this._page_rect = {
-            x: rect.x,
-            y: rect.y + rect.height - PAGE_PANEL_HEIGHT,
-            width: rect.width,
-            height: PAGE_PANEL_HEIGHT
-        };
+        const items_rect_width = rect.width - Styles.Scrollbar.width - Styles.Scrollbar.spacing;
 
-        const item_width = rect.width - ITEM_BORDER * 2;
-        const item_count = Math.max(1, Math.floor((rect.height - PAGE_PANEL_HEIGHT - ITEM_BORDER * 2 + ITEM_SPACING) / (ITEM_HEIGHT + ITEM_SPACING)));
+        const item_width = items_rect_width - ITEM_BORDER * 2;
+        const item_count = Math.max(1, Math.floor((rect.height - ITEM_BORDER * 2 + ITEM_SPACING) / (ITEM_HEIGHT + ITEM_SPACING)));
 
         this._layout_items = Array.from({ length: item_count }, (_, index) => {
             return {
@@ -48,26 +42,30 @@ export class TriggerTab extends AGUIItem {
         this._upper_rect = {
             x: rect.x,
             y: rect.y,
-            width: rect.width,
-            height: ITEM_BORDER * 2 + item_count * (ITEM_HEIGHT + ITEM_SPACING) - ITEM_SPACING
+            width: items_rect_width,
+            height: rect.height
         };
 
-        this._page_binding = {
-            page: 0,
-            maxPage: 0,
-            update: () => { }
+        const scrollbar_rect = {
+            x: rect.x + rect.width - Styles.Scrollbar.width,
+            y: rect.y,
+            width: Styles.Scrollbar.width,
+            height: rect.height
         };
 
-        this.pageDial = new PageDial(this._page_rect, this._page_binding);
+        this.scroll = new Scrollbar({
+            container_rows: this._parent.targetPersona.responses.length + 1,
+            content_rows: this._layout_items.length
+        }, scrollbar_rect);
     }
 
     Draw(hasFocus: boolean): void {
-        this._page_binding.maxPage = Math.ceil((this._parent.targetPersona.responses.length + 1) / this._layout_items.length);
         const mouse = { x: MouseX, y: MouseY };
-
-        this.pageDial.Draw(hasFocus);
-
         ADrawRoundRect(this._upper_rect, ITEM_HEIGHT / 2 + ITEM_BORDER, { fill: "White", stroke: "Black" });
+
+        this.scroll.update(this._parent.targetPersona.responses.length + 1, this._layout_items.length);
+
+
         let focusing = -1;
         if (hasFocus) {
             this._layout_items.forEach((rect, index) => {
@@ -76,7 +74,7 @@ export class TriggerTab extends AGUIItem {
         }
 
         this._layout_items.forEach((rect, index) => {
-            const targetIdx = index + this._page_binding.page * this._layout_items.length;
+            const targetIdx = index + this.scroll.offset;
 
             if (this._parent.targetItem && this._parent.targetPersona.responses[targetIdx] == this._parent.targetItem) {
                 ADrawCircleRect(rect, { fill: Styles.Tab.active })
@@ -92,13 +90,13 @@ export class TriggerTab extends AGUIItem {
                 ADrawTextFit(rect, this._parent.targetPersona.responses[targetIdx].name);
             }
         });
+
+        this.scroll.Draw(hasFocus);
     }
 
     Click(mouse: IPoint): void {
-        this.pageDial.Click(mouse);
-
         this._layout_items.forEach((rect, index) => {
-            const targetIdx = index + this._page_binding.page * this._layout_items.length;
+            const targetIdx = index + this.scroll.offset;
             if (WithinRect(mouse, rect)) {
                 if (targetIdx == this._parent.targetPersona.responses.length) {
                     this._parent.targetPersona.responses.push({ name: GetText("Default::NewResponseName"), enabled: false, trigger: { mode: "activity", allow_activities: [] }, messages: [] });
@@ -109,5 +107,11 @@ export class TriggerTab extends AGUIItem {
                 }
             }
         });
+
+        this.scroll.Click(mouse);
+    }
+
+    MouseWheel(event: WheelEvent): void {
+        if (WithinRect({ x: MouseX, y: MouseY }, this._upper_rect)) this.scroll.RawMouseWheel(event);
     }
 }

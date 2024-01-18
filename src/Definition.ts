@@ -8,7 +8,7 @@ export enum MoanType {
     Tickle
 }
 
-export const ModVersion = buildVersion(1, 0, 2);
+export const ModVersion = buildVersion(1, 0, 3);
 export const ModName = 'BondageClub Responsive'
 export const HTMLIDPrefix = "BCR_";
 
@@ -50,6 +50,11 @@ export const Styles = {
         active: "rgba(128, 255, 255, 1)",
         hover: "rgba(204, 204, 204, 0.5)",
         border: 5,
+    },
+    Scrollbar: {
+        width: 50,
+        spacing: 5,
+        button_height: 100,
     },
     SegmentButton: {
         active: "rgba(160, 255, 255, 1)",

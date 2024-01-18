@@ -8,6 +8,7 @@ import { GetText } from "../../../i18n";
 import { Styles } from "../../../Definition";
 import { PageDial, PageDialBinding } from "../../Widgets/PageDial";
 import { DataManager } from "../../../Data";
+import { Scrollbar } from "../../Widgets/Scrollbar";
 
 const ROUND_BUTTON_DIAMETER = 40;
 
@@ -51,51 +52,51 @@ export class ResponseMessageList extends AGUIItem {
 
     private readonly _parent: TriggerSetting;
 
-    private pageBinding: PageDialBinding = {
-        page: 0,
-        maxPage: 0,
-        update: () => { }
-    };
-
-    private pageDial: PageDial;
+    private scrollbar: Scrollbar;
 
     constructor(parent: TriggerSetting, state: ResponseMenuState, rect: IRect) {
         super();
         this._parent = parent;
         this._state = state;
 
-        this._items_per_page = Math.floor((rect.height - ITEM_SPACING - ITEM_HEIGHT) / (ITEM_HEIGHT + ITEM_SPACING));
+        this._items_per_page = Math.floor((rect.height - ITEM_SPACING) / (ITEM_HEIGHT + ITEM_SPACING));
 
         this._list_rect = {
             x: rect.x,
             y: rect.y,
-            width: rect.width,
+            width: rect.width - Styles.Scrollbar.width - Styles.Scrollbar.spacing,
             height: ITEM_SPACING + (ITEM_HEIGHT + ITEM_SPACING) * this._items_per_page
         };
 
         this._itemRects = Array.from({ length: this._items_per_page }, (_, index) => {
             return {
-                x: rect.x + ITEM_SPACING,
-                y: rect.y + ITEM_SPACING + (ITEM_HEIGHT + ITEM_SPACING) * index,
-                width: rect.width - ITEM_SPACING * 2,
+                x: this._list_rect.x + ITEM_SPACING,
+                y: this._list_rect.y + ITEM_SPACING + (ITEM_HEIGHT + ITEM_SPACING) * index,
+                width: this._list_rect.width - ITEM_SPACING * 2,
                 height: ITEM_HEIGHT
             };
         });
 
-        const _page_dial = {
-            x: rect.x,
-            y: rect.y + rect.height - ITEM_HEIGHT,
-            width: rect.width,
-            height: ITEM_HEIGHT
-        };
+        const scrollbar_rect = {
+            x: rect.x + rect.width - Styles.Scrollbar.width,
+            y: rect.y,
+            width: Styles.Scrollbar.width,
+            height: rect.height
+        }
 
-        this.pageDial = new PageDial(_page_dial, this.pageBinding);
+        this.scrollbar = new Scrollbar(
+            {
+                content_rows: this._state.targetItem?.messages.length ?? 0 + 1,
+                container_rows: this._items_per_page
+            },
+            scrollbar_rect
+        );
     }
 
     Draw(hasFocus: boolean): void {
         if (this._state.targetItem === null) return;
 
-        this.pageBinding.maxPage = Math.ceil((this._state.targetItem.messages.length + 1) / this._itemRects.length);
+        this.scrollbar.update(this._state.targetItem.messages.length + 1, this._itemRects.length);
 
         const mouse = { x: MouseX, y: MouseY };
         const t_item = this._state.targetItem;
@@ -103,7 +104,7 @@ export class ResponseMessageList extends AGUIItem {
         ADrawRoundRect(this._list_rect, ITEM_HEIGHT / 2 + ITEM_SPACING);
 
         this._itemRects.forEach((v, i) => {
-            const targetIndex = this.pageBinding.page * this._items_per_page + i;
+            const targetIndex = this.scrollbar.offset + i;
             const tmessage = t_item.messages[targetIndex];
 
             if (tmessage) {
@@ -113,18 +114,16 @@ export class ResponseMessageList extends AGUIItem {
             }
         });
 
-        this.pageDial.Draw(hasFocus);
+        this.scrollbar.Draw(hasFocus)
     }
 
     Click(mouse: IPoint): void {
         if (this._state.targetItem === null) return;
         const t_item = this._state.targetItem;
 
-        this.pageDial.Click(mouse);
-
         if (WithinRect(mouse, this._list_rect)) {
             this._itemRects.forEach((v, i) => {
-                const targetIndex = this.pageBinding.page * this._items_per_page + i;
+                const targetIndex = this.scrollbar.offset + i;
                 const tmessage = t_item.messages[targetIndex];
                 if (tmessage && WithinRect(mouse, v)) {
                     setSubscreen(new MessageSettinPopup(this._parent, tmessage, msg => {
@@ -143,5 +142,12 @@ export class ResponseMessageList extends AGUIItem {
             });
         }
 
+        this.scrollbar.Click(mouse);
+    }
+
+    MouseWheel(event: WheelEvent): void {
+        if (this._state.targetItem === null) return;
+        this.scrollbar.MouseWheel(event);
+        if (WithinRect({ x: MouseX, y: MouseY }, this._list_rect)) this.scrollbar.RawMouseWheel(event);
     }
 }

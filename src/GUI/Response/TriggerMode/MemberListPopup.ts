@@ -8,6 +8,7 @@ import { ADrawCricleIconButton, ADrawRoundRect, ADrawTextFit, RoundFramedRect } 
 import { TextInput } from "../../Widgets/InputText";
 import { PageDial, PageDialBinding } from "../../Widgets/PageDial";
 import { Popup } from "../../Widgets/Popup";
+import { Scrollbar } from "../../Widgets/Scrollbar";
 import { BasicText } from "../../Widgets/Text";
 
 const TITLE_FONT_SIZE = 36;
@@ -19,14 +20,12 @@ const MEMBER_TABLE_COLUMN_WIDTH = 260;
 
 const REMOVE_BUTTON_DIAMETER = 40;
 
-const MEMBER_TABLE_ROWS_PER_PAGE = 5;
+const MEMBER_TABLE_ROWS_PER_PAGE = 7;
 const MEMBER_TABLE_HEIGHT = MEMBER_TABLE_TITLE_HEIGHT + MEMBER_TABLE_ROW_HEIGHT * MEMBER_TABLE_ROWS_PER_PAGE;
 const MEMBER_TABLE_WIDTH = MEMBER_TABLE_COLUMN_WIDTH * 2;
 
-const PAGE_PANEL_WIDTH = 300;
-
-const TOTAL_MEMBER_TABLE_HEIGHT = MEMBER_TABLE_HEIGHT + TABLE_INNER_SPACING + Styles.Dialog.control_button_height;
-const TOTAL_MEMBER_TABLE_WIDTH = Math.max(MEMBER_TABLE_WIDTH + (TABLE_INNER_SPACING + REMOVE_BUTTON_DIAMETER) * 2, PAGE_PANEL_WIDTH);
+const TOTAL_MEMBER_TABLE_HEIGHT = MEMBER_TABLE_HEIGHT;
+const TOTAL_MEMBER_TABLE_WIDTH = MEMBER_TABLE_WIDTH + TABLE_INNER_SPACING + REMOVE_BUTTON_DIAMETER + Styles.Scrollbar.spacing + Styles.Scrollbar.width;
 
 const TOTAL_DIALOG_WIDTH = Math.max(TOTAL_MEMBER_TABLE_WIDTH, Styles.Dialog.control_button_width * 2 + Styles.Dialog.padding);
 const TOTAL_DIALOG_HEIGHT = TITLE_FONT_SIZE + Styles.Dialog.padding + Styles.Input.height + Styles.Dialog.padding + TOTAL_MEMBER_TABLE_HEIGHT + Styles.Dialog.padding + Styles.Dialog.control_button_height;
@@ -34,13 +33,9 @@ const TOTAL_DIALOG_HEIGHT = TITLE_FONT_SIZE + Styles.Dialog.padding + Styles.Inp
 class MemberList extends AGUIItem {
     private readonly _table: IRect;
 
-    private readonly _page_panel: IRect;
-
     private readonly memberList: number[];
 
-    private pageBinding: PageDialBinding;
-
-    private pageDial: PageDial;
+    private scrollbar: Scrollbar;
 
     constructor(rect: IRect, memberList: number[]) {
         super();
@@ -53,24 +48,21 @@ class MemberList extends AGUIItem {
             height: MEMBER_TABLE_TITLE_HEIGHT + MEMBER_TABLE_ROW_HEIGHT * MEMBER_TABLE_ROWS_PER_PAGE
         };
 
-        this._page_panel = {
-            x: rect.x + rect.width / 2 - PAGE_PANEL_WIDTH / 2,
-            y: rect.y + this._table.height + TABLE_INNER_SPACING,
-            width: PAGE_PANEL_WIDTH,
-            height: Styles.Dialog.control_button_height
-        };
+        const scrollbar_rect = {
+            x: rect.x + rect.width - Styles.Scrollbar.width,
+            y: rect.y,
+            width: Styles.Scrollbar.width,
+            height: rect.height
+        }
 
-        this.pageBinding = {
-            page: 0,
-            maxPage: 0,
-            update: () => { }
-        };
-
-        this.pageDial = new PageDial(this._page_panel, this.pageBinding);
+        this.scrollbar = new Scrollbar({
+            content_rows: this.memberList.length,
+            container_rows: MEMBER_TABLE_ROWS_PER_PAGE
+        }, scrollbar_rect);
     }
 
     Draw(hasFocus: boolean): void {
-        this.pageBinding.maxPage = Math.ceil(this.memberList.length / MEMBER_TABLE_ROWS_PER_PAGE);
+        this.scrollbar.update(this.memberList.length, MEMBER_TABLE_ROWS_PER_PAGE);
 
         ADrawRoundRect(this._table, Styles.Dialog.roundRadius);
 
@@ -103,17 +95,19 @@ class MemberList extends AGUIItem {
         }, GetText("CharaInfo::Name"));
 
         Array.from({ length: MEMBER_TABLE_ROWS_PER_PAGE }, (_, i) => i).forEach(i => {
-            const y = this._table.y + MEMBER_TABLE_TITLE_HEIGHT + MEMBER_TABLE_ROW_HEIGHT * i;
-            const width = MEMBER_TABLE_COLUMN_WIDTH;
-            const height = MEMBER_TABLE_ROW_HEIGHT;
-            const member = this.memberList[this.pageBinding.page * MEMBER_TABLE_ROWS_PER_PAGE + i];
-            const deleteRect = {
-                x: this._table.x + MEMBER_TABLE_WIDTH + TABLE_INNER_SPACING,
-                y: y + MEMBER_TABLE_ROW_HEIGHT / 2 - REMOVE_BUTTON_DIAMETER / 2,
-                width: REMOVE_BUTTON_DIAMETER,
-                height: REMOVE_BUTTON_DIAMETER
-            }
+            const targetIdx = this.scrollbar.offset + i;
+            const member = this.memberList[targetIdx];
             if (member) {
+                const y = this._table.y + MEMBER_TABLE_TITLE_HEIGHT + MEMBER_TABLE_ROW_HEIGHT * i;
+                const width = MEMBER_TABLE_COLUMN_WIDTH;
+                const height = MEMBER_TABLE_ROW_HEIGHT;
+                const deleteRect = {
+                    x: this._table.x - TABLE_INNER_SPACING - REMOVE_BUTTON_DIAMETER,
+                    y: y + MEMBER_TABLE_ROW_HEIGHT / 2 - REMOVE_BUTTON_DIAMETER / 2,
+                    width: REMOVE_BUTTON_DIAMETER,
+                    height: REMOVE_BUTTON_DIAMETER
+                }
+
                 ADrawTextFit({ x: this._table.x, y, width, height }, member.toString());
                 const name = Player?.FriendNames?.get(member) || "???";
                 ADrawTextFit({ x: this._table.x + TABLE_INNER_SPACING + MEMBER_TABLE_COLUMN_WIDTH, y, width, height }, name);
@@ -121,17 +115,17 @@ class MemberList extends AGUIItem {
             }
         });
 
-        this.pageDial.Draw(hasFocus);
+        this.scrollbar.Draw(hasFocus);
     }
 
     Click(mouse: IPoint): void {
-        this.pageDial.Click(mouse);
         Array.from({ length: MEMBER_TABLE_ROWS_PER_PAGE }, (_, i) => i).forEach(i => {
             const y = this._table.y + MEMBER_TABLE_TITLE_HEIGHT + MEMBER_TABLE_ROW_HEIGHT * i;
-            const member = this.memberList[this.pageBinding.page * MEMBER_TABLE_ROWS_PER_PAGE + i];
+            const targetIdx = this.scrollbar.offset + i;
+            const member = this.memberList[targetIdx];
 
             const deleteRect = {
-                x: this._table.x + MEMBER_TABLE_WIDTH + TABLE_INNER_SPACING,
+                x: this._table.x - TABLE_INNER_SPACING - REMOVE_BUTTON_DIAMETER,
                 y: y + MEMBER_TABLE_ROW_HEIGHT / 2 - REMOVE_BUTTON_DIAMETER / 2,
                 width: REMOVE_BUTTON_DIAMETER,
                 height: REMOVE_BUTTON_DIAMETER
@@ -141,6 +135,12 @@ class MemberList extends AGUIItem {
                 this.memberList.splice(this.memberList.indexOf(member), 1);
             }
         });
+        this.scrollbar.Click(mouse);
+    }
+
+    MouseWheel(event: WheelEvent): void {
+        this.scrollbar.MouseWheel(event);
+        if (WithinRect({ x: MouseX, y: MouseY }, this._table)) this.scrollbar.RawMouseWheel(event);
     }
 }
 
