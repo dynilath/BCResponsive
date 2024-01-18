@@ -9,9 +9,9 @@ export function HTMLID(id: string): string {
 }
 
 export abstract class GUISettingScreen {
-    Load() { }
     Run() { }
     Click() { }
+    MouseWheel(event: WheelEvent) { }
     Exit() { setSubscreen(null); }
     Unload() { }
 }
@@ -74,9 +74,6 @@ export class GUISetting {
             this._currentScreen.Unload();
         }
         this._currentScreen = subscreen;
-        if (this._currentScreen) {
-            this._currentScreen.Load();
-        }
     }
 
     static init(mod: ModSDKModAPI, func: () => GUISettingScreen) {
@@ -106,6 +103,19 @@ export class GUISetting {
                 this._currentScreen.Click();
                 return;
             }
+            return next(args);
+        });
+
+        if (window["PreferenceMouseWheel" as any] == null) {
+            (window["PreferenceMouseWheel" as any] as any) = (event: WheelEvent) => { };
+        }
+
+        mod.hookFunction("PreferenceMouseWheel", 10, (args, next) => {
+            if (this._currentScreen) {
+                this._currentScreen.MouseWheel(args[0] as WheelEvent);
+                return;
+            }
+
             return next(args);
         });
 

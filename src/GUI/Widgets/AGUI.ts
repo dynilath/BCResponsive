@@ -20,6 +20,7 @@ export interface IPoint {
 export abstract class AGUIItem {
     abstract Draw(hasFocus: boolean): void;
     Click(mouse: IPoint): void { };
+    MouseWheel(event: WheelEvent): void { };
     Unload(): void { };
 }
 
@@ -44,6 +45,10 @@ export class AGUIScreen extends GUISettingScreen {
 
     Click(): void {
         this._items.forEach(item => item.Click({ x: MouseX, y: MouseY }));
+    }
+
+    MouseWheel(event: WheelEvent): void {
+        this._items.forEach(item => item.MouseWheel(event));
     }
 
     Exit(): void {

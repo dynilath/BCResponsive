@@ -230,4 +230,16 @@ export class ChipsPark extends AGUIItem {
             }
         }
     }
+
+    MouseWheel(event: WheelEvent): void {
+        const mouse = { x: MouseX, y: MouseY };
+        if (this.scrollbar && (WithinRect(mouse, this._chips_park) || WithinRect(mouse, this.scrollbar.scroll))) {
+            const step = this.scrollbar.bar_max_offset / (this.row_count + 1 - this.display_row_count);
+            if (event.deltaY < 0) {
+                this.scrollbar.bar_offset = Math.max(0, this.scrollbar.bar_offset - step);
+            } else if (event.deltaY > 0) {
+                this.scrollbar.bar_offset = Math.min(this.scrollbar.bar_max_offset, this.scrollbar.bar_offset + step);
+            }
+        }
+    }
 }
