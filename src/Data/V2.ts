@@ -75,9 +75,11 @@ export function V2ValidatePersonality(arg: any): ResponsivePersonality | undefin
             if (j.trigger.mode === "activity") {
                 let allow_activities = j.trigger.allow_activities;
                 let allow_bodyparts = j.trigger.allow_bodyparts;
+                let allow_ids = j.trigger.allow_ids;
                 if (allow_activities !== undefined && !isStringArray(allow_activities)) return undefined;
                 if (allow_bodyparts !== undefined && !isStringArray(allow_bodyparts)) return undefined;
-                return { mode: "activity", allow_activities, allow_bodyparts };
+                if (allow_ids !== undefined && !isNumberArray(allow_ids)) return undefined;
+                return { mode: "activity", allow_activities, allow_bodyparts, allow_ids };
             } else if (j.trigger.mode === "orgasm") {
                 return { mode: "orgasm" };
             } else if (j.trigger.mode === "spicer") {
