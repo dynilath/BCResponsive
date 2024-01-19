@@ -2,7 +2,6 @@
   "name": "bc-responsive",
   "version": "1.0.0",
   "description": "A auto response script for bondage-club",
-  "type": "module",
   "scripts": {
     "build": "rollup --bundleConfigAsCjs -c src/rollup.config.js",
     "dev": "npm run build && lite-server -c public/lite-server.config.js"

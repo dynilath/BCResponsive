@@ -1,11 +1,10 @@
-import typescript from "@rollup/plugin-typescript";
-import progress from "rollup-plugin-progress";
-import commonjs from "@rollup/plugin-commonjs";
-import resolve from "@rollup/plugin-node-resolve";
-import cleanup from "rollup-plugin-cleanup";
-import copy from 'rollup-plugin-copy';
-import path from 'path'
-
+const typescript = require("@rollup/plugin-typescript");
+const progress = require("rollup-plugin-progress");
+const commonjs = require("@rollup/plugin-commonjs");
+const resolve = require("@rollup/plugin-node-resolve");
+const cleanup = require("rollup-plugin-cleanup");
+const copy = require('rollup-plugin-copy');
+const path = require('path');
 
 const config_d = {
     folder: "Responsive",
@@ -42,4 +41,4 @@ const config = {
     ],
 }
 
-export default config;
+module.exports = config;
