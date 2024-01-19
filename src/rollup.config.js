@@ -15,7 +15,7 @@ const config_d = {
 
 const relative_dir = path.relative(".", __dirname).replace(/\\/g, "/");
 
-const config = {
+const default_config = {
     input: `${relative_dir}/${config_d.input}`,
     output: {
         file: `public/${config_d.folder}/${config_d.output}`,
@@ -24,18 +24,26 @@ const config = {
         banner: ``,
     },
     treeshake: true,
-    plugins: [
-        copy({
-            targets: [
-                { src: `${relative_dir}/${config_d.loader}`, dest: `public/${config_d.folder}` }
-            ]
-        }),
-        progress({ clearLine: true }),
-        resolve({ browser: true }),
-        typescript({ exclude: ["**/__tests__", "**/*.test.ts"], tsconfig: `${relative_dir}/tsconfig.json`, inlineSources: true }),
-        commonjs(),
-        cleanup({ sourcemap: false })
-    ],
 }
 
-module.exports = config;
+const plugins = deploy => [
+    copy({
+        targets: [
+            { 
+                src: `${relative_dir}/${config_d.loader}`, 
+                dest: `public/${config_d.folder}`,
+                transform: (contents, filename) =>
+                    contents.toString().replace("__DEPLOY_SITE__", `${deploy}/${config_d.folder}/${config_d.output}` )
+            }
+        ]
+    }),
+    progress({ clearLine: true }),
+    resolve({ browser: true }),
+    typescript({ exclude: ["**/__tests__", "**/*.test.ts"], tsconfig: `${relative_dir}/tsconfig.json`, inlineSources: true }),
+    commonjs(),
+    cleanup({ sourcemap: false })
+]
+
+module.exports = cliArgs => {
+    return {...default_config, plugins: plugins(cliArgs.configDeploy)}
+};

@@ -15,7 +15,7 @@
 
 (function () {
     "use strict";
-    const src = `https://dynilath.gitlab.io/SaotomeToyStoreVendor/Responsive/main.js?v=${Date.now()}`;
+    const src = `__DEPLOY_SITE__?v=${Date.now()}`;
     if (typeof BCResponsive_Loaded === "undefined") {
         const n = document.createElement("script");
         n.setAttribute("type", "text/javascript");
