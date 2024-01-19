@@ -34,10 +34,7 @@ const config = {
         resolve({ browser: true }),
         typescript({ exclude: ["**/__tests__", "**/*.test.ts"], tsconfig: `${relative_dir}/tsconfig.json`, inlineSources: true }),
         commonjs(),
-        cleanup({
-            comments: 'none',
-            sourcemap: false,
-        })
+        cleanup({ sourcemap: false })
     ],
 }
 
