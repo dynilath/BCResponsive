@@ -70,8 +70,8 @@ export class PersonaItem extends AGUIItem {
         };
 
         this._new_rect = {
-            x: rect.x,
-            y: rect.y + rect.height / 2,
+            x: rect.x + spacing,
+            y: rect.y + rect.height / 2 - text_area_height / 2,
             width: rect.width - spacing * 2,
             height: text_area_height
         };
