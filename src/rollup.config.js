@@ -5,6 +5,7 @@ const resolve = require("@rollup/plugin-node-resolve");
 const cleanup = require("rollup-plugin-cleanup");
 const copy = require('rollup-plugin-copy');
 const path = require('path');
+const terser = require("@rollup/plugin-terser");
 
 const config_d = {
     folder: "Responsive",
@@ -15,7 +16,7 @@ const config_d = {
 
 const relative_dir = path.relative(".", __dirname).replace(/\\/g, "/");
 
-const default_config = {
+const config_default = {
     input: `${relative_dir}/${config_d.input}`,
     output: {
         file: `public/${config_d.folder}/${config_d.output}`,
@@ -26,14 +27,14 @@ const default_config = {
     treeshake: true,
 }
 
-const plugins = deploy => [
+const plugins_debug = deploy => [
     copy({
         targets: [
-            { 
-                src: `${relative_dir}/${config_d.loader}`, 
+            {
+                src: `${relative_dir}/${config_d.loader}`,
                 dest: `public/${config_d.folder}`,
                 transform: (contents, filename) =>
-                    contents.toString().replace("__DEPLOY_SITE__", `${deploy}/${config_d.folder}/${config_d.output}` )
+                    contents.toString().replace("__DEPLOY_SITE__", `${deploy}/${config_d.folder}/${config_d.output}`)
             }
         ]
     }),
@@ -44,6 +45,13 @@ const plugins = deploy => [
     cleanup({ sourcemap: false })
 ]
 
+const plugins = deploy => [...plugins_debug(deploy), terser()]
+
 module.exports = cliArgs => {
-    return {...default_config, plugins: plugins(cliArgs.configDeploy)}
+    const deploy = cliArgs.configDeploy;
+    const debug = !!cliArgs.configDebug;
+    if (!deploy) throw new Error("No deploy site specified");
+    console.log(`${debug ? "dev" : "release"} is set deployed to ${deploy}`);
+    if (debug) return { ...config_default, plugins: plugins_debug(deploy) };
+    return { ...config_default, plugins: plugins(deploy) };
 };
