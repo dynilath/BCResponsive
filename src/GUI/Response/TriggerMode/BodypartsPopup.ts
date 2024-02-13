@@ -4,7 +4,7 @@ import { GetText } from "../../../i18n";
 import { GUISettingScreen } from "../../GUI";
 import { TextRoundButton } from "../../Widgets/Button";
 import { ChipsPark } from "../../Widgets/ChipsPark";
-import { RoundFramedRect } from "../../Widgets/Common";
+import { RoundFramedRect } from "../../Widgets/Rect";
 import { Popup } from "../../Widgets/Popup";
 import { BasicText } from "../../Widgets/Text";
 import { ResponseMenuState } from "../ResponseMenuState";

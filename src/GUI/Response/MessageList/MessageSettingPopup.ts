@@ -1,6 +1,6 @@
 import { GetText } from "../../../i18n";
 import { GUISettingScreen } from "../../GUI";
-import { RoundFramedRect } from "../../Widgets/Common";
+import { RoundFramedRect } from "../../Widgets/Rect";
 import { TextButton, TextRoundButton } from "../../Widgets/Button";
 import { BasicText } from "../../Widgets/Text";
 import { TextAreaItem } from "../../Widgets/InputText";

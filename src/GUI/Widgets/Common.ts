@@ -1,6 +1,6 @@
 import { Styles } from "../../Definition";
 import { GetIcon, Icons } from "../Icons";
-import { AGUIItem, IPoint, IRect, WithinRect as WithinRect } from "./AGUI";
+import { IPoint, IRect, WithinRect as WithinRect } from "./AGUI";
 
 export function ADrawText(rect: IPoint, Text: string, option?: { color?: string, align?: CanvasTextAlign }) {
     if (!option) option = {};
@@ -184,38 +184,6 @@ export function ADrawRoundRect(rect: IRect, radius: number, style?: { fill?: str
 
 export function ADrawIcon(rect: IRect, icon: keyof typeof Icons) {
     MainCanvas.drawImage(GetIcon(icon), rect.x, rect.y, rect.width, rect.height);
-}
-
-export class FramedRect extends AGUIItem {
-    private _rect: IRect;
-    private _color: string;
-
-    constructor(rect: IRect, color: string) {
-        super();
-        this._rect = rect;
-        this._color = color;
-    }
-
-    Draw() {
-        ADrawFramedRect(this._rect, this._color);
-    }
-}
-
-export class RoundFramedRect extends AGUIItem {
-    private _rect: IRect;
-    private _radius: number;
-    private _fill: string;
-
-    constructor(rect: IRect, radius: number, fill: string) {
-        super();
-        this._rect = rect;
-        this._radius = radius;
-        this._fill = fill;
-    }
-
-    Draw() {
-        ADrawRoundRect(this._rect, this._radius, { fill: this._fill });
-    }
 }
 
 

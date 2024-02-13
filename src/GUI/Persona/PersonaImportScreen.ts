@@ -1,6 +1,6 @@
 import { DataManager } from "../../Data";
 import { GUISettingScreen, hasFocus } from "../GUI";
-import { RoundFramedRect } from "../Widgets/Common";
+import { RoundFramedRect } from "../Widgets/Rect";
 import { TextRoundButton } from "../Widgets/Button";
 import { DynamicText } from "../Widgets/Text";
 import { TextAreaItem } from "../Widgets/InputText";

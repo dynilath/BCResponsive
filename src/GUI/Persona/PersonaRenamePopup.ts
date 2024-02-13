@@ -2,7 +2,7 @@ import { MaxNameLength, Styles } from "../../Definition";
 import { GetText } from "../../i18n";
 import { GUISettingScreen } from "../GUI";
 import { TextRoundButton } from "../Widgets/Button";
-import { RoundFramedRect } from "../Widgets/Common";
+import { RoundFramedRect } from "../Widgets/Rect";
 import { TextInput } from "../Widgets/InputText";
 import { Popup } from "../Widgets/Popup";
 import { BasicText } from "../Widgets/Text";
