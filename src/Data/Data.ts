@@ -29,7 +29,7 @@ export class DataManager {
         if (this._instance === undefined)
             this._instance = new DataManager;
 
-        function LoadAndMessage(C: Character | null | undefined) {
+        function LoadAndMessage(C: PlayerCharacter | null | undefined) {
             if (C) DataManager.instance.ServerTakeData(C);
             console.log(`${ModName} v${ModVersion} ready.`);
         }
@@ -42,7 +42,7 @@ export class DataManager {
 
         mod.hookFunction('LoginResponse', 0, (args, next) => {
             next(args);
-            LoadAndMessage(args[0] as Character);
+            LoadAndMessage(args[0] as PlayerCharacter);
         });
 
         if (Player && Player.MemberNumber) {
@@ -90,7 +90,7 @@ export class DataManager {
         }
     }
 
-    ServerTakeData(C: Character) {
+    ServerTakeData(C: PlayerCharacter) {
         const raw_data = C.ExtensionSettings[DataKeyName]
             || (C.OnlineSettings as any)[DataKeyName]
         this.DecodeDataStr(raw_data);

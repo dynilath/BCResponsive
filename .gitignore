@@ -3,3 +3,4 @@
 *.lock
 .npmrc
 *.log
+pnpm-lock.yaml

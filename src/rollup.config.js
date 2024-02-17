@@ -1,57 +1,92 @@
 const typescript = require("@rollup/plugin-typescript");
-const progress = require("rollup-plugin-progress");
 const commonjs = require("@rollup/plugin-commonjs");
 const resolve = require("@rollup/plugin-node-resolve");
+const replace = require('@rollup/plugin-replace');
 const cleanup = require("rollup-plugin-cleanup");
 const copy = require('rollup-plugin-copy');
-const path = require('path');
 const terser = require("@rollup/plugin-terser");
+const path = require('path');
+const package = require('../package.json');
 
-const config_d = {
-    folder: "Responsive",
-    input: "Responsive.ts",
-    output: "main.js",
-    loader: "loader.user.js",
+const deployFileName = "main.js";
+
+const buildSettings = {
+    deployDir: package.buildSettings.deployDir,
+    input: package.buildSettings.input,
 }
 
-const relative_dir = path.relative(".", __dirname).replace(/\\/g, "/");
+const loaderFileInfo = {
+    deploy: `${buildSettings.deployDir}/${deployFileName}`,
+    description: `${package.description}`,
+    name: `${package.displayName} (Loader)`,
+    author: `${package.author}`,
+}
 
-const config_default = {
-    input: `${relative_dir}/${config_d.input}`,
+const modInfo = {
+    name: `"${package.displayName}"`,
+    version: `"${package.version}"`,
+    repo: (() => {
+        if (!package.repository || !package.repository.url) return "undefined";
+        if (package.repository.url.startsWith("git+")) return `"${package.repository.url.replace("git+", "").replace(".git", "")}"`;
+        return `"${package.repository.url.replace(".git", "")}"`;
+    })(),
+}
+
+const loadFlag = `${package.displayName.replace(/ /g, "")}_Loaded`;
+
+const destDir = `${process.env.INIT_CWD}/public/${buildSettings.deployDir}`;
+
+const relativeDir = path.relative(".", __dirname).replace(/\\/g, "/");
+
+const default_config = debug => ({
+    input: `${relativeDir}/${buildSettings.input}`,
     output: {
-        file: `public/${config_d.folder}/${config_d.output}`,
+        file: `${destDir}/${deployFileName}`,
         format: "iife",
-        sourcemap: false,
+        sourcemap: debug,
         banner: ``,
     },
     treeshake: true,
-}
+})
 
-const plugins_debug = deploy => [
+const plugins_debug = deploySite => [
     copy({
         targets: [
             {
-                src: `${relative_dir}/${config_d.loader}`,
-                dest: `public/${config_d.folder}`,
+                src: `${relativeDir}/loader.user.js`,
+                dest: destDir,
                 transform: (contents, filename) =>
-                    contents.toString().replace("__DEPLOY_SITE__", `${deploy}/${config_d.folder}/${config_d.output}`)
+                    contents.toString().replace("__DEPLOY_SITE__", `${deploySite}/${loaderFileInfo.deploy}`)
+                        .replace("__DESCRIPTION__", loaderFileInfo.description)
+                        .replace("__NAME__", loaderFileInfo.name)
+                        .replace("__AUTHOR__", loaderFileInfo.author)
+                        .replace("__LOAD_FLAG__", loadFlag)
             }
         ]
     }),
-    progress({ clearLine: true }),
-    resolve({ browser: true }),
-    typescript({ exclude: ["**/__tests__", "**/*.test.ts"], tsconfig: `${relative_dir}/tsconfig.json`, inlineSources: true }),
+    typescript({ exclude: ["**/__tests__", "**/*.test.ts"], tsconfig: `${relativeDir}/tsconfig.json` }),
     commonjs(),
-    cleanup({ sourcemap: false })
+    replace({
+        __mod_name__: modInfo.name,
+        __mod_version__: modInfo.version,
+        __repo__: modInfo.repo,
+        __load_flag__: loadFlag,
+        preventAssignment: false
+    }),
+    resolve({ browser: true }),
+    cleanup(),
 ]
 
-const plugins = deploy => [...plugins_debug(deploy), terser()]
+const plugins = deploySite => [
+    ...plugins_debug(deploySite),
+    terser()
+]
 
 module.exports = cliArgs => {
-    const deploy = cliArgs.configDeploy;
     const debug = !!cliArgs.configDebug;
+    const deploy = cliArgs.configDeploy;
     if (!deploy) throw new Error("No deploy site specified");
     console.log(`${debug ? "dev" : "release"} is set deployed to ${deploy}`);
-    if (debug) return { ...config_default, plugins: plugins_debug(deploy) };
-    return { ...config_default, plugins: plugins(deploy) };
+    if (debug) return { ...default_config(debug), plugins: plugins_debug(deploy) }
+    return { ...default_config(debug), plugins: plugins(deploy) }
 };

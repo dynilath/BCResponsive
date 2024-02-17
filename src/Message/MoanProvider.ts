@@ -1,7 +1,8 @@
 import { TriggerData, TriggerDataActivity, TriggerDataOrgasm, isTriggerDataActivity, isTriggerDataOrgasm } from "./types";
 import { DataManager } from "../Data";
-import { ChatRoomAutoInterceptMessage, ChatRoomSendAction } from "./ChatMessages";
+import { ChatRoomAutoInterceptMessage } from "./ChatMessages";
 import { ReplaceField } from "./MessageFields";
+import { ChatRoomAction } from "bc-utilities";
 
 export function InvokeResponse(data: TriggerData, player: Character | undefined, target?: Character) {
     const active_personality = DataManager.active_personality;
@@ -52,7 +53,7 @@ function InvokeResponseForActivity(persona: ResponsivePersonality, data: Trigger
             ChatRoomAutoInterceptMessage(ReplaceField(selected_spicer.content, player, target) + " " + ReplaceField(selected.content, player, target));
         }
     } else if (selected.type === "action") {
-        ChatRoomSendAction(ReplaceField(selected.content, player, target));
+        ChatRoomAction.instance.SendAction(ReplaceField(selected.content, player, target));
     }
 }
 
@@ -73,6 +74,6 @@ function InvokeResponseForOrgasm(persona: ResponsivePersonality, data: TriggerDa
     if (selected.type === "message") {
         ChatRoomAutoInterceptMessage(ReplaceField(selected.content, player, undefined));
     } else if (selected.type === "action") {
-        ChatRoomSendAction(ReplaceField(selected.content, player, undefined));
+        ChatRoomAction.instance.SendAction(ReplaceField(selected.content, player, undefined));
     }
 }

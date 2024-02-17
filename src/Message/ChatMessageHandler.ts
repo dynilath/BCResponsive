@@ -3,7 +3,7 @@ type HandleFunction = (player: Character, sender: Character, data: ServerChatRoo
 export class ChatMessageHandler {
     _handles = new Map<ServerChatRoomMessageType, Array<HandleFunction>>();
 
-    Run(player: Character | undefined, data: ServerChatRoomMessage) {
+    Run(player: PlayerCharacter | undefined, data: ServerChatRoomMessage) {
         if (player === undefined || player.MemberNumber === undefined) return;
         if (player.GhostList && player.GhostList.indexOf(data.Sender) >= 0) return;
         let sender = ChatRoomCharacter.find(c => c.MemberNumber == data.Sender);

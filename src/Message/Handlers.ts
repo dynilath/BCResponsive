@@ -1,8 +1,8 @@
 import { DataManager } from "../Data";
-import { ActivityDeconstruct } from "./ChatMessages";
+import { ActivityDeconstruct } from "bc-utilities";
 import { InvokeResponse } from "./MoanProvider";
 
-export function ActivityHandle(player: Character | undefined, data: ServerChatRoomMessage) {
+export function ActivityHandle(player: PlayerCharacter | undefined, data: ServerChatRoomMessage) {
     if (!DataManager.instance.data.settings.enabled) return;
     if (player === undefined || player.MemberNumber === undefined) return;
     if (data.Type !== "Activity") return;
@@ -22,11 +22,11 @@ export function ActivityHandle(player: Character | undefined, data: ServerChatRo
         activity: activityInfo.ActivityName,
         bodypart: activityInfo.ActivityGroup,
         from: activityInfo.SourceCharacter.MemberNumber,
-        arousal: player.ArousalSettings.Progress
+        arousal: player.ArousalSettings?.Progress || 0
     }, player, sender);
 }
 
-export function OrgasmHandle(player: Character | undefined, target: Character) {
+export function OrgasmHandle(player: PlayerCharacter | undefined, target: Character) {
     if (!DataManager.instance.data.settings.enabled) return;
     if (CurrentScreen !== 'ChatRoom') return;
     if (player === undefined || player.MemberNumber === undefined) return;

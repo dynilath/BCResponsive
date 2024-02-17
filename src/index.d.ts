@@ -1,3 +1,9 @@
+enum MoanType {
+    Orgasm,
+    Pain,
+    Tickle
+}
+
 interface ResponsiveSettingV1 {
     settings: { enable: boolean };
     hot: string[];
@@ -77,5 +83,8 @@ type ResponsivePartialSetting = Partial<ResponsiveSolidSetting>;
 type ModSetting = { BCResponsive?: string };
 
 interface Window {
-    BCResponsive_Loaded?: boolean;
+    __load_flag__?: boolean;
 }
+declare const __mod_version__: string;
+declare const __mod_name__: string;
+declare const __repo__: string;

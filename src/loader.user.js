@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name BC Responsive Loader (Loader)
+// @name __NAME__
 // @namespace https://www.bondageprojects.com/
-// @version 1.2
-// @description An anto response script for Bondage Club
-// @author Saki Saotome
+// @version 1.3
+// @description __DESCRIPTION__
+// @author __AUTHOR__
 // @match bondageprojects.elementfx.com/*/BondageClub/*
 // @match www.bondageprojects.elementfx.com/*/BondageClub/*
 // @match bondage-europe.com/*/BondageClub/*
@@ -16,10 +16,11 @@
 (function () {
     "use strict";
     const src = `__DEPLOY_SITE__?v=${Date.now()}`;
-    if (typeof BCResponsive_Loaded === "undefined") {
-        const n = document.createElement("script");
-        n.setAttribute("type", "text/javascript");
-        n.setAttribute("src", src);
+    if (typeof __LOAD_FLAG__ === "undefined") {
+        const script = document.createElement("script");
+        script.src = src;
+        script.type = "text/javascript";
+        script.crossOrigin = "anonymous";
         document.head.appendChild(n);
     }
 })();

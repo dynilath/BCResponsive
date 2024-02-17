@@ -1,30 +1,5 @@
 import { CUSTOM_ACTION_TAG } from "../Definition";
 
-interface ActivityInfo {
-    SourceCharacter: { MemberNumber: number };
-    TargetCharacter: { MemberNumber: number };
-    ActivityGroup: string;
-    ActivityName: string;
-}
-
-export function ActivityDeconstruct(dict: ChatMessageDictionary): ActivityInfo | undefined {
-    let SourceCharacter, TargetCharacter, ActivityGroup, ActivityName;
-    for (let v of dict) {
-        if (v.hasOwnProperty('TargetCharacter')) {
-            TargetCharacter = { MemberNumber: v['TargetCharacter'] };
-        } else if (v.hasOwnProperty('SourceCharacter')) {
-            SourceCharacter = { MemberNumber: v['SourceCharacter'] };
-        } else if (v.hasOwnProperty('ActivityName')) {
-            ActivityName = v['ActivityName'];
-        } else if (v.hasOwnProperty('Tag') && v.Tag === 'FocusAssetGroup') {
-            ActivityGroup = v['FocusGroupName'];
-        }
-    }
-    if (SourceCharacter === undefined || TargetCharacter === undefined
-        || ActivityGroup === undefined || ActivityName === undefined) return undefined;
-    return { SourceCharacter, TargetCharacter, ActivityGroup, ActivityName };
-}
-
 function IsSimpleChat(msg: string) {
     return msg.trim().length > 0 && !msg.startsWith("/") && !msg.startsWith("(") && !msg.startsWith("*");
 }
@@ -53,15 +28,4 @@ export function ChatRoomAutoInterceptMessage(msg: string) {
     } else {
         ChatRoomNormalMessage(msg);
     }
-}
-
-export function ChatRoomSendAction(Content: string) {
-    if (!Content || !Player || !Player.MemberNumber) return;
-    ServerSend("ChatRoomChat", {
-        Content: CUSTOM_ACTION_TAG,
-        Type: "Action",
-        Dictionary: [
-            { Tag: `MISSING PLAYER DIALOG: ${CUSTOM_ACTION_TAG}`, Text: Content },
-        ]
-    });
 }

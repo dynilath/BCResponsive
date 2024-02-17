@@ -1,15 +1,7 @@
-function buildVersion(v1: number, v2: number, v3: number) {
-    return `${v1}.${v2}.${v3}`;
-}
+export const ModVersion = __mod_version__;
+export const ModName = __mod_name__;
+export const GIT_REPO = __repo__;
 
-export enum MoanType {
-    Orgasm,
-    Pain,
-    Tickle
-}
-
-export const ModVersion = buildVersion(1, 0, 5);
-export const ModName = 'BondageClub Responsive'
 export const HTMLIDPrefix = "BCR_";
 
 export const DebugMode = false;
@@ -77,7 +69,5 @@ export const DefaultPersonaIndex = 0;
 export const MaxPersonalities = 5;
 
 export const MaxNameLength = 20;
-
-export const Repository = "https://github.com/dynilath/BCResponsive"
 
 export const DataKeyName = "BCResponsiveData";

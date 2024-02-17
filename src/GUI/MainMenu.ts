@@ -1,6 +1,6 @@
 
 import { DataManager } from "../Data";
-import { Repository, Styles } from "../Definition";
+import { GIT_REPO, Styles } from "../Definition";
 import { GetText } from "../i18n";
 import { GUISettingScreen, setSubscreen } from "./GUI";
 import { PersonaSetting } from "./Persona/PersonaMenu";
@@ -64,7 +64,7 @@ export class GUIMainMenu extends AGUIScreen {
                 y: 800,
                 width: 100,
                 height: 100
-            }, Styles.Dialog.roundRadius, "github", () => window.open(Repository))
+            }, Styles.Dialog.roundRadius, "github", () => window.open(GIT_REPO))
         ]
     }
 }
