@@ -60,17 +60,19 @@ export function V1SettingToV2Setting(data: ResponsiveSettingV1): ResponsiveSetti
     }, undefined));
     return def;
 }
-export function V2ValidatePersonality(arg: any): ResponsivePersonality | undefined {
+export function V2ValidatePersonality(arg: Partial<ResponsivePersonality> | undefined): ResponsivePersonality | undefined {
     if (!((d: any): d is ResponsivePersonality => {
         return d !== undefined && d !== null && typeof d === "object" && typeof d.name === "string" && typeof d.index === "number" && Array.isArray(d.responses);
     })(arg)) return undefined;
 
-    let responses = arg.responses.map((j: any): ResponsiveItem | undefined => {
+    let responses = arg.responses.map((j: Partial<ResponsiveItem>): ResponsiveItem | undefined => {
         if (typeof j !== "object") return undefined;
         if (typeof j.name !== "string") return undefined;
         if (typeof j.trigger !== "object") return undefined;
 
-        let trigger = ((): ResponsiveTrigger | undefined => {
+        const enabled = j.enabled === undefined ? true : j.enabled;
+
+        const trigger = ((): ResponsiveTrigger | undefined => {
             if (typeof j.trigger.mode !== "string") return undefined;
             if (j.trigger.mode === "activity") {
                 let allow_activities = j.trigger.allow_activities;
@@ -108,7 +110,7 @@ export function V2ValidatePersonality(arg: any): ResponsivePersonality | undefin
             return { type: k.type, content: k.content };
         }).filter((_: any) => _ !== undefined) as ResponsiveMessage[];
 
-        return { name: j.name, enabled: true, trigger: trigger, messages: messages };
+        return { name: j.name, enabled, trigger, messages };
     }).filter((_: any) => _ !== undefined) as ResponsiveItem[];
 
     return { name: arg.name, index: arg.index, responses: responses };

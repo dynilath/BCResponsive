@@ -2,7 +2,10 @@ var config = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   globals: {
-    'TranslationLanguage': 'EN'
+    'TranslationLanguage': 'EN',
+    '__mod_name__': 'BCResponsive',
+    '__mod_version__':'0.0.0',
+    '__repo__' : '',
   },
 };
 

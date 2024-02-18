@@ -15,6 +15,7 @@ describe("getDefaultSettings", () => {
         let data = getDefaultSettings();
         expect(data.personalities[0]).toBeDefined();
         (data.personalities[0] as ResponsivePersonality).name = "test";
+        (data.personalities[0] as ResponsivePersonality).responses[0].enabled = false;
         let json = JSON.stringify(data);
 
         let data_picked = pickV2Setting(JSON.parse(json));
