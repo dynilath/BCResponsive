@@ -3,7 +3,6 @@ import { DefaultValueV1TriggerActivities } from "../../../Data/V1";
 import { Styles } from "../../../Definition";
 import { GetText } from "../../../i18n";
 import { GUISettingScreen } from "../../GUI";
-import { AGUIItem, IRect } from "../../Widgets/AGUI";
 import { TextRoundButton } from "../../Widgets/Button";
 import { ChipsPark } from "../../Widgets/ChipsPark";
 import { RoundFramedRect } from "../../Widgets/Rect";
@@ -22,13 +21,10 @@ const TOTAL_CHIPS_WIDTH = 1000;
 const DIALOG_CONTENT_HEIGHT = 720;
 
 export class ActivityPopup extends Popup {
-
-    private readonly source: ResponseMenuState;
     private readonly editing: Set<string>;
 
-    constructor(prev: GUISettingScreen, source: ResponseMenuState) {
+    constructor(readonly prev: GUISettingScreen, readonly source: ResponseMenuState) {
         super(prev);
-        this.source = source;
 
         const _title = {
             x: Styles.Screen.center_x,
@@ -137,7 +133,7 @@ export class ActivityPopup extends Popup {
             else vs.forEach(a => this.editing.add(a));
         }
 
-        this._items = [
+        this.items = [
             new RoundFramedRect(_dialog, Styles.Dialog.roundRadius, "White"),
             new BasicText(_title, GetText("ActivityPopup::Title"), { align: "center" }),
             new ChipsPark(this.editing, _chips_value, _chips_park, flip),

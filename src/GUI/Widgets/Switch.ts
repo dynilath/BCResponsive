@@ -9,14 +9,13 @@ export class Switch extends AGUIItem {
     private _radius: number;
     private _p_off: IPoint;
     private _p_on: IPoint;
-    private _state: Binding<boolean>;
 
     private _animate_state: {
         last_update: number;
         value: number;
     };
 
-    constructor(state: Binding<boolean>, rect: IRect) {
+    constructor(readonly state: Binding<boolean>, readonly rect: IRect) {
         super();
 
         const padding = 10;
@@ -39,11 +38,10 @@ export class Switch extends AGUIItem {
         this._radius = padding_radius - padding;
         this._p_off = { x: this._rect.x + padding_radius, y: this._rect.y + padding_radius };
         this._p_on = { x: this._rect.x + this._rect.width - padding_radius, y: this._rect.y + padding_radius };
-        this._state = state;
 
         this._animate_state = {
             last_update: Date.now(),
-            value: this._state.value ? 1 : 0
+            value: this.state.value ? 1 : 0
         };
     }
 
@@ -51,7 +49,7 @@ export class Switch extends AGUIItem {
         const ctx = MainCanvas;
 
         const delta = Date.now() - this._animate_state.last_update;
-        if (this._state.value) {
+        if (this.state.value) {
             this._animate_state.value = Math.min(1, this._animate_state.value + delta / 100);
         } else {
             this._animate_state.value = Math.max(0, this._animate_state.value - delta / 100);
@@ -62,7 +60,7 @@ export class Switch extends AGUIItem {
 
         ADrawCircleRect(this._rect);
 
-        ctx.fillStyle = this._state.value ? Styles.Switch.on : Styles.Switch.off;
+        ctx.fillStyle = this.state.value ? Styles.Switch.on : Styles.Switch.off;
         ctx.beginPath();
         ctx.arc(circle_pos.x, circle_pos.y, this._radius + 5, 0, 2 * Math.PI);
         ctx.fill();
@@ -71,6 +69,6 @@ export class Switch extends AGUIItem {
 
     Click(mouse: IPoint): void {
         if (WithinRect(mouse, this._rect))
-            this._state.value = !this._state.value;
+            this.state.value = !this.state.value;
     }
 }

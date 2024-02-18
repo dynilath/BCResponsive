@@ -6,120 +6,85 @@ import { ADrawIconTextButton, ADrawIconButton } from "./Common";
 
 
 export class StdButton extends AGUIItem {
-    private _rect: IRect;
-    private _callback: () => void;
-    private _text: string | null = null;
-    private _icon: string | null = null;
 
-    constructor(rect: IRect, text: string, callback: () => void, icon: string | null = null) {
+    constructor(readonly rect: IRect, readonly text: string, readonly callback: () => void, readonly icon: string | null = null) {
         super();
-        this._rect = rect;
-        this._text = text;
-        this._callback = callback;
-        this._icon = icon;
     }
 
     Draw(hasFocus: boolean) {
-        if (this._icon && this._text) {
-            ADrawIconTextButton(this._rect, this._text, this._icon);
-        } else if (this._icon) {
-            ADrawIconButton(this._rect, this._icon);
-        } else if (this._text) {
-            ADrawIconTextButton(this._rect, this._text, "");
+        if (this.icon && this.text) {
+            ADrawIconTextButton(this.rect, this.text, this.icon);
+        } else if (this.icon) {
+            ADrawIconButton(this.rect, this.icon);
+        } else if (this.text) {
+            ADrawIconTextButton(this.rect, this.text, "");
         }
     }
 
     Click(mouse: IPoint) {
-        if (WithinRect(mouse, this._rect)) this._callback();
+        if (WithinRect(mouse, this.rect)) this.callback();
     }
 }
 
 export class DynamicTextRoundButton extends AGUIItem {
-    readonly _rect: IRect;
-    readonly _text: () => string;
-    readonly _callback: () => void;
-
-    enabled: (() => boolean) | undefined;
-
-    constructor(rect: IRect, text: () => string, callback: () => void, enabled?: () => boolean) {
+    constructor(readonly rect: IRect, readonly text: () => string, readonly callback: () => void, readonly enabled?: () => boolean) {
         super();
-        this._rect = rect;
-        this._text = text;
-        this._callback = callback;
-        this.enabled = enabled;
     }
 
     Draw(hasFocus: boolean): void {
         if (!this.enabled || this.enabled()) {
-            if (hasFocus && WithinRect({ x: MouseX, y: MouseY }, this._rect)) {
-                ADrawCircleRect(this._rect, { fill: Styles.Button.hover });
+            if (hasFocus && WithinRect({ x: MouseX, y: MouseY }, this.rect)) {
+                ADrawCircleRect(this.rect, { fill: Styles.Button.hover });
             } else {
-                ADrawCircleRect(this._rect, { fill: Styles.Button.idle });
+                ADrawCircleRect(this.rect, { fill: Styles.Button.idle });
             }
-            ADrawTextFit(this._rect, this._text());
+            ADrawTextFit(this.rect, this.text());
         } else {
-            ADrawCircleRect(this._rect, { stroke: Styles.Button.disabled });
-            ADrawTextFit(this._rect, this._text(), { color: Styles.Button.disabled });
+            ADrawCircleRect(this.rect, { stroke: Styles.Button.disabled });
+            ADrawTextFit(this.rect, this.text(), { color: Styles.Button.disabled });
         }
     }
 
     Click(mouse: IPoint): void {
-        if (WithinRect(mouse, this._rect)) this._callback();
+        if (WithinRect(mouse, this.rect)) this.callback();
     }
 }
 
 export class TextRoundButton extends AGUIItem {
-    readonly _rect: IRect;
-    readonly _text: string;
-    readonly _callback: () => void;
-
-    enabled: (() => boolean) | undefined;
-
-    constructor(rect: IRect, text: string, callback: () => void, enabled?: () => boolean) {
+    constructor(readonly rect: IRect, readonly text: string, readonly callback: () => void, readonly enabled?: () => boolean) {
         super();
-        this._rect = rect;
-        this._text = text;
-        this._callback = callback;
-        this.enabled = enabled;
     }
 
     Draw(hasFocus: boolean): void {
         if (!this.enabled || this.enabled()) {
-            if (hasFocus && WithinRect({ x: MouseX, y: MouseY }, this._rect)) {
-                ADrawCircleRect(this._rect, { fill: Styles.Button.hover });
+            if (hasFocus && WithinRect({ x: MouseX, y: MouseY }, this.rect)) {
+                ADrawCircleRect(this.rect, { fill: Styles.Button.hover });
             } else {
-                ADrawCircleRect(this._rect, { fill: Styles.Button.idle });
+                ADrawCircleRect(this.rect, { fill: Styles.Button.idle });
             }
-            ADrawTextFit(this._rect, this._text);
+            ADrawTextFit(this.rect, this.text);
         } else {
-            ADrawCircleRect(this._rect, { stroke: Styles.Button.disabled });
-            ADrawTextFit(this._rect, this._text, { color: Styles.Button.disabled });
+            ADrawCircleRect(this.rect, { stroke: Styles.Button.disabled });
+            ADrawTextFit(this.rect, this.text, { color: Styles.Button.disabled });
         }
     }
 
     Click(mouse: IPoint): void {
-        if (WithinRect(mouse, this._rect)) this._callback();
+        if (WithinRect(mouse, this.rect)) this.callback();
     }
 }
 
 export class TextButton extends AGUIItem {
-    private _rect: IRect;
-    private _callback: () => void;
-    private _text: string;
-
-    constructor(rect: IRect, text: string, callback: () => void) {
+    constructor(readonly rect: IRect, readonly text: string, readonly callback: () => void) {
         super();
-        this._rect = rect;
-        this._text = text;
-        this._callback = callback;
     }
 
     Draw(hasFocus: boolean) {
-        ADrawTextButton(this._rect, this._text, hasFocus);
+        ADrawTextButton(this.rect, this.text, hasFocus);
     }
 
     Click(mouse: IPoint) {
-        if (WithinRect(mouse, this._rect)) this._callback();
+        if (WithinRect(mouse, this.rect)) this.callback();
     }
 }
 
@@ -148,22 +113,12 @@ export class ExitButton extends AGUIItem {
 }
 
 export class IconRoundButton extends AGUIItem {
-    private _rect: IRect;
-    private _radius: number;
-    private _icon: keyof typeof Icons;
-    private _callback: () => void;
-    private _icon_rect: IRect;
+    private readonly icon_rect: IRect;
 
-    constructor(rect: IRect, radius: number, icon: keyof typeof Icons, callback: () => void) {
+    constructor(readonly rect: IRect, readonly radius: number, readonly icon: keyof typeof Icons, readonly callback: () => void) {
         super();
-        this._rect = rect;
-        this._radius = radius;
-        this._icon = icon;
-        this._callback = callback;
-
         const spacing = rect.height * 0.15
-
-        this._icon_rect = {
+        this.icon_rect = {
             x: rect.x + rect.width / 2 - rect.height / 2 + spacing,
             y: rect.y + spacing,
             width: rect.height - spacing * 2,
@@ -172,15 +127,15 @@ export class IconRoundButton extends AGUIItem {
     }
 
     Draw(hasFocus: boolean) {
-        if (hasFocus && WithinRect({ x: MouseX, y: MouseY }, this._rect)) {
-            ADrawRoundRect(this._rect, this._radius, { fill: Styles.Button.hover });
+        if (hasFocus && WithinRect({ x: MouseX, y: MouseY }, this.rect)) {
+            ADrawRoundRect(this.rect, this.radius, { fill: Styles.Button.hover });
         } else {
-            ADrawRoundRect(this._rect, this._radius, { fill: Styles.Button.idle });
+            ADrawRoundRect(this.rect, this.radius, { fill: Styles.Button.idle });
         }
-        ADrawIcon(this._icon_rect, this._icon);
+        ADrawIcon(this.icon_rect, this.icon);
     }
 
     Click(mouse: IPoint) {
-        if (WithinRect(mouse, this._rect)) this._callback();
+        if (WithinRect(mouse, this.rect)) this.callback();
     }
 }

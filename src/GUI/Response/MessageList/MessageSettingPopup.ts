@@ -10,16 +10,14 @@ import { SegmentButton } from "../../Widgets/SegmentButton";
 import { Binding } from "../../Widgets/Binding";
 
 class MessageTypeBinding extends Binding<string> {
-    private _rmessage: ResponsiveMessage;
-    constructor(message: ResponsiveMessage) {
+    constructor(readonly message: ResponsiveMessage) {
         super();
-        this._rmessage = message;
     }
     get value(): string {
-        return this._rmessage.type;
+        return this.message.type;
     }
     set value(v: string) {
-        this._rmessage.type = v as ResponsiveMessageType;
+        this.message.type = v as ResponsiveMessageType;
     }
 }
 
@@ -36,7 +34,7 @@ export class MessageSettinPopup extends Popup {
     private _confirm_callback: (message: ResponsiveMessage) => void;
     private _delete_callback: (message: ResponsiveMessage) => void;
 
-    constructor(prev: GUISettingScreen | null, target: ResponsiveMessage, confirm: (message: ResponsiveMessage) => void, del: (message: ResponsiveMessage) => void) {
+    constructor(readonly prev: GUISettingScreen | null, readonly target: ResponsiveMessage, readonly confirm: (message: ResponsiveMessage) => void, readonly del: (message: ResponsiveMessage) => void) {
         super(prev);
 
         if (target) this._input_state = { ...target };
@@ -102,7 +100,7 @@ export class MessageSettinPopup extends Popup {
 
         this._text_input = new TextAreaItem(_input, "InputMessage", { text: this._input_state.content });
 
-        this._items = [
+        this.items = [
             new RoundFramedRect(_dialog, Styles.Dialog.roundRadius, "White"),
             new BasicText(_title, GetText("MessagePopup::EditMessage"), { align: "center" }),
             this._text_input,

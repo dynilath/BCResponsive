@@ -12,12 +12,10 @@ const TRIGGER_INFO_HEIGHT = 60;
 const TRIGGER_INFO_SPACING = 10;
 
 export class TriggerBaseInfo extends AGUIItem {
-    private readonly _state: ResponseMenuState;
     private components: AGUIItem[];
 
-    constructor(state: ResponseMenuState, rect: IRect) {
+    constructor(readonly state: ResponseMenuState, readonly rect: IRect) {
         super();
-        this._state = state;
         const nextX = rect.x + TRIGGER_INFO_BASE_WIDTH;
 
         const _name_text = { x: rect.x, y: rect.y + TRIGGER_INFO_HEIGHT / 2 };
@@ -37,11 +35,11 @@ export class TriggerBaseInfo extends AGUIItem {
 
         this.components = [
             new BasicText(_name_text, GetText("TriggerInfo::Name")),
-            new ButtonEdit(this._state.TriggerName(), "InputTriggerName", _name_input),
+            new ButtonEdit(this.state.TriggerName(), "InputTriggerName", _name_input),
             new BasicText(_enabled_text, GetText("TriggerInfo::OnOff")),
-            new Switch(this._state.TriggerEnabled(), _enabled_input),
+            new Switch(this.state.TriggerEnabled(), _enabled_input),
             new BasicText(_mode_text, GetText("TriggerInfo::Mode")),
-            new SegmentButton(this._state.TriggerMode(), _mode_input)
+            new SegmentButton(this.state.TriggerMode(), _mode_input)
         ]
     }
 

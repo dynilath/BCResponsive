@@ -44,20 +44,14 @@ const ITEM_HEIGHT = 60;
 const ITEM_SPACING = 10;
 
 export class ResponseMessageList extends AGUIItem {
-    private readonly _state: ResponseMenuState;
-
     private readonly _items_per_page: number;
     private readonly _list_rect: IRect;
     private readonly _itemRects: IRect[];
 
-    private readonly _parent: TriggerSetting;
-
     private scrollbar: Scrollbar;
 
-    constructor(parent: TriggerSetting, state: ResponseMenuState, rect: IRect) {
+    constructor(readonly parent: TriggerSetting, readonly state: ResponseMenuState, readonly rect: IRect) {
         super();
-        this._parent = parent;
-        this._state = state;
 
         this._items_per_page = Math.floor((rect.height - ITEM_SPACING) / (ITEM_HEIGHT + ITEM_SPACING));
 
@@ -86,7 +80,7 @@ export class ResponseMessageList extends AGUIItem {
 
         this.scrollbar = new Scrollbar(
             {
-                content_rows: this._state.targetItem?.messages.length ?? 0 + 1,
+                content_rows: this.state.targetItem?.messages.length ?? 0 + 1,
                 container_rows: this._items_per_page
             },
             scrollbar_rect
@@ -94,12 +88,12 @@ export class ResponseMessageList extends AGUIItem {
     }
 
     Draw(hasFocus: boolean): void {
-        if (this._state.targetItem === null) return;
+        if (this.state.targetItem === null) return;
 
-        this.scrollbar.update(this._state.targetItem.messages.length + 1, this._itemRects.length);
+        this.scrollbar.update(this.state.targetItem.messages.length + 1, this._itemRects.length);
 
         const mouse = { x: MouseX, y: MouseY };
-        const t_item = this._state.targetItem;
+        const t_item = this.state.targetItem;
 
         ADrawRoundRect(this._list_rect, ITEM_HEIGHT / 2 + ITEM_SPACING);
 
@@ -118,15 +112,15 @@ export class ResponseMessageList extends AGUIItem {
     }
 
     Click(mouse: IPoint): void {
-        if (this._state.targetItem === null) return;
-        const t_item = this._state.targetItem;
+        if (this.state.targetItem === null) return;
+        const t_item = this.state.targetItem;
 
         if (WithinRect(mouse, this._list_rect)) {
             this._itemRects.forEach((v, i) => {
                 const targetIndex = this.scrollbar.offset + i;
                 const tmessage = t_item.messages[targetIndex];
                 if (tmessage && WithinRect(mouse, v)) {
-                    setSubscreen(new MessageSettinPopup(this._parent, tmessage, msg => {
+                    setSubscreen(new MessageSettinPopup(this.parent, tmessage, msg => {
                         t_item.messages[targetIndex] = msg;
                         DataManager.save();
                     }, _ => {
@@ -134,7 +128,7 @@ export class ResponseMessageList extends AGUIItem {
                         DataManager.save();
                     }));
                 } else if (t_item.messages.length === targetIndex && WithinRect(mouse, v)) {
-                    setSubscreen(new MessageSettinPopup(this._parent, { type: "message", content: GetText("Default::ExampleMessage") }, msg => {
+                    setSubscreen(new MessageSettinPopup(this.parent, { type: "message", content: GetText("Default::ExampleMessage") }, msg => {
                         t_item.messages.push(msg);
                         DataManager.save();
                     }, () => { }));
@@ -146,7 +140,7 @@ export class ResponseMessageList extends AGUIItem {
     }
 
     MouseWheel(event: WheelEvent): void {
-        if (this._state.targetItem === null) return;
+        if (this.state.targetItem === null) return;
         this.scrollbar.MouseWheel(event);
         if (WithinRect({ x: MouseX, y: MouseY }, this._list_rect)) this.scrollbar.RawMouseWheel(event);
     }

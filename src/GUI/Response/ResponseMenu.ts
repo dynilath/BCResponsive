@@ -65,13 +65,13 @@ const TriggerDeleteModeSwitchText = {
 export class TriggerSetting extends AGUIScreen {
     private readonly _state: ResponseMenuState;
     private readonly triggerTab: TriggerTab;
-    constructor(prev: GUISettingScreen | null = null, persona: ResponsivePersonality) {
+    constructor(readonly prev: GUISettingScreen | null = null, readonly persona: ResponsivePersonality) {
         super(prev);
         this._state = new ResponseMenuState(persona);
 
         this.triggerTab = new TriggerTab(this._state, TriggerTabRect);
 
-        this._items = [
+        this.items = [
             new TitleText(),
             new ResponseMessageList(this, this._state, TriggerMessageRect),
             new ActivityModeInfo(this, this._state, TriggerExtendedInfoRect),

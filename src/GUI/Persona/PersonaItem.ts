@@ -10,8 +10,6 @@ import { PersonaRemamePopup } from "./PersonaRenamePopup";
 const EXPAND_MARGIN = 10;
 
 export class PersonaItem extends AGUIItem {
-    private readonly _index: number;
-    private readonly _rect: IRect;
 
     private readonly _rename_rect: IRect;
     private readonly _import_rect: IRect;
@@ -20,13 +18,8 @@ export class PersonaItem extends AGUIItem {
 
     private readonly _new_rect: IRect;
 
-    private readonly _parent: GUISettingScreen | null;
-
-    constructor(parent: GUISettingScreen | null, index: number, rect: IRect) {
+    constructor(readonly parent: GUISettingScreen | null, readonly index: number, readonly rect: IRect) {
         super();
-        this._index = index;
-        this._rect = rect;
-        this._parent = parent;
 
         const button_width = Math.max(rect.width * 0.8, 120);
         const button_height = Math.max(rect.height * 0.1, 60);
@@ -92,7 +85,7 @@ export class PersonaItem extends AGUIItem {
     Draw(hasFocus: boolean) {
         MainCanvas.textAlign = "center";
 
-        const persona = DataManager.instance.data.personalities[this._index];
+        const persona = DataManager.instance.data.personalities[this.index];
 
         const now = Date.now();
         if (this._focusState.lastUpdate === 0) this._focusState.lastUpdate = now;
@@ -101,10 +94,10 @@ export class PersonaItem extends AGUIItem {
 
         const expand_margin = EXPAND_MARGIN * (1 - this._focusState.value);
         const adjusted_rect = {
-            x: this._rect.x + expand_margin,
-            y: this._rect.y + expand_margin,
-            width: this._rect.width - expand_margin * 2,
-            height: this._rect.height - expand_margin * 2
+            x: this.rect.x + expand_margin,
+            y: this.rect.y + expand_margin,
+            width: this.rect.width - expand_margin * 2,
+            height: this.rect.height - expand_margin * 2
         };
 
         const mouse = { x: MouseX, y: MouseY };
@@ -148,33 +141,33 @@ export class PersonaItem extends AGUIItem {
     }
 
     Click(mouse: IPoint): void {
-        const persona = DataManager.instance.data.personalities[this._index];
+        const persona = DataManager.instance.data.personalities[this.index];
 
         const expand_margin = 10 * (1 - this._focusState.value);
         const adjusted_rect = {
-            x: this._rect.x + expand_margin,
-            y: this._rect.y + expand_margin,
-            width: this._rect.width - expand_margin * 2,
-            height: this._rect.height - expand_margin * 2
+            x: this.rect.x + expand_margin,
+            y: this.rect.y + expand_margin,
+            width: this.rect.width - expand_margin * 2,
+            height: this.rect.height - expand_margin * 2
         };
 
         let notdelete = true;
 
         if (persona) {
             if (WithinRect(mouse, this._rename_rect)) {
-                setSubscreen(new PersonaRemamePopup(this._parent, persona, n => {
+                setSubscreen(new PersonaRemamePopup(this.parent, persona, n => {
                     persona.name = n;
                     DataManager.save();
                 }));
             }
             else if (WithinRect(mouse, this._import_rect)) {
-                setSubscreen(new PersonaImportScreen(this._parent, this._index));
+                setSubscreen(new PersonaImportScreen(this.parent, this.index));
             }
             else if (WithinRect(mouse, this._delete_rect)) {
                 if (this.deleteState === 0) {
                     this.deleteState = 1;
                 } else {
-                    DataManager.instance.data.personalities[this._index] = undefined;
+                    DataManager.instance.data.personalities[this.index] = undefined;
                     this.deleteState = 0;
                 }
                 notdelete = false;
@@ -186,9 +179,9 @@ export class PersonaItem extends AGUIItem {
             }
         } else {
             if (WithinRect(mouse, adjusted_rect)) {
-                DataManager.instance.data.personalities[this._index] = {
+                DataManager.instance.data.personalities[this.index] = {
                     name: GetText("Default::NewPersonality"),
-                    index: this._index,
+                    index: this.index,
                     responses: [],
                 };
                 DataManager.save();

@@ -14,7 +14,7 @@ const INPUT_WIDTH = 600;
 export class PersonaRemamePopup extends Popup {
     private _input: TextInput;
 
-    constructor(prev: GUISettingScreen | null, target: ResponsivePersonality, confirm: (name: string) => void) {
+    constructor(readonly prev: GUISettingScreen | null, readonly target: ResponsivePersonality, readonly confirm: (name: string) => void) {
         super(prev);
 
         const dialog_total_width = Math.max(INPUT_WIDTH, Styles.Dialog.control_button_width * 2 + Styles.Dialog.padding);
@@ -55,7 +55,7 @@ export class PersonaRemamePopup extends Popup {
 
         this._input = new TextInput(_input, "PersonaRenameInput", target.name);
 
-        this._items = [
+        this.items = [
             new RoundFramedRect(_dialog, Styles.Dialog.roundRadius, "White"),
             new BasicText(_title, GetText("PersonaRename::Title"), { align: "center" }),
             this._input,

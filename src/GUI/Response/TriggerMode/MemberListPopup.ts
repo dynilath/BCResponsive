@@ -33,14 +33,10 @@ const TOTAL_DIALOG_HEIGHT = TITLE_FONT_SIZE + Styles.Dialog.padding + Styles.Inp
 
 class MemberList extends AGUIItem {
     private readonly _table: IRect;
+    private readonly scrollbar: Scrollbar;
 
-    private readonly memberList: number[];
-
-    private scrollbar: Scrollbar;
-
-    constructor(rect: IRect, memberList: number[]) {
+    constructor(readonly rect: IRect, readonly memberList: number[]) {
         super();
-        this.memberList = memberList;
 
         this._table = {
             x: rect.x + TABLE_INNER_SPACING + REMOVE_BUTTON_DIAMETER,
@@ -150,7 +146,7 @@ export class MemberListPopup extends Popup {
     private readonly source_member_list: number[];
     private readonly editing_member_list: number[];
 
-    constructor(prev: GUISettingScreen | null, source: number[]) {
+    constructor(readonly prev: GUISettingScreen | null, readonly source: number[]) {
         super(prev);
         this.source_member_list = source;
         this.editing_member_list = [...source];
@@ -202,7 +198,7 @@ export class MemberListPopup extends Popup {
 
         const text_input = new TextInput(_input, "MemberNumberInput", "", GetText("MemberListPopup::InputID"));
 
-        this._items = [
+        this.items = [
             new RoundFramedRect(_dialog, Styles.Dialog.roundRadius, "White"),
             new BasicText(_title, GetText("MemberListPopup::Title"), { align: "center" }),
             text_input,

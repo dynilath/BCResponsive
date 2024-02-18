@@ -9,12 +9,9 @@ interface SegmentButtonSetting {
 }
 
 export class SegmentButton extends AGUIItem {
-    private readonly _rect: IRect;
     private readonly _rects: IRect[];
 
-    private setting: SegmentButtonSetting;
-
-    constructor(setting: SegmentButtonSetting, rect: IRect) {
+    constructor(readonly setting: SegmentButtonSetting, readonly rect: IRect) {
         super();
 
         const textWidths = setting.text.map(t => MainCanvas.measureText(t.display).width + Styles.Text.padding * 2);
@@ -23,8 +20,6 @@ export class SegmentButton extends AGUIItem {
         }, [0]);
 
         const fullTextWidth = increment[increment.length - 1];
-
-        this._rect = rect;
 
         const segWidth = rect.width - Styles.SegmentButton.border * 2;
         const segHeight = rect.height - Styles.SegmentButton.border * 2;
@@ -42,7 +37,7 @@ export class SegmentButton extends AGUIItem {
 
     Draw(hasFocus: boolean) {
         const mouse = { x: MouseX, y: MouseY };
-        ADrawCircleRect(this._rect);
+        ADrawCircleRect(this.rect);
         this._rects.forEach((r, i) => {
             if (this.setting.binding.value === this.setting.text[i].value) ADrawCircleRect(r, { fill: Styles.SegmentButton.active });
             if (WithinRect(mouse, r) && hasFocus) ADrawCircleRect(r, { fill: Styles.SegmentButton.hover, stroke: "none" });

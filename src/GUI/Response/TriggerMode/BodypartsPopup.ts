@@ -18,12 +18,10 @@ const CHIPS_SPACING = 10;
 const TOTAL_CHIPS_WIDTH = 600;
 
 export class BodypartsPopup extends Popup {
-    private readonly source: ResponseMenuState;
     private readonly editing: Set<string>;
 
-    constructor(prev: GUISettingScreen, source: ResponseMenuState) {
+    constructor(readonly prev: GUISettingScreen, readonly source: ResponseMenuState) {
         super(prev);
-        this.source = source;
 
         const bodypart_metrics = ActivityAreaDisplay.Metrics();
 
@@ -99,7 +97,7 @@ export class BodypartsPopup extends Popup {
             else this.editing.add(v);
         }
 
-        this._items = [
+        this.items = [
             new RoundFramedRect(_dialog, Styles.Dialog.roundRadius, "White"),
             new BasicText(_dialog_title, GetText("BodypartsPopup::Title"), { align: "center" }),
             new ActivityAreaDisplay(this.editing, _bodypart_selector, flip),

@@ -15,9 +15,6 @@ const ITEM_SPACING = 20;
 
 
 export class ActivityModeInfo extends AGUIItem {
-    private _state: ResponseMenuState;
-
-    private readonly _parent: GUISettingScreen;
     private readonly _activity_text: IPoint;
     private readonly _activity_state: IRect;
 
@@ -29,10 +26,8 @@ export class ActivityModeInfo extends AGUIItem {
 
     private _components: AGUIItem[] = [];
 
-    constructor(parent: GUISettingScreen, state: ResponseMenuState, rect: IRect) {
+    constructor(readonly parent: GUISettingScreen, readonly state: ResponseMenuState, readonly rect: IRect) {
         super();
-        this._parent = parent;
-        this._state = state;
 
         const T_ITEM_HEIGHT = BASE_FONT_SIZE + ITEM_INNER_SPACING + ITEM_HEIGHT;
 
@@ -54,7 +49,7 @@ export class ActivityModeInfo extends AGUIItem {
             new BasicText(this._bodypart_text, GetText("TriggerInfo::OnBodyparts")),
             new BasicText(this._allow_ids_text, GetText("TriggerInfo::OnMembers")),
             new DynamicTextRoundButton(this._activity_state, () =>
-                this._state.asActivity(v => (act => {
+                this.state.asActivity(v => (act => {
                     if (act === undefined)
                         return GetText("TriggerInfo::AllActivities");
                     if (act.length === 0)
@@ -62,9 +57,9 @@ export class ActivityModeInfo extends AGUIItem {
                     let result = act.slice(0, 3).map(a => ActivityDictionaryText(`Activity${a}`)).join(", ");
                     if (act.length > 3) result += GetText("TriggerInfo::AndMore", [act.length - 3]);
                     return result;
-                })(v.allow_activities)) ?? "", () => setSubscreen(new ActivityPopup(this._parent, this._state))),
+                })(v.allow_activities)) ?? "", () => setSubscreen(new ActivityPopup(this.parent, this.state))),
             new DynamicTextRoundButton(this._bodypart_state, () => {
-                return this._state.asActivity(v => (bparts => {
+                return this.state.asActivity(v => (bparts => {
                     if (bparts === undefined)
                         return GetText("TriggerInfo::AllBodyparts");
                     if (bparts.length === 0)
@@ -73,9 +68,9 @@ export class ActivityModeInfo extends AGUIItem {
                     if (bparts.length > 3) result += GetText("TriggerInfo::AndMore", [bparts.length - 3]);
                     return result;
                 })(v.allow_bodyparts)) ?? "";
-            }, () => setSubscreen(new BodypartsPopup(this._parent, this._state))),
+            }, () => setSubscreen(new BodypartsPopup(this.parent, this.state))),
             new DynamicTextRoundButton(this._allow_ids_state, () => {
-                return this._state.asActivity(v => (ids => {
+                return this.state.asActivity(v => (ids => {
                     if (ids === undefined || ids.length === 0)
                         return GetText("TriggerInfo::AllMemberIDs");
                     let result = ids.slice(0, 3).join(", ");
@@ -83,7 +78,7 @@ export class ActivityModeInfo extends AGUIItem {
                     return result;
                 })(v.allow_ids)) ?? "";
             }, () => {
-                setSubscreen(new MemberListPopup(this._parent, this._state.asActivity(v => {
+                setSubscreen(new MemberListPopup(this.parent, this.state.asActivity(v => {
                     if (v.allow_ids === undefined) v.allow_ids = [];
                     return v.allow_ids;
                 }) ?? []));
@@ -92,13 +87,13 @@ export class ActivityModeInfo extends AGUIItem {
     }
 
     Draw(hasFocus: boolean): void {
-        this._state.asActivity(_ => {
+        this.state.asActivity(_ => {
             this._components.forEach(c => c.Draw(hasFocus));
         });
     }
 
     Click(mouse: IPoint): void {
-        this._state.asActivity(_ => {
+        this.state.asActivity(_ => {
             this._components.forEach(c => c.Click(mouse));
         });
     }

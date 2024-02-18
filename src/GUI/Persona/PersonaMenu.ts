@@ -7,7 +7,7 @@ import { TitleText } from "../Widgets/Text";
 import { PersonaItem } from "./PersonaItem";
 
 export class PersonaSetting extends AGUIScreen {
-    constructor(prev: GUISettingScreen | null = null) {
+    constructor(readonly prev: GUISettingScreen | null = null) {
         const personas = DataManager.instance.data.personalities;
 
         const personaBannerHeight = 600;
@@ -24,7 +24,7 @@ export class PersonaSetting extends AGUIScreen {
 
         super(prev);
 
-        this._items = Array.from({ length: MaxPersonalities }, (_, index): number => index).map((index): AGUIItem => {
+        this.items = Array.from({ length: MaxPersonalities }, (_, index): number => index).map((index): AGUIItem => {
             const rect: IRect = {
                 x: personaStartX + (personaBannerWidth + personaBannerSpacing) * index,
                 y: personaStartY, width: personaBannerWidth, height: personaBannerHeight

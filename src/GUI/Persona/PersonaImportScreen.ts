@@ -14,7 +14,7 @@ export class PersonaImportScreen extends Popup {
     readonly _bind: { text: string };
     _lastInputInvalid: boolean = false;
 
-    constructor(prev: GUISettingScreen | null = null, index: number) {
+    constructor(readonly prev: GUISettingScreen | null = null, readonly index: number) {
         const centerX = 1000;
         const centerY = 500;
 
@@ -44,7 +44,7 @@ export class PersonaImportScreen extends Popup {
             })()
         }
 
-        this._items = [
+        this.items = [
             new RoundFramedRect({
                 x: centerX - totalWidth / 2 - padding,
                 y: centerY - totalHeight / 2 - padding,
@@ -92,13 +92,13 @@ export class PersonaImportScreen extends Popup {
     }
 
     Run(): void {
-        if (this._prev)
-            this._prev.Run();
+        if (this.prev)
+            this.prev.Run();
 
         // draws the background
         MainCanvas.fillStyle = "rgba(0, 0, 0, 0.5)";
         MainCanvas.fillRect(0, 0, 2000, 1000);
 
-        this._items.forEach(item => item.Draw(hasFocus(this)));
+        this.items.forEach(item => item.Draw(hasFocus(this)));
     }
 }

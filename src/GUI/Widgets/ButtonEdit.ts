@@ -5,9 +5,6 @@ import { StylesRect } from "./CSStyle";
 import { ADrawTextButton } from "./Common";
 
 export class ButtonEdit extends AGUIItem {
-    private _binding: Binding<string>;
-    private _HTMLID: string;
-    private _rect: IRect;
     private _text: HTMLInputElement | undefined;
 
     private _display_state: 'input' | 'button' = 'button';
@@ -18,15 +15,15 @@ export class ButtonEdit extends AGUIItem {
 
     private CreateInput() {
         let text = document.createElement("input");
-        text.id = HTMLID(this._HTMLID);
-        text.name = this._HTMLID;
-        text.value = this._binding.value;
+        text.id = HTMLID(this.HTMLID);
+        text.name = this.HTMLID;
+        text.value = this.binding.value;
         text.setAttribute("screen-generated", CurrentScreen);
 
         text.className = "HideOnPopup";
 
         text.onchange = () => {
-            this._binding.value = this.text.trim();
+            this.binding.value = this.text.trim();
         };
 
         document.body.appendChild(text);
@@ -34,31 +31,27 @@ export class ButtonEdit extends AGUIItem {
         return text;
     }
 
-    constructor(bind: Binding<string>, id: string, rect: IRect) {
+    constructor(readonly binding: Binding<string>, readonly HTMLID: string, readonly rect: IRect) {
         super();
-        this._binding = bind;
-        this._rect = rect;
-        this._HTMLID = id;
-
         this._text = this.CreateInput();
     }
 
     Click(mouse: IPoint): void {
-        if (WithinRect(mouse, this._rect)) {
+        if (WithinRect(mouse, this.rect)) {
             if (this._display_state === 'button') {
                 if (!this._text) this._text = this.CreateInput();
                 this._display_state = 'input';
             }
         } else {
             if (this._display_state === 'input') {
-                if (this._text) this._binding.value = this.text.trim();
+                if (this._text) this.binding.value = this.text.trim();
                 this._display_state = 'button';
             }
         }
     }
 
     OnChange(): void {
-        this._binding.value = this.text.trim();
+        this.binding.value = this.text.trim();
     }
 
     Draw(hasFocus: boolean): void {
@@ -71,11 +64,11 @@ export class ButtonEdit extends AGUIItem {
 
         if (this._display_state === 'button') {
             this.HideTextEdit();
-            ADrawTextButton(this._rect, this._binding.value, hasFocus);
+            ADrawTextButton(this.rect, this.binding.value, hasFocus);
         } else {
             this._text.hidden = false;
 
-            StylesRect(this._rect, this._text);
+            StylesRect(this.rect, this._text);
         }
     }
 

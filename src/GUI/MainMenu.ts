@@ -33,10 +33,10 @@ class MasterSwitch extends Binding<boolean> {
 }
 
 export class GUIMainMenu extends AGUIScreen {
-    constructor(prev: GUISettingScreen | null = null) {
+    constructor(readonly prev: GUISettingScreen | null = null) {
         super(prev);
 
-        this._items = [
+        this.items = [
             new ExitButton(() => this.Exit()),
             new TitleText(),
             new BasicText({ x: MENU_BASE_X + ITEM_SPACING + ITEM_HEIGHT * 2, y: MENU_BASE_Y + ITEM_HEIGHT / 2 }, GetText("MainMenu::MainSwitch")),

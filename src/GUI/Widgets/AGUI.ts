@@ -25,38 +25,34 @@ export abstract class AGUIItem {
 }
 
 export class AGUIScreen extends GUISettingScreen {
-    protected _prev: GUISettingScreen | null = null;
-
-    protected _items: AGUIItem[] = [];
-
-    constructor(prev: GUISettingScreen | null, items: AGUIItem[] = []) {
+    items: AGUIItem[];
+    constructor(readonly prev: GUISettingScreen | null, items: AGUIItem[] = []) {
         super();
-        this._prev = prev;
-        this._items = items;
+        this.items = items;
     }
 
     AddItem(item: AGUIItem) {
-        this._items.push(item);
+        this.items.push(item);
     }
 
     Run(): void {
-        this._items.forEach(item => item.Draw(hasFocus(this)));
+        this.items.forEach(item => item.Draw(hasFocus(this)));
     }
 
     Click(): void {
-        this._items.forEach(item => item.Click({ x: MouseX, y: MouseY }));
+        this.items.forEach(item => item.Click({ x: MouseX, y: MouseY }));
     }
 
     MouseWheel(event: WheelEvent): void {
-        this._items.forEach(item => item.MouseWheel(event));
+        this.items.forEach(item => item.MouseWheel(event));
     }
 
     Exit(): void {
-        setSubscreen(this._prev);
+        setSubscreen(this.prev);
     }
 
     Unload(): void {
-        this._items.forEach(item => item.Unload());
+        this.items.forEach(item => item.Unload());
     }
 }
 

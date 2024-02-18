@@ -11,8 +11,6 @@ import { ResponseMenuState } from "../ResponseMenuState";
 import { MemberListPopup } from "./MemberListPopup";
 
 export class SpicerModeInfo extends AGUIItem {
-    private _state: ResponseMenuState;
-
     private readonly _min_arousal_text: IPoint;
     private readonly _min_arousal_input: IRect;
 
@@ -28,12 +26,8 @@ export class SpicerModeInfo extends AGUIItem {
     private _editList: AGUIItem[] = [];
     private _components: AGUIItem[] = [];
 
-    private _parent: GUISettingScreen;
-
-    constructor(parent: GUISettingScreen, state: ResponseMenuState, rect: IRect) {
+    constructor(readonly parent: GUISettingScreen, readonly state: ResponseMenuState, readonly rect: IRect) {
         super();
-        this._state = state;
-        this._parent = parent;
 
         const itemHeight = 60;
         const spacing = 10;
@@ -59,8 +53,8 @@ export class SpicerModeInfo extends AGUIItem {
         this._allow_ids_state = { x: rect.x, y: lineY, width: rect.width, height: Styles.Input.height };
 
         this._editList = [
-            new ButtonEdit(this._state.SpicerMinArousal(), "MinArousal", this._min_arousal_input),
-            new ButtonEdit(this._state.SpicerMaxArousal(), "MaxArousal", this._max_arousal_input),
+            new ButtonEdit(this.state.SpicerMinArousal(), "MinArousal", this._min_arousal_input),
+            new ButtonEdit(this.state.SpicerMaxArousal(), "MaxArousal", this._max_arousal_input),
         ];
 
         this._components = [
@@ -68,15 +62,15 @@ export class SpicerModeInfo extends AGUIItem {
             new BasicText(this._max_arousal_text, GetText("TriggerInfo::MaxArousal")),
             ...this._editList,
             new BasicText(this._apply_fav_text, GetText("TriggerInfo::ApplyFavorite")),
-            new Switch(this._state.SpicerApplyFavorite(), this._apply_fav_switch),
+            new Switch(this.state.SpicerApplyFavorite(), this._apply_fav_switch),
             new BasicText(this._allow_ids_text, GetText("TriggerInfo::OnMembers")),
-            new DynamicTextRoundButton(this._allow_ids_state, () => this._state.asSpicer(v => (ids => {
+            new DynamicTextRoundButton(this._allow_ids_state, () => this.state.asSpicer(v => (ids => {
                 if (ids === undefined || ids.length === 0)
                     return GetText("TriggerInfo::AllMemberIDs");
                 let result = ids.slice(0, 3).join(", ");
                 if (ids.length > 3) result += GetText("TriggerInfo::AndMore", [ids.length - 3]);
                 return result;
-            })(v.allow_ids)) ?? "", () => setSubscreen(new MemberListPopup(this._parent, this._state.asSpicer(v => {
+            })(v.allow_ids)) ?? "", () => setSubscreen(new MemberListPopup(this.parent, this.state.asSpicer(v => {
                 if (v.allow_ids === undefined) v.allow_ids = [];
                 return v.allow_ids;
             }) ?? [])))
@@ -85,7 +79,7 @@ export class SpicerModeInfo extends AGUIItem {
     }
 
     Draw(hasFocus: boolean): void {
-        this._state.asSpicer(v => {
+        this.state.asSpicer(v => {
             this._components.forEach(v => v.Draw(hasFocus));
         }, () => {
             this._editList.forEach(v => v.Draw(false));
@@ -93,7 +87,7 @@ export class SpicerModeInfo extends AGUIItem {
     }
 
     Click(mouse: IPoint): void {
-        this._state.asSpicer(v => {
+        this.state.asSpicer(v => {
             this._components.forEach(v => v.Click(mouse));
         });
     }

@@ -6,19 +6,13 @@ export class ActivityAreaDisplay extends AGUIItem {
     private readonly _translate: IPoint;
     private readonly _scale: number;
 
-    private readonly source: Set<string>;
-
     private readonly _bodypart_rects: {
         group: string;
         rects: IRect[];
     }[];
 
-    private readonly _callback: (v: string) => void;
-
-    constructor(source: Set<string>, rect: IRect, callback: (v: string) => void) {
+    constructor(readonly source: Set<string>, readonly rect: IRect, readonly callback: (v: string) => void) {
         super();
-        this.source = source;
-        this._callback = callback;
 
         const am = ActivityAreaDisplay.AbsoluteMetrics();
         const expectRatio = am.width / am.height;
@@ -86,7 +80,7 @@ export class ActivityAreaDisplay extends AGUIItem {
         this._bodypart_rects.forEach((v, i) => {
             if (v.rects.length === 0) return;
             if (v.rects.some(v => WithinRect(mouse, v))) {
-                this._callback(v.group);
+                this.callback(v.group);
             }
         });
     }
