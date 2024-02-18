@@ -44,6 +44,7 @@ export const CNTextMap = new Map<string, string>([
     ["PersonaMenu::Confirm?", "确定删除？"],
     ["PersonaMenu::CreateNew", "创建新人格"],
     ["PersonaImport::Title", "导入/导出人格"],
+    ["PersonaMenu::DeleteMode", "删除响应模式"],
     ["PersonaImport::InvalidInput", "导入格式错误"],
     ["PersonaRename::Title", "输入新名称"],
     ["TriggerMode::activity", "互动"],

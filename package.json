@@ -1,7 +1,7 @@
 {
   "name": "bc-responsive",
   "displayName": "BondageClub Responsive",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A auto response script for bondage-club",
   "packageManager": "pnpm@8.15.1",
   "buildSettings": {
@@ -17,7 +17,7 @@
   "scripts": {
     "build": "rollup -c src/rollup.config.js",
     "dev": "rollup -c src/rollup.config.js --configDebug --configDeploy http://localhost:3042",
-    "dev::server": "http-server ./public -p 3042 --cors"
+    "serve": "http-server ./public -p 3042 --cors"
   },
   "dependencies": {
     "bc-utilities": "workspace:^",

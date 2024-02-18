@@ -1,3 +1,4 @@
+import { Calculate, Result } from "bc-utilities";
 import { ModVersion } from "../../Definition";
 import { GetText } from "../../i18n";
 import { AGUIItem, IPoint } from "./AGUI";
@@ -12,43 +13,24 @@ export class TitleText extends AGUIItem {
 }
 
 export class BasicText extends AGUIItem {
-    private _where: IPoint;
-    private _text: string;
-
-    private setting: {
-        align: CanvasTextAlign;
-        color: string;
-    };
-
-    constructor(where: IPoint, text: string, setting?: Partial<BasicText['setting']>) {
+    constructor(readonly where: IPoint, readonly text: Calculate<string>, readonly setting?: { align?: CanvasTextAlign; color?: string; }) {
         super();
-        this._where = where;
-        this._text = text;
-
-        if (!setting) setting = {};
-        this.setting = {
-            align: setting.align || "left",
-            color: setting.color || "Black"
-        };
     }
 
     Draw() {
-        MainCanvas.textAlign = this.setting.align;
-        MainCanvas.fillStyle = this.setting.color;
-        MainCanvas.fillText(this._text, this._where.x, this._where.y);
+        MainCanvas.textAlign = this.setting?.align || "left";
+        MainCanvas.fillStyle = this.setting?.color || "Black";
+        MainCanvas.fillText(Result(this.text), this.where.x, this.where.y);
     }
 }
 
 export class DynamicText extends AGUIItem {
-    private _pattern: () => { where: IPoint; text: string; align: CanvasTextAlign; color: string; };
-
-    constructor(pattern: () => { where: IPoint; text: string; align: CanvasTextAlign; color: string; }) {
+    constructor(readonly pattern: () => { where: IPoint; text: string; align: CanvasTextAlign; color: string; }) {
         super();
-        this._pattern = pattern;
     }
 
     Draw() {
-        const { where, text, align, color } = this._pattern();
+        const { where, text, align, color } = this.pattern();
         MainCanvas.textAlign = align;
         MainCanvas.fillStyle = color;
         MainCanvas.fillText(text, where.x, where.y);

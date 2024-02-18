@@ -43,6 +43,7 @@ export const ENTextMap = new Map<string, string>([
     ["PersonaMenu::Delete", "Delete"],
     ["PersonaMenu::Confirm?", "Confirm Delete?"],
     ["PersonaMenu::CreateNew", "Create New"],
+    ["PersonaMenu::DeleteMode", "Delete Response Mode"],
     ["PersonaImport::Title", "Import/Export Personality"],
     ["PersonaImport::InvalidInput", "Invalid Input"],
     ["PersonaRename::Title", "Enter New Name"],
