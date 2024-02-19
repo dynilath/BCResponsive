@@ -13,6 +13,7 @@ const deployFileName = "main.js";
 const buildSettings = {
     deployDir: package.buildSettings.deployDir,
     input: package.buildSettings.input,
+    scriptId: package.buildSettings.scriptId,
 }
 
 const loaderFileInfo = {
@@ -31,6 +32,8 @@ const modInfo = {
         return `"${package.repository.url.replace(".git", "")}"`;
     })(),
 }
+
+const scriptId = `"${buildSettings.scriptId ?? ""}"`;
 
 const loadFlag = `${package.displayName.replace(/ /g, "")}_Loaded`;
 
@@ -61,18 +64,23 @@ const plugins_debug = deploySite => [
                         .replace("__NAME__", loaderFileInfo.name)
                         .replace("__AUTHOR__", loaderFileInfo.author)
                         .replace("__LOAD_FLAG__", loadFlag)
+                        .replace("__SCRIPT_ID__", scriptId)
+            }, {
+                src: `${relativeDir}/assets/*`,
+                dest: `${destDir}/assets`
             }
         ]
     }),
-    typescript({ exclude: ["**/__tests__", "**/*.test.ts"], tsconfig: `${relativeDir}/tsconfig.json` }),
-    commonjs(),
     replace({
         __mod_name__: modInfo.name,
         __mod_version__: modInfo.version,
         __repo__: modInfo.repo,
         __load_flag__: loadFlag,
+        __script_id__: scriptId,
         preventAssignment: false
     }),
+    typescript({ exclude: ["**/__tests__", "**/*.test.ts"], tsconfig: `${relativeDir}/tsconfig.json` }),
+    commonjs(),
     resolve({ browser: true }),
     cleanup(),
 ]
