@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name __NAME__
 // @namespace https://www.bondageprojects.com/
-// @version 1.3
+// @version 1.4
 // @description __DESCRIPTION__
 // @author __AUTHOR__
 // @match bondageprojects.elementfx.com/*/BondageClub/*
@@ -21,6 +21,6 @@
         script.src = src;
         script.type = "text/javascript";
         script.crossOrigin = "anonymous";
-        document.head.appendChild(n);
+        document.head.appendChild(script);
     }
 })();
