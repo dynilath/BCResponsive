@@ -62,7 +62,7 @@ export const CNTextMap = new Map<string, string>([
     ["TriggerInfo::AllBodyparts", "所有身体部位"],
     ["TriggerInfo::NoBodyparts", "无身体部位"],
     ["TriggerInfo::AllMemberIDs", "所有玩家"],
-    ["TriggerInfo::AndMore", "等{0}个"],
+    ["TriggerInfo::AndMore", "以及{0}个"],
     ["TriggerInfo::MinArousal", "最低性奋："],
     ["TriggerInfo::MaxArousal", "最高性奋："],
     ["TriggerInfo::ApplyFavorite", "应用喜好："],
