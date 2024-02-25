@@ -3,15 +3,15 @@ import { AGUIItem, IPoint, IRect, WithinRect as WithinRect } from "./AGUI";
 import { Binding } from "./Binding";
 import { ADrawCircleRect, ADrawFramedRect, ADrawTextFit } from "./Common";
 
-interface SegmentButtonSetting {
-    text: { display: string; value: string; }[];
-    binding: Binding<string>;
+export interface SegmentButtonSetting<T> {
+    text: { display: string; value: T; }[];
+    binding: Binding<T>;
 }
 
-export class SegmentButton extends AGUIItem {
+export class SegmentButton<T> extends AGUIItem {
     private readonly _rects: IRect[];
 
-    constructor(readonly setting: SegmentButtonSetting, readonly rect: IRect) {
+    constructor(readonly setting: SegmentButtonSetting<T>, readonly rect: IRect) {
         super();
 
         const textWidths = setting.text.map(t => MainCanvas.measureText(t.display).width + Styles.Text.padding * 2);

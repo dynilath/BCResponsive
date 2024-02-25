@@ -9,14 +9,14 @@ import { Styles } from "../../../Definition";
 import { SegmentButton } from "../../Widgets/SegmentButton";
 import { Binding } from "../../Widgets/Binding";
 
-class MessageTypeBinding extends Binding<string> {
+class MessageTypeBinding extends Binding<ResponsiveMessageType> {
     constructor(readonly message: ResponsiveMessage) {
         super();
     }
-    get value(): string {
+    get value(): ResponsiveMessageType {
         return this.message.type;
     }
-    set value(v: string) {
+    set value(v: ResponsiveMessageType) {
         this.message.type = v as ResponsiveMessageType;
     }
 }
@@ -104,8 +104,11 @@ export class MessageSettinPopup extends Popup {
             new RoundFramedRect(_dialog, Styles.Dialog.roundRadius, "White"),
             new BasicText(_title, GetText("MessagePopup::EditMessage"), { align: "center" }),
             this._text_input,
-            new SegmentButton({
-                text: ["message", "action"].map(v => ({ display: GetText(`MessagePopup::Type::${v}`), value: v })),
+            new SegmentButton<ResponsiveMessageType>({
+                text: [
+                    { display: GetText("MessagePopup::Type::message"), value: "message" },
+                    { display: GetText("MessagePopup::Type::action"), value: "action" }
+                ],
                 binding: new MessageTypeBinding(this._input_state)
             }, _type_segbutton),
             new TextRoundButton(_insert_me_button, GetText("MessagePopup::InsertMe"), () => {

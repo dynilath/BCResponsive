@@ -1,18 +1,15 @@
-import { ENTextMap } from "./EN";
-import { CNTextMap } from "./CN";
+import { ENConfig } from "./EN";
+import { CNConfig } from "./CN";
 
-const textmap = new Map<string, Map<string, string>>([
-    ["CN", CNTextMap],
-    ["EN", ENTextMap],
-]);
+const textmap: Record<string, Record<TextTags, string>> = {
+    "EN": ENConfig,
+    "CN": CNConfig,
+};
 
-const fallback = textmap.get("EN");
-
-export function GetText(srcTag: string, FormatArgs?: any[]) {
-    let target = textmap.get(TranslationLanguage);
-    let ret = target?.get(srcTag) || fallback?.get(srcTag) || srcTag;
+export function GetText(srcTag: TextTags, FormatArgs?: any[]) {
+    let target = (textmap[TranslationLanguage] || textmap["EN"])[srcTag];
     if (FormatArgs) {
-        ret = ret.replace(/\{(\d+)\}/g, (m, i) => FormatArgs[i]);
+        target = target.replace(/\{(\d+)\}/g, (m, i) => FormatArgs[i]);
     }
-    return ret;
+    return target;
 }

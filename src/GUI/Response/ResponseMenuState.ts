@@ -2,6 +2,7 @@ import { DataManager, isTriggerActivity, isTriggerOrgasm, isTriggerSpicer } from
 import { MaxNameLength } from "../../Definition";
 import { GetText } from "../../i18n";
 import { Binding } from "../Widgets/Binding";
+import { SegmentButtonSetting } from "../Widgets/SegmentButton";
 
 class NameProperty extends Binding<string> {
     readonly _state: ResponseMenuState;
@@ -39,17 +40,17 @@ class EnabledProperty extends Binding<boolean> {
     }
 }
 
-class ModeProperty extends Binding<string> {
+class ModeProperty extends Binding<ResponsiveTriggerMode> {
     readonly _state: ResponseMenuState;
     constructor(readonly state: ResponseMenuState) {
         super();
         this._state = state;
     }
-    get value(): string {
-        if (this._state.targetItem === null) return "";
+    get value(): ResponsiveTriggerMode {
+        if (this._state.targetItem === null) return "activity";
         return this._state.targetItem.trigger.mode;
     }
-    set value(v: string) {
+    set value(v: ResponsiveTriggerMode) {
         if (this._state.targetItem !== null) {
             this._state.targetItem.trigger.mode = v as ResponsiveTriggerMode;
             DataManager.save();
@@ -123,9 +124,13 @@ export class ResponseMenuState {
         return new EnabledProperty(this);
     }
 
-    TriggerMode() {
+    TriggerMode(): SegmentButtonSetting<ResponsiveTriggerMode> {
         return {
-            text: ["activity", "orgasm", "spicer"].map(t => { return { display: GetText(`TriggerMode::${t}`), value: t }; }),
+            text: [
+                { display: GetText(`TriggerMode::activity`), value: "activity" },
+                { display: GetText(`TriggerMode::orgasm`), value: "orgasm" },
+                { display: GetText(`TriggerMode::spicer`), value: "spicer" }
+            ],
             binding: new ModeProperty(this)
         }
     }
