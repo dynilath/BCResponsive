@@ -29,7 +29,7 @@ type TriggerInfoTextTags = "TriggerInfo::AddNew" | "TriggerInfo::Name" | "Trigge
     | "TriggerInfo::OnActivity" | "TriggerInfo::OnBodyparts" | "TriggerInfo::OnMembers" | "TriggerInfo::AllActivities"
     | "TriggerInfo::NoActivities" | "TriggerInfo::AllBodyparts" | "TriggerInfo::NoBodyparts" | "TriggerInfo::AllMemberIDs"
     | "TriggerInfo::AndMore" | "TriggerInfo::MinArousal" | "TriggerInfo::MaxArousal" | "TriggerInfo::ApplyFavorite"
-    | "TriggerInfo::NewResponses"
+    | "TriggerInfo::NewResponses" | "TriggerInfo::Orgasm::Type" | `TriggerInfo::Orgasm::Type::${OrgasmTriggerType}`
 
 type MemberListPopupTextTags = "MemberListPopup::Title" | "MemberListPopup::InputID"
 

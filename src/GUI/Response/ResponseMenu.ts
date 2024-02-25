@@ -10,6 +10,7 @@ import { TriggerTab } from "./TriggerTab";
 import { TriggerBaseInfo } from "./TriggerBaseInfo";
 import { Switch } from "../Widgets/Switch";
 import { GetText } from "../../i18n";
+import { OrgasmModeInfo } from "./TriggerMode/OrgasmModeInfo";
 
 const MENU_BASE_Y = 200;
 const MENU_TOTAL_HEIGHT = 660;
@@ -76,6 +77,7 @@ export class TriggerSetting extends AGUIScreen {
             new ResponseMessageList(this, this._state, TriggerMessageRect),
             new ActivityModeInfo(this, this._state, TriggerExtendedInfoRect),
             new SpicerModeInfo(this, this._state, TriggerExtendedInfoRect),
+            new OrgasmModeInfo(this, this._state, TriggerExtendedInfoRect),
             new TriggerBaseInfo(this._state, TriggerBaseInfoRect),
             this.triggerTab,
             new BasicText(TriggerDeleteModeSwitchText, GetText("PersonaMenu::DeleteMode"), { align: "right" }),

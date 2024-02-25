@@ -1,5 +1,5 @@
 import { TriggerData, TriggerDataActivity, TriggerDataOrgasm, isTriggerDataActivity, isTriggerDataOrgasm } from "./types";
-import { DataManager } from "../Data";
+import { DataManager, isTriggerOrgasm } from "../Data";
 import { ChatRoomAutoInterceptMessage } from "./ChatMessages";
 import { ReplaceField } from "./MessageFields";
 import { ChatRoomAction } from "bc-utilities";
@@ -62,7 +62,8 @@ function InvokeResponseForOrgasm(persona: ResponsivePersonality, data: TriggerDa
         let actived_messages = persona.responses.filter(i => {
             if (!i.enabled) return false;
             const trigger = i.trigger;
-            if (trigger.mode !== "orgasm") return false;
+            if (!isTriggerOrgasm(trigger)) return false;
+            if (trigger.type !== "Any" && trigger.type !== data.type) return false;
             return true;
         }).reduce((acc, cur) => { return acc.concat(cur.messages); }, [] as ResponsiveMessage[]);
 

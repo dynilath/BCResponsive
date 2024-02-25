@@ -1,5 +1,5 @@
 export interface TriggerDataActivity {
-    type: "activity";
+    triggerType: "activity";
     from: number;
     activity: string;
     bodypart: string;
@@ -7,15 +7,16 @@ export interface TriggerDataActivity {
 }
 
 export interface TriggerDataOrgasm {
-    type: "orgasm";
+    triggerType: "orgasm";
+    type: OrgasmTriggerType;
 }
 
 export type TriggerData = TriggerDataActivity | TriggerDataOrgasm;
 
 export function isTriggerDataActivity(data: TriggerData): data is TriggerDataActivity {
-    return data.type === "activity";
+    return data.triggerType === "activity";
 }
 
 export function isTriggerDataOrgasm(data: TriggerData): data is TriggerDataOrgasm {
-    return data.type === "orgasm";
+    return data.triggerType === "orgasm";
 }

@@ -1,5 +1,5 @@
 import { DataManager } from "../Data";
-import { ActivityDeconstruct } from "bc-utilities";
+import { ActivityDeconstruct, Monitor, OrgasmMonitor } from "bc-utilities";
 import { InvokeResponse } from "./MoanProvider";
 
 export function ActivityHandle(player: PlayerCharacter | undefined, data: ServerChatRoomMessage) {
@@ -18,7 +18,7 @@ export function ActivityHandle(player: PlayerCharacter | undefined, data: Server
     if (sender.MemberNumber !== activityInfo.SourceCharacter.MemberNumber) return;
 
     InvokeResponse({
-        type: "activity",
+        triggerType: "activity",
         activity: activityInfo.ActivityName,
         bodypart: activityInfo.ActivityGroup,
         from: activityInfo.SourceCharacter.MemberNumber,
@@ -26,11 +26,13 @@ export function ActivityHandle(player: PlayerCharacter | undefined, data: Server
     }, player, sender);
 }
 
-export function OrgasmHandle(player: PlayerCharacter | undefined, target: Character) {
-    if (!DataManager.instance.data.settings.enabled) return;
-    if (CurrentScreen !== 'ChatRoom') return;
-    if (player === undefined || player.MemberNumber === undefined) return;
-    if (player.MemberNumber !== target.MemberNumber) return;
+export function OrgasmHandle(monitor: OrgasmMonitor) {
+    const eventFunc = (event: OrgasmTriggerType) => ((pl: PlayerCharacter) => {
+        if (CurrentScreen !== 'ChatRoom') return;
+        InvokeResponse({ triggerType: "orgasm", type: event }, pl);
+    })
 
-    InvokeResponse({ type: "orgasm" }, player);
+    monitor.AddOrgasmEvent(eventFunc("Orgasmed"))
+    monitor.AddRuinedEvent(eventFunc("Ruined"))
+    monitor.AddResistEvent(eventFunc("Resisted"))
 }

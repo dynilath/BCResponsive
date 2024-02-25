@@ -68,7 +68,7 @@ export class DataManager {
         this.instance.data.active_personality = newValue?.index ?? null;
     }
 
-    modData: ResponsivePartialSetting = {};
+    modData: Partial<ResponsiveSolidSetting> = {};
 
     private EncodeDataStr(): string {
         return LZString.compressToBase64(JSON.stringify(this.modData));

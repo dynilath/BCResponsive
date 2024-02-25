@@ -20,10 +20,14 @@ interface ResponsiveTriggerActivity {
     allow_activities?: string[];
     allow_bodyparts?: string[];
     allow_ids?: number[];
+    forbid_ids?: number[];
 }
+
+type OrgasmTriggerType = "Orgasmed" | "Ruined" | "Resisted" | "Any";
 
 interface ResponsiveTriggerOrgasm {
     mode: "orgasm";
+    type: OrgasmTriggerType;
 }
 
 interface ResponsiveTriggerSpicer {
@@ -32,6 +36,7 @@ interface ResponsiveTriggerSpicer {
     max_arousal?: number;
     apply_favorite?: boolean;
     allow_ids?: number[];
+    forbid_ids?: number[];
 }
 
 type ResponsiveTrigger = ResponsiveTriggerActivity | ResponsiveTriggerOrgasm | ResponsiveTriggerSpicer;
@@ -77,8 +82,6 @@ interface ResponsiveSettingV2 {
 type ResponsiveSetting = ResponsiveSettingV1 | ResponsiveSettingV2;
 
 interface ResponsiveSolidSetting extends ResponsiveSetting { }
-
-type ResponsivePartialSetting = Partial<ResponsiveSolidSetting>;
 
 type ModSetting = { BCResponsive?: string };
 

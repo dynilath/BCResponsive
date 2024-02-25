@@ -4,7 +4,7 @@ import { DataManager } from './Data/Data';
 import { CUSTOM_ACTION_TAG, ModName, ModVersion, GIT_REPO } from './Definition';
 import { GUISetting } from './GUI/GUI';
 import { GUIMainMenu } from './GUI/MainMenu';
-import { ChatRoomAction } from 'bc-utilities';
+import { ChatRoomAction, OrgasmMonitor } from 'bc-utilities';
 
 (function () {
     if (window.__load_flag__) return;
@@ -18,10 +18,8 @@ import { ChatRoomAction } from 'bc-utilities';
         ActivityHandle(Player, args[0] as ServerChatRoomMessage);
     });
 
-    mod.hookFunction('ActivityOrgasmStart', 9, (args, next) => {
-        next(args);
-        OrgasmHandle(Player, args[0] as Character);
-    });
+    const orgasm = new OrgasmMonitor(mod);
+    OrgasmHandle(orgasm);
 
     GUISetting.init(mod, () => { return new GUIMainMenu });
     DataManager.init(mod);

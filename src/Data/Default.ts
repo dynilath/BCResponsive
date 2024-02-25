@@ -38,6 +38,7 @@ export function getDefaultPersonaList() {
         enabled: true,
         trigger: {
             mode: "orgasm",
+            type: "Any",
         },
         messages: DefaultValueV1.orgasm.map(message_mapper)
     }, {
