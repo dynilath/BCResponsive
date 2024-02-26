@@ -2,20 +2,21 @@ import { Styles } from "../../Definition";
 import { GetIcon, Icons } from "../Icons";
 import { IPoint, IRect, WithinRect as WithinRect } from "./AGUI";
 
-export function ADrawText(rect: IPoint, Text: string, option?: { color?: string, align?: CanvasTextAlign }) {
+export function ADrawText(rect: IPoint, Text: string, option?: { color?: string, align?: CanvasTextAlign, emphasis?: boolean }) {
     if (!option) option = {};
     const color = option.color || "Black";
     const align = option.align || "left";
 
     MainCanvas.fillStyle = color;
     MainCanvas.textAlign = align;
+
+    if (option.emphasis) MainCanvas.fillText(Text, rect.x + 1, rect.y + 1);
     MainCanvas.fillText(Text, rect.x, rect.y);
 }
 
-export function ADrawTextFit(rect: IRect, Text: string, args?: { color?: string, padding?: number }) {
-    if (!args) args = {};
-    const color = args.color || Styles.Text.Base;
-    const padding = args.padding || Styles.Text.padding;
+export function ADrawTextFit(rect: IRect, Text: string, args?: { color?: string, padding?: number, emphasis?: boolean; }) {
+    const color = args?.color || Styles.Text.Base;
+    const padding = args?.padding || Styles.Text.padding;
 
     const actualWidth = rect.width - padding * 2;
 
@@ -23,14 +24,20 @@ export function ADrawTextFit(rect: IRect, Text: string, args?: { color?: string,
     const centerX = rect.x + rect.width / 2;
     const centerY = rect.y + rect.height / 2;
     const measure = MainCanvas.measureText(Text);
+
+    const fillText = (x: number, y: number) => {
+        if (args?.emphasis) MainCanvas.fillText(Text, x + 1, y + 1);
+        MainCanvas.fillText(Text, x, y);
+    }
+
     MainCanvas.fillStyle = color;
     if (actualWidth < measure.width) {
         const ratio = actualWidth / measure.width;
         MainCanvas.scale(ratio, ratio);
-        MainCanvas.fillText(Text, centerX / ratio, centerY / ratio);
+        fillText(centerX / ratio, centerY / ratio);
         MainCanvas.scale(1 / ratio, 1 / ratio);
     } else {
-        MainCanvas.fillText(Text, centerX, centerY);
+        fillText(centerX, centerY);
     }
 }
 

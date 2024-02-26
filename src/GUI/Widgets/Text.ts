@@ -1,27 +1,39 @@
 import { Calculate, Result } from "bc-utilities";
 import { ModVersion } from "../../Definition";
 import { GetText } from "../../i18n";
-import { AGUIItem, IPoint } from "./AGUI";
-import { ADrawText } from "./Common";
+import { AGUIItem, IPoint, IRect } from "./AGUI";
+import { ADrawText, ADrawTextFit } from "./Common";
 
 export class TitleText extends AGUIItem {
     constructor() { super(); }
 
     Draw() {
-        ADrawText({ x: 200, y: 125 }, `${GetText("responsive_setting_title")} v${ModVersion}`);
+        const text = GetText("responsive_setting_title");
+        ADrawText({ x: 201, y: 126 }, `${text} v${ModVersion}`, { color: "Gray" });
+        ADrawText({ x: 200, y: 125 }, `${text} v${ModVersion}`);
     }
 }
 
 export class BasicText extends AGUIItem {
-    constructor(readonly where: IPoint, readonly text: Calculate<string>, readonly setting?: { align?: CanvasTextAlign; color?: string; }) {
+    constructor(readonly where: IPoint, readonly text: Calculate<string>, readonly setting?: { align?: CanvasTextAlign; color?: string; emphasis?: boolean; }) {
         super();
     }
 
     Draw() {
         MainCanvas.textAlign = this.setting?.align || "left";
         MainCanvas.fillStyle = this.setting?.color || "Black";
-        MainCanvas.fillText(Result(this.text), this.where.x, this.where.y);
+        const text = Result(this.text);
+        if (this.setting?.emphasis) MainCanvas.fillText(text, this.where.x + 1, this.where.y + 1);
+        MainCanvas.fillText(text, this.where.x, this.where.y);
     }
+}
+
+export class FitText extends AGUIItem {
+    constructor(readonly rect: IRect, readonly text: Calculate<string>, readonly setting?: { color?: string; emphasis?: boolean; }) {
+        super();
+    }
+
+    Draw() { ADrawTextFit(this.rect, Result(this.text), this.setting); }
 }
 
 export class DynamicText extends AGUIItem {
