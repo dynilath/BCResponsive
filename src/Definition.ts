@@ -44,7 +44,7 @@ export const Styles = {
         border: 5,
     },
     Scrollbar: {
-        width: 50,
+        width: 30,
         spacing: 5,
         button_height: 100,
     },

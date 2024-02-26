@@ -135,7 +135,7 @@ export class ActivityPopup extends Popup {
 
         this.items = [
             new RoundFramedRect(_dialog, Styles.Dialog.roundRadius, "White"),
-            new BasicText(_title, GetText("ActivityPopup::Title"), { align: "center" }),
+            new BasicText(_title, GetText("ActivityPopup::Title"), { align: "center", emphasis: true }),
             new ChipsPark(this.editing, _chips_value, _chips_park, flip),
             new TextRoundButton(_filter_clear, GetText("General::Clear"), () => this.editing.clear()),
             new TextRoundButton(_filter_all, GetText("General::AllSet"), () => _chips_value.forEach(v => this.editing.add(v.value))),

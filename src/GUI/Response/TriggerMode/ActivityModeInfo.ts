@@ -78,7 +78,7 @@ export class ActivityModeInfo extends AGUIItem {
                     return result;
                 })(v.allow_ids)) ?? "";
             }, () => {
-                setSubscreen(new MemberListPopup(this.parent, this.state.asActivity(v => {
+                setSubscreen(new MemberListPopup(this.parent, GetText("MemberListPopup::AllowIDs::Title"), this.state.asActivity(v => {
                     if (v.allow_ids === undefined) v.allow_ids = [];
                     return v.allow_ids;
                 }) ?? []));

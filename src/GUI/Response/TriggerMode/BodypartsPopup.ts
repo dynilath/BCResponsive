@@ -99,7 +99,7 @@ export class BodypartsPopup extends Popup {
 
         this.items = [
             new RoundFramedRect(_dialog, Styles.Dialog.roundRadius, "White"),
-            new BasicText(_dialog_title, GetText("BodypartsPopup::Title"), { align: "center" }),
+            new BasicText(_dialog_title, GetText("BodypartsPopup::Title"), { align: "center", emphasis: true }),
             new ActivityAreaDisplay(this.editing, _bodypart_selector, flip),
             new ChipsPark(this.editing, _chips_value, _chips_park, flip),
             new TextRoundButton(_chip_clear, GetText("General::Clear"), () => this.editing.clear()),

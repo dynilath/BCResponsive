@@ -146,7 +146,7 @@ export class MemberListPopup extends Popup {
     private readonly source_member_list: number[];
     private readonly editing_member_list: number[];
 
-    constructor(readonly prev: GUISettingScreen | null, readonly source: number[]) {
+    constructor(readonly prev: GUISettingScreen | null, readonly title: string, readonly source: number[]) {
         super(prev);
         this.source_member_list = source;
         this.editing_member_list = [...source];
@@ -200,7 +200,7 @@ export class MemberListPopup extends Popup {
 
         this.items = [
             new RoundFramedRect(_dialog, Styles.Dialog.roundRadius, "White"),
-            new BasicText(_title, GetText("MemberListPopup::Title"), { align: "center" }),
+            new BasicText(_title, title, { align: "center", emphasis: true }),
             text_input,
             new TextRoundButton(_input_confirm, GetText("General::Add"), () => {
                 const member_number = parseInt(text_input.text);

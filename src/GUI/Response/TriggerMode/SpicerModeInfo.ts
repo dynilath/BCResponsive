@@ -70,7 +70,7 @@ export class SpicerModeInfo extends AGUIItem {
                 let result = ids.slice(0, 3).join(", ");
                 if (ids.length > 3) result += GetText("TriggerInfo::AndMore", [ids.length - 3]);
                 return result;
-            })(v.allow_ids)) ?? "", () => setSubscreen(new MemberListPopup(this.parent, this.state.asSpicer(v => {
+            })(v.allow_ids)) ?? "", () => setSubscreen(new MemberListPopup(this.parent, GetText("MemberListPopup::AllowIDs::Title"), this.state.asSpicer(v => {
                 if (v.allow_ids === undefined) v.allow_ids = [];
                 return v.allow_ids;
             }) ?? [])))
