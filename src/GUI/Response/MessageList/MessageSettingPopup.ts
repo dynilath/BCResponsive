@@ -9,15 +9,15 @@ import { Styles } from "../../../Definition";
 import { SegmentButton } from "../../Widgets/SegmentButton";
 import { Binding } from "../../Widgets/Binding";
 
-class MessageTypeBinding extends Binding<ResponsiveMessageType> {
-    constructor(readonly message: ResponsiveMessage) {
+class MessageTypeBinding extends Binding<ResponseMessageType> {
+    constructor(readonly message: ResponseMessage) {
         super();
     }
-    get value(): ResponsiveMessageType {
+    get value(): ResponseMessageType {
         return this.message.type;
     }
-    set value(v: ResponsiveMessageType) {
-        this.message.type = v as ResponsiveMessageType;
+    set value(v: ResponseMessageType) {
+        this.message.type = v as ResponseMessageType;
     }
 }
 
@@ -28,13 +28,13 @@ const INPUT_HEIGHT = 500;
 const SPACING = 15;
 
 export class MessageSettinPopup extends Popup {
-    private _input_state: ResponsiveMessage;
+    private _input_state: ResponseMessage;
     private _text_input: TextAreaItem;
 
-    private _confirm_callback: (message: ResponsiveMessage) => void;
-    private _delete_callback: (message: ResponsiveMessage) => void;
+    private _confirm_callback: (message: ResponseMessage) => void;
+    private _delete_callback: (message: ResponseMessage) => void;
 
-    constructor(readonly prev: GUISettingScreen | null, readonly target: ResponsiveMessage, readonly confirm: (message: ResponsiveMessage) => void, readonly del: (message: ResponsiveMessage) => void) {
+    constructor(readonly prev: GUISettingScreen | null, readonly target: ResponseMessage, readonly confirm: (message: ResponseMessage) => void, readonly del: (message: ResponseMessage) => void) {
         super(prev);
 
         if (target) this._input_state = { ...target };
@@ -102,9 +102,9 @@ export class MessageSettinPopup extends Popup {
 
         this.items = [
             new RoundFramedRect(_dialog, Styles.Dialog.roundRadius, "White"),
-            new BasicText(_title, GetText("MessagePopup::EditMessage"), { align: "center" }),
+            new BasicText(_title, GetText("MessagePopup::EditMessage"), { align: "center", emphasis: true }),
             this._text_input,
-            new SegmentButton<ResponsiveMessageType>({
+            new SegmentButton<ResponseMessageType>({
                 text: [
                     { display: GetText("MessagePopup::Type::message"), value: "message" },
                     { display: GetText("MessagePopup::Type::action"), value: "action" }

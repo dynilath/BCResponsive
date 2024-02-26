@@ -44,7 +44,7 @@ export function pickV2Setting(data: any): ResponsiveSettingV2 {
 export function V1SettingToV2Setting(data: ResponsiveSettingV1): ResponsiveSettingV2 {
     let def = getDefaultSettings();
     def.settings.enabled = data.settings.enable;
-    const v1mapper = (_: string) => { return { type: "message", content: _ } as ResponsiveMessage; };
+    const v1mapper = (_: string) => { return { type: "message", content: _ } as ResponseMessage; };
     def.personalities = Array.from({ length: MaxPersonalities }, (_, index) => index).map(FirstOr({
         name: "Default",
         index: 0,
@@ -56,7 +56,8 @@ export function V1SettingToV2Setting(data: ResponsiveSettingV1): ResponsiveSetti
             { name: "High Arousal", trigger: { mode: "spicer", min_arousal: 80 }, messages: data.hot.map(v1mapper) },
             { name: "Mid Arousal", trigger: { mode: "spicer", max_arousal: 80, min_arousal: 50 }, messages: data.medium.map(v1mapper) },
             { name: "Low Arousal", trigger: { mode: "spicer", max_arousal: 50 }, messages: data.low.map(v1mapper) },
-        ] as ResponsiveItem[]
+        ] as ResponseItem[],
+        blackList: []
     }, undefined));
     return def;
 }
@@ -65,25 +66,26 @@ export function V2ValidatePersonality(arg: Partial<ResponsivePersonality> | unde
         return d !== undefined && d !== null && typeof d === "object" && typeof d.name === "string" && typeof d.index === "number" && Array.isArray(d.responses);
     })(arg)) return undefined;
 
-    let responses = arg.responses.map((j: Partial<ResponsiveItem>): ResponsiveItem | undefined => {
+    if (!isNumberArray(arg.blackList))
+        arg.blackList = [];
+
+    let responses = arg.responses.map((j: Partial<ResponseItem>): ResponseItem | undefined => {
         if (typeof j !== "object") return undefined;
         if (typeof j.name !== "string") return undefined;
         if (typeof j.trigger !== "object") return undefined;
 
         const enabled = j.enabled === undefined ? true : j.enabled;
 
-        const trigger = ((): ResponsiveTrigger | undefined => {
-            if (!(["activity", "orgasm", "spicer"] as ResponsiveTriggerMode[]).includes(j.trigger.mode)) return undefined;
+        const trigger = ((): ResponseTrigger | undefined => {
+            if (!(["activity", "orgasm", "spicer"] as ResponseTriggerMode[]).includes(j.trigger.mode)) return undefined;
             if (j.trigger.mode === "activity") {
                 let allow_activities = j.trigger.allow_activities;
                 let allow_bodyparts = j.trigger.allow_bodyparts;
                 let allow_ids = j.trigger.allow_ids;
-                let forbid_ids = j.trigger.forbid_ids;
                 if (allow_activities !== undefined && !isStringArray(allow_activities)) return undefined;
                 if (allow_bodyparts !== undefined && !isStringArray(allow_bodyparts)) return undefined;
                 if (allow_ids !== undefined && !isNumberArray(allow_ids)) return undefined;
-                if (forbid_ids !== undefined && !isNumberArray(forbid_ids)) return undefined;
-                return { mode: "activity", allow_activities, allow_bodyparts, allow_ids, forbid_ids };
+                return { mode: "activity", allow_activities, allow_bodyparts, allow_ids };
             } else if (j.trigger.mode === "orgasm") {
                 let type = j.trigger.type;
                 if (type === undefined) type = "Any";
@@ -94,29 +96,27 @@ export function V2ValidatePersonality(arg: Partial<ResponsivePersonality> | unde
                 let max_arousal = j.trigger.max_arousal;
                 let apply_favorite = j.trigger.apply_favorite;
                 let allow_ids = j.trigger.allow_ids;
-                let forbid_ids = j.trigger.forbid_ids;
                 if (min_arousal !== undefined && typeof min_arousal !== "number") return undefined;
                 if (max_arousal !== undefined && typeof max_arousal !== "number") return undefined;
                 if (apply_favorite !== undefined && typeof apply_favorite !== "boolean") return undefined;
                 if (allow_ids !== undefined && !isNumberArray(allow_ids)) return undefined;
-                if (forbid_ids !== undefined && !isNumberArray(forbid_ids)) return undefined;
-                return { mode: "spicer", min_arousal, max_arousal, apply_favorite, allow_ids, forbid_ids };
+                return { mode: "spicer", min_arousal, max_arousal, apply_favorite, allow_ids };
             }
             return undefined;
         })();
         if (trigger === undefined) return undefined;
 
         if (!Array.isArray(j.messages)) return undefined;
-        let messages = j.messages.map((k: Partial<ResponsiveMessage>): ResponsiveMessage | undefined => {
+        let messages = j.messages.map((k: Partial<ResponseMessage>): ResponseMessage | undefined => {
             if (typeof k !== "object") return undefined;
             if (k.type !== "action" && k.type !== "message") return undefined;
             if (typeof k.content !== "string") return undefined;
             return { type: k.type, content: k.content };
-        }).filter((_: any) => _ !== undefined) as ResponsiveMessage[];
+        }).filter((_: any) => _ !== undefined) as ResponseMessage[];
 
         return { name: j.name, enabled, trigger, messages };
-    }).filter((_: any) => _ !== undefined) as ResponsiveItem[];
+    }).filter((_: any) => _ !== undefined) as ResponseItem[];
 
-    return { name: arg.name, index: arg.index, responses: responses };
+    return { name: arg.name, index: arg.index, responses: responses, blackList: arg.blackList };
 }
 

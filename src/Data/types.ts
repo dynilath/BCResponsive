@@ -1,11 +1,11 @@
 
-export function isTriggerActivity(trigger: ResponsiveTrigger): trigger is ResponsiveTriggerActivity {
+export function isTriggerActivity(trigger: ResponseTrigger): trigger is ResponsiveTriggerActivity {
     return trigger.mode === "activity";
 }
-export function isTriggerOrgasm(trigger: ResponsiveTrigger): trigger is ResponsiveTriggerOrgasm {
+export function isTriggerOrgasm(trigger: ResponseTrigger): trigger is ResponsiveTriggerOrgasm {
     return trigger.mode === "orgasm";
 }
-export function isTriggerSpicer(trigger: ResponsiveTrigger): trigger is ResponsiveTriggerSpicer {
+export function isTriggerSpicer(trigger: ResponseTrigger): trigger is ResponsiveTriggerSpicer {
     return trigger.mode === "spicer";
 }
 export function isNumberArray(data: any): data is number[] {

@@ -12,7 +12,7 @@ import { Scrollbar } from "../../Widgets/Scrollbar";
 
 const ROUND_BUTTON_DIAMETER = 40;
 
-function DrawMessageItem(message: ResponsiveMessage, active: boolean, mouse: IPoint, rect: IRect) {
+function DrawMessageItem(message: ResponseMessage, active: boolean, mouse: IPoint, rect: IRect) {
     if (active && WithinRect(mouse, rect))
         ADrawCircleRect(rect, { fill: Styles.Button.hover });
     else ADrawCircleRect(rect);
@@ -59,7 +59,7 @@ export class ResponseMessageList extends AGUIItem {
             x: rect.x,
             y: rect.y,
             width: rect.width - Styles.Scrollbar.width - Styles.Scrollbar.spacing,
-            height: ITEM_SPACING + (ITEM_HEIGHT + ITEM_SPACING) * this._items_per_page
+            height: rect.height
         };
 
         this._itemRects = Array.from({ length: this._items_per_page }, (_, index) => {

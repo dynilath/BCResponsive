@@ -17,6 +17,8 @@ export function InvokeResponse(data: TriggerData, player: Character | undefined,
 }
 
 function InvokeResponseForActivity(persona: ResponsivePersonality, data: TriggerDataActivity, player: Character | undefined, target: Character | undefined) {
+    if (persona.blackList.includes(data.from)) return;
+
     let selected = (() => {
         let actived_messages = persona.responses.filter(i => {
             if (!i.enabled) return false;
@@ -26,7 +28,7 @@ function InvokeResponseForActivity(persona: ResponsivePersonality, data: Trigger
             if (trigger.allow_bodyparts !== undefined && !trigger.allow_bodyparts.includes(data.bodypart)) return false;
             if (trigger.allow_ids !== undefined && !trigger.allow_ids.includes(data.from)) return false;
             return true;
-        }).reduce((acc, cur) => { return acc.concat(cur.messages); }, [] as ResponsiveMessage[]);
+        }).reduce((acc, cur) => { return acc.concat(cur.messages); }, [] as ResponseMessage[]);
 
         if (actived_messages.length === 0) return undefined;
         return actived_messages[Math.floor(Math.random() * actived_messages.length)];
@@ -43,7 +45,7 @@ function InvokeResponseForActivity(persona: ResponsivePersonality, data: Trigger
                 if (trigger.max_arousal !== undefined && data.arousal > trigger.max_arousal) return false;
                 if (trigger.allow_ids !== undefined && !trigger.allow_ids.includes(data.from)) return false;
                 return true;
-            }).reduce((acc, cur) => { return acc.concat(cur.messages); }, [] as ResponsiveMessage[]);
+            }).reduce((acc, cur) => { return acc.concat(cur.messages); }, [] as ResponseMessage[]);
             if (actived_spicers.length === 0) return undefined;
             return actived_spicers[Math.floor(Math.random() * actived_spicers.length)];
         })();
@@ -65,7 +67,7 @@ function InvokeResponseForOrgasm(persona: ResponsivePersonality, data: TriggerDa
             if (!isTriggerOrgasm(trigger)) return false;
             if (trigger.type !== "Any" && trigger.type !== data.type) return false;
             return true;
-        }).reduce((acc, cur) => { return acc.concat(cur.messages); }, [] as ResponsiveMessage[]);
+        }).reduce((acc, cur) => { return acc.concat(cur.messages); }, [] as ResponseMessage[]);
 
         if (actived_messages.length === 0) return undefined;
         return actived_messages[Math.floor(Math.random() * actived_messages.length)];

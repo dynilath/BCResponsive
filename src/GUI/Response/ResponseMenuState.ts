@@ -40,19 +40,19 @@ class EnabledProperty extends Binding<boolean> {
     }
 }
 
-class ModeProperty extends Binding<ResponsiveTriggerMode> {
+class ModeProperty extends Binding<ResponseTriggerMode> {
     readonly _state: ResponseMenuState;
     constructor(readonly state: ResponseMenuState) {
         super();
         this._state = state;
     }
-    get value(): ResponsiveTriggerMode {
+    get value(): ResponseTriggerMode {
         if (this._state.targetItem === null) return "activity";
         return this._state.targetItem.trigger.mode;
     }
-    set value(v: ResponsiveTriggerMode) {
+    set value(v: ResponseTriggerMode) {
         if (this._state.targetItem !== null) {
-            this._state.targetItem.trigger.mode = v as ResponsiveTriggerMode;
+            this._state.targetItem.trigger.mode = v;
             DataManager.save();
         }
     }
@@ -110,7 +110,7 @@ export interface ExpandList<T> {
 }
 
 export class ResponseMenuState {
-    targetItem: ResponsiveItem | null = null;
+    targetItem: ResponseItem | null = null;
 
     get targetPersona(): ResponsivePersonality {
         return this.persona;
@@ -124,7 +124,7 @@ export class ResponseMenuState {
         return new EnabledProperty(this);
     }
 
-    TriggerMode(): SegmentButtonSetting<ResponsiveTriggerMode> {
+    TriggerMode(): SegmentButtonSetting<ResponseTriggerMode> {
         return {
             text: [
                 { display: GetText(`TriggerMode::activity`), value: "activity" },
@@ -175,7 +175,7 @@ export class ResponseMenuState {
             el();
     }
 
-    asBaseTrigger<T>(op: (t: ResponsiveTrigger) => T, el?: () => void) {
+    asBaseTrigger<T>(op: (t: ResponseTrigger) => T, el?: () => void) {
         if (this.targetItem !== null)
             return op(this.targetItem.trigger);
         else if (el !== undefined)

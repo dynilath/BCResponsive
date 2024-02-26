@@ -183,6 +183,7 @@ export class PersonaItem extends AGUIItem {
                     name: GetText("Default::NewPersonality"),
                     index: this.index,
                     responses: [],
+                    blackList: [],
                 };
                 DataManager.save();
             }

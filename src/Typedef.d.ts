@@ -20,7 +20,6 @@ interface ResponsiveTriggerActivity {
     allow_activities?: string[];
     allow_bodyparts?: string[];
     allow_ids?: number[];
-    forbid_ids?: number[];
 }
 
 type OrgasmTriggerType = "Orgasmed" | "Ruined" | "Resisted" | "Any";
@@ -36,41 +35,31 @@ interface ResponsiveTriggerSpicer {
     max_arousal?: number;
     apply_favorite?: boolean;
     allow_ids?: number[];
-    forbid_ids?: number[];
 }
 
-type ResponsiveTrigger = ResponsiveTriggerActivity | ResponsiveTriggerOrgasm | ResponsiveTriggerSpicer;
+type ResponseTrigger = ResponsiveTriggerActivity | ResponsiveTriggerOrgasm | ResponsiveTriggerSpicer;
 
-type ResponsiveTriggerMode = ResponsiveTrigger["mode"];
+type ResponseTriggerMode = ResponseTrigger["mode"];
 
-interface ResponsiveTriggerType {
-    mode: ResponsiveTriggerMode;
-    min_arousal?: number;
-    max_arousal?: number;
-    apply_favorite?: boolean;
-    allow_activities?: string[];
-    allow_bodyparts?: string[];
-    allow_ids?: number[];
-}
+type ResponseMessageType = "action" | "message";
 
-type ResponsiveMessageType = "action" | "message";
-
-interface ResponsiveMessage {
-    type: ResponsiveMessageType,
+interface ResponseMessage {
+    type: ResponseMessageType;
     content: string;
 }
 
-interface ResponsiveItem {
+interface ResponseItem {
     name: string;
     enabled: boolean;
-    trigger: ResponsiveTrigger;
-    messages: ResponsiveMessage[];
+    trigger: ResponseTrigger;
+    messages: ResponseMessage[];
 }
 
 interface ResponsivePersonality {
     name: string;
     index: number;
-    responses: ResponsiveItem[];
+    blackList: number[];
+    responses: ResponseItem[];
 }
 
 interface ResponsiveSettingV2 {

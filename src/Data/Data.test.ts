@@ -15,6 +15,7 @@ describe("getDefaultSettings", () => {
         let data = getDefaultSettings();
         expect(data.personalities[0]).toBeDefined();
         (data.personalities[0] as ResponsivePersonality).name = "test";
+        (data.personalities[0] as ResponsivePersonality).blackList = [1, 2, 3];
         (data.personalities[0] as ResponsivePersonality).responses[0].enabled = false;
         (data.personalities[0] as ResponsivePersonality).responses.push({
             name: "test",
@@ -30,7 +31,6 @@ describe("getDefaultSettings", () => {
                 min_arousal: 10,
                 max_arousal: 92,
                 allow_ids: undefined,
-                forbid_ids: [4, 5, 6]
             },
             messages: [{ type: "message", content: "test" }]
         });
@@ -42,7 +42,6 @@ describe("getDefaultSettings", () => {
                 allow_bodyparts: ["test"],
                 allow_activities: ["test"],
                 allow_ids: undefined,
-                forbid_ids: [4, 5, 6]
             },
             messages: [{ type: "action", content: "test" }]
         });

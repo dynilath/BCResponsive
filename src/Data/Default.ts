@@ -6,10 +6,10 @@ import { FirstOr } from "./types";
 
 
 export function getDefaultPersonaList() {
-    const message_mapper = (_: string) => { return { type: "message", content: _ } as ResponsiveMessage; };
-    const action_mapper = (_: string) => { return { type: "action", content: _ } as ResponsiveMessage; };
+    const message_mapper = (_: string) => { return { type: "message", content: _ } as ResponseMessage; };
+    const action_mapper = (_: string) => { return { type: "action", content: _ } as ResponseMessage; };
 
-    const default_personality: ResponsiveItem[] = [{
+    const default_personality: ResponseItem[] = [{
         name: GetText("Default::ItemName::Pain"),
         enabled: true,
         trigger: {
