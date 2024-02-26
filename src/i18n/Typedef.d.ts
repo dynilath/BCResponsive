@@ -21,9 +21,11 @@ type PersonaMenuTextTags = "PersonaMenu::EditName" | "PersonaMenu::Import" | "Pe
 
 type PersonaImportTextTags = "PersonaImport::Title" | "PersonaImport::InvalidInput"
 
-type PersonaRenameTextTags = "PersonaRename::Title"
+type PersonaInfoTextTags = "PersonaInfo::BlackList"
 
-type TriggerModeTextTags = `TriggerMode::${ResponsiveTriggerMode}`
+type PersonaInfoPopupTextTags = "RenamePopup::PersonaName::Title" | "MemberListPopup::PersonaBlackList::Title"
+
+type TriggerModeTextTags = `TriggerMode::${ResponseTriggerMode}`
 
 type TriggerInfoTextTags = "TriggerInfo::AddNew" | "TriggerInfo::Name" | "TriggerInfo::OnOff" | "TriggerInfo::Mode"
     | "TriggerInfo::OnActivity" | "TriggerInfo::OnBodyparts" | "TriggerInfo::OnMembers" | "TriggerInfo::AllActivities"
@@ -31,17 +33,17 @@ type TriggerInfoTextTags = "TriggerInfo::AddNew" | "TriggerInfo::Name" | "Trigge
     | "TriggerInfo::AndMore" | "TriggerInfo::MinArousal" | "TriggerInfo::MaxArousal" | "TriggerInfo::ApplyFavorite"
     | "TriggerInfo::NewResponses" | "TriggerInfo::Orgasm::Type" | `TriggerInfo::Orgasm::Type::${OrgasmTriggerType}`
 
-type MemberListPopupTextTags = "MemberListPopup::Title" | "MemberListPopup::InputID"
+type MemberListPopupTextTags = "MemberListPopup::AllowIDs::Title" | "MemberListPopup::InputID"
 
 type BodypartsPopupTextTags = "BodypartsPopup::Title"
 
 type ActivityPopupTextTags = "ActivityPopup::Title" | "ActivityPopup::Pain" | "ActivityPopup::Tickle"
     | "ActivityPopup::Masturbate" | "ActivityPopup::Feet"
 
-type MessagePopupTextTags = "MessagePopup::EditMessage" | `MessagePopup::Type::${ResponsiveMessageType}`
+type MessagePopupTextTags = "MessagePopup::EditMessage" | `MessagePopup::Type::${ResponseMessageType}`
     | "MessagePopup::InsertMe" | "MessagePopup::InsertOther"
 
 type TextTags = LegacyTextTags | GeneralTextTags | CharaInfoTextTags | DefaultTextTags | MainMenuTextTags
-    | PersonaMenuTextTags | PersonaImportTextTags | PersonaRenameTextTags | TriggerModeTextTags
+    | PersonaMenuTextTags | PersonaImportTextTags | PersonaInfoTextTags | PersonaInfoPopupTextTags | TriggerModeTextTags
     | TriggerInfoTextTags | MemberListPopupTextTags | BodypartsPopupTextTags | ActivityPopupTextTags
     | MessagePopupTextTags
