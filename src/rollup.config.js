@@ -46,7 +46,7 @@ const default_config = debug => ({
     output: {
         file: `${destDir}/${deployFileName}`,
         format: "iife",
-        sourcemap: debug ? "inline" : false,
+        sourcemap: debug ? "inline" : true,
         banner: ``,
     },
     treeshake: true,
@@ -87,7 +87,7 @@ const plugins_debug = deploySite => [
 
 const plugins = deploySite => [
     ...plugins_debug(deploySite),
-    terser()
+    terser({sourceMap: true})
 ]
 
 module.exports = cliArgs => {
