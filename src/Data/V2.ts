@@ -88,7 +88,7 @@ export function V2ValidatePersonality(arg: Partial<ResponsivePersonality> | unde
                 return { mode: "activity", allow_activities, allow_bodyparts, allow_ids };
             } else if (j.trigger.mode === "orgasm") {
                 let type = j.trigger.type;
-                if (type === undefined) type = "Any";
+                if (type === undefined) type = "Orgasmed";
                 if (!(["Orgasmed", "Ruined", "Resisted", "Any"] as OrgasmTriggerType[]).includes(type)) return undefined;
                 return { mode: "orgasm", type };
             } else if (j.trigger.mode === "spicer") {
