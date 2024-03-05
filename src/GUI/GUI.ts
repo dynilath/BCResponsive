@@ -30,6 +30,7 @@ export function setSubscreen(subscreen: GUISettingScreen | null): void {
         if (!subscreen) {
             if (typeof PreferenceSubscreenExtensionsClear === "function")
                 PreferenceSubscreenExtensionsClear();
+            else PreferenceSubscreen = "";
         }
     }
 }
@@ -115,42 +116,13 @@ export class GUISetting {
     }
 
     private hookGUI(mod: ModSDKModAPI<any>) {
-        mod.hookFunction("PreferenceRun", 10, (args, next) => {
-            if (this._currentScreen) {
-                const origAlign = MainCanvas.textAlign;
-                this._currentScreen.Run();
-                drawTooltip();
-                MainCanvas.textAlign = origAlign;
-                return;
-            }
-
-            next(args);
-        });
-
-        mod.hookFunction("PreferenceClick", 10, (args, next) => {
-            if (this._currentScreen) {
-                this._currentScreen.Click();
-                return;
-            }
-            return next(args);
-        });
-
-        if (window["PreferenceMouseWheel" as any] == null) {
+        if (typeof window["PreferenceMouseWheel" as any] !== "function") {
             (window["PreferenceMouseWheel" as any] as any) = (event: WheelEvent) => { };
         }
 
         mod.hookFunction("PreferenceMouseWheel", 10, (args, next) => {
             if (this._currentScreen) {
                 this._currentScreen.MouseWheel(args[0] as WheelEvent);
-                return;
-            }
-
-            return next(args);
-        });
-
-        mod.hookFunction("InformationSheetExit", 10, (args, next) => {
-            if (this._currentScreen) {
-                this._currentScreen.Exit();
                 return;
             }
 
@@ -165,11 +137,19 @@ export class GUISetting {
             return next(args);
         });
 
-        (window as any)[`PreferenceSubscreen${SettingName}Load`] = () => {
-            if (this._mainScreenProvider) {
-                this.currentScreen = this._mainScreenProvider();
+        (window as any)[`PreferenceSubscreen${SettingName}Load`] = () => this.currentScreen = this._mainScreenProvider?.() ?? null;
+
+        (window as any)[`PreferenceSubscreen${SettingName}Run`] = () => {
+            if (this._currentScreen) {
+                const origAlign = MainCanvas.textAlign;
+                this._currentScreen.Run();
+                drawTooltip();
+                MainCanvas.textAlign = origAlign;
             }
         }
+
+        (window as any)[`PreferenceSubscreen${SettingName}Click`] = () => this._currentScreen?.Click();
+        (window as any)[`PreferenceSubscreen${SettingName}Exit`] = () => this._currentScreen?.Exit();
 
         mod.hookFunction("DrawButton", 2, (args: string[], next: (arg0: any) => any) => {
             if (args[6] == `Icons/${SettingName}.png`) args[6] = Icons.responsive_main;
