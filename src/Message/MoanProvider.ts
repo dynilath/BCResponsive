@@ -28,7 +28,7 @@ function InvokeResponseForActivity(persona: ResponsivePersonality, data: Trigger
             if (trigger.allow_bodyparts !== undefined && !trigger.allow_bodyparts.includes(data.bodypart)) return false;
             if (trigger.allow_ids !== undefined && !trigger.allow_ids.includes(data.from)) return false;
             return true;
-        }).reduce((acc, cur) => { return acc.concat(cur.messages); }, [] as ResponseMessage[]);
+        }).map(i => i.messages).flat();
 
         if (actived_messages.length === 0) return undefined;
         return actived_messages[Math.floor(Math.random() * actived_messages.length)];
@@ -45,7 +45,7 @@ function InvokeResponseForActivity(persona: ResponsivePersonality, data: Trigger
                 if (trigger.max_arousal !== undefined && data.arousal > trigger.max_arousal) return false;
                 if (trigger.allow_ids !== undefined && !trigger.allow_ids.includes(data.from)) return false;
                 return true;
-            }).reduce((acc, cur) => { return acc.concat(cur.messages); }, [] as ResponseMessage[]);
+            }).map(i => i.messages).flat().filter(i => i.type === "message");
             if (actived_spicers.length === 0) return undefined;
             return actived_spicers[Math.floor(Math.random() * actived_spicers.length)];
         })();
