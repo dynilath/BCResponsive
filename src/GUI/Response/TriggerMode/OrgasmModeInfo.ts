@@ -1,6 +1,6 @@
 import { DataManager } from "../../../Data";
 import { GetText } from "../../../i18n";
-import { GUISettingScreen } from "../../GUI";
+import { IGUIScreen } from "../../GUI";
 import { AGUIItem, IPoint, IRect } from "../../Widgets/AGUI";
 import { Binding } from "../../Widgets/Binding";
 import { SegmentButton, SegmentButtonSetting } from "../../Widgets/SegmentButton";
@@ -26,7 +26,7 @@ class OrgasmTypeBinding extends Binding<OrgasmTriggerType> {
 
 export class OrgasmModeInfo extends AGUIItem {
     private _components: AGUIItem[] = [];
-    constructor(readonly parent: GUISettingScreen, readonly state: ResponseMenuState, readonly rect: IRect) {
+    constructor(readonly parent: IGUIScreen, readonly state: ResponseMenuState, readonly rect: IRect) {
         super();
 
         const type_text = { x: rect.x, y: rect.y + BASE_FONT_SIZE / 2 };

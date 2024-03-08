@@ -1,9 +1,9 @@
 import { DataManager } from "../../Data";
 import { Styles } from "../../Definition";
 import { GetText } from "../../i18n";
-import { GUISettingScreen, setSubscreen } from "../GUI";
+import { GUISetting, IGUIScreen } from "../GUI";
 import { AGUIItem, IPoint, IRect, WithinRect } from "../Widgets/AGUI";
-import { ADrawCricleTextButton, ADrawRoundRect, ADrawText, ADrawTextFit } from "../Widgets/Common";
+import { ADrawCricleTextButton, ADrawRoundRect, ADrawTextFit } from "../Widgets/Common";
 import { PersonaImportScreen } from "./PersonaImportScreen";
 import { PersonaRemamePopup } from "./PersonaRenamePopup";
 
@@ -18,7 +18,7 @@ export class PersonaItem extends AGUIItem {
 
     private readonly _new_rect: IRect;
 
-    constructor(readonly parent: GUISettingScreen | null, readonly index: number, readonly rect: IRect) {
+    constructor(readonly parent: IGUIScreen | null, readonly index: number, readonly rect: IRect) {
         super();
 
         const button_width = Math.max(rect.width * 0.8, 120);
@@ -155,13 +155,13 @@ export class PersonaItem extends AGUIItem {
 
         if (persona) {
             if (WithinRect(mouse, this._rename_rect)) {
-                setSubscreen(new PersonaRemamePopup(this.parent, persona, n => {
+                GUISetting.setScreen(new PersonaRemamePopup(this.parent, persona, n => {
                     persona.name = n;
                     DataManager.save();
                 }));
             }
             else if (WithinRect(mouse, this._import_rect)) {
-                setSubscreen(new PersonaImportScreen(this.parent, this.index));
+                GUISetting.setScreen(new PersonaImportScreen(this.parent, this.index));
             }
             else if (WithinRect(mouse, this._delete_rect)) {
                 if (this.deleteState === 0) {

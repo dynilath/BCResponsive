@@ -1,4 +1,4 @@
-import { GUISettingScreen, hasFocus, setSubscreen } from "../GUI";
+import { GUISetting, IGUIScreen, hasFocus } from "../GUI";
 
 export interface IRect {
     x: number;
@@ -24,9 +24,9 @@ export abstract class AGUIItem {
     Unload(): void { };
 }
 
-export class AGUIScreen extends GUISettingScreen {
+export class AGUIScreen extends IGUIScreen {
     items: AGUIItem[];
-    constructor(readonly prev: GUISettingScreen | null, items: AGUIItem[] = []) {
+    constructor(readonly prev: IGUIScreen | null, items: AGUIItem[] = []) {
         super();
         this.items = items;
     }
@@ -48,7 +48,7 @@ export class AGUIScreen extends GUISettingScreen {
     }
 
     Exit(): void {
-        setSubscreen(this.prev);
+        GUISetting.setScreen(this.prev);
     }
 
     Unload(): void {

@@ -1,8 +1,8 @@
-import { GUISettingScreen, hasFocus } from "../GUI";
+import { IGUIScreen, hasFocus } from "../GUI";
 import { AGUIItem, AGUIScreen } from "./AGUI";
 
 export class Popup extends AGUIScreen {
-    constructor(readonly prev: GUISettingScreen | null, items: AGUIItem[] = []) {
+    constructor(readonly prev: IGUIScreen | null, items: AGUIItem[] = []) {
         super(prev, items);
     }
 

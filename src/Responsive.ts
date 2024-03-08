@@ -3,7 +3,7 @@ import { ActivityHandle, OrgasmHandle } from './Message/Handlers';
 import { DataManager } from './Data/Data';
 import { CUSTOM_ACTION_TAG, ModName, ModVersion, GIT_REPO } from './Definition';
 import { GUISetting } from './GUI/GUI';
-import { GUIMainMenu } from './GUI/MainMenu';
+import { MainMenu } from './GUI/MainMenu';
 import { ChatRoomAction, OrgasmMonitor } from 'bc-utilities';
 
 (function () {
@@ -21,7 +21,7 @@ import { ChatRoomAction, OrgasmMonitor } from 'bc-utilities';
     const orgasm = new OrgasmMonitor(mod);
     OrgasmHandle(orgasm);
 
-    GUISetting.init(mod, () => { return new GUIMainMenu });
+    GUISetting.init(mod, () => { return new MainMenu });
     DataManager.init(mod);
     ChatRoomAction.init(CUSTOM_ACTION_TAG);
 

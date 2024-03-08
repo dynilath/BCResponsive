@@ -1,6 +1,5 @@
 import { ModSDKModAPI } from "bondage-club-mod-sdk";
 import { DebugMode, HTMLIDPrefix, ModName, SettingName } from "../Definition";
-import { Localization } from "../Lang";
 import { Icons } from "./Icons";
 import { GetText } from "../i18n";
 
@@ -8,31 +7,16 @@ export function HTMLID(id: string): string {
     return `${HTMLIDPrefix}${id}`;
 }
 
-export abstract class GUISettingScreen {
+export abstract class IGUIScreen {
     Run() { }
     Click() { }
     MouseWheel(event: WheelEvent) { }
-    Exit() { setSubscreen(null); }
+    Exit() { GUISetting.instance.Current = null; }
     Unload() { }
 }
 
-export function getCurrentSubscreen(): GUISettingScreen | null {
-    return GUISetting.instance && GUISetting.instance.currentScreen;
-}
-
-export function hasFocus(subscreen: GUISettingScreen): boolean {
-    return getCurrentSubscreen() === subscreen;
-}
-
-export function setSubscreen(subscreen: GUISettingScreen | null): void {
-    if (GUISetting.instance) {
-        GUISetting.instance.currentScreen = subscreen;
-        if (!subscreen) {
-            if (typeof PreferenceSubscreenExtensionsClear === "function")
-                PreferenceSubscreenExtensionsClear();
-            else PreferenceSubscreen = "";
-        }
-    }
+export function hasFocus(subscreen: IGUIScreen): boolean {
+    return GUISetting.instance.Current === subscreen;
 }
 
 function drawTooltip() {
@@ -59,28 +43,39 @@ function drawTooltip() {
 }
 
 export class GUISetting {
-    static instance: GUISetting | null = null;
+    private static _instance: GUISetting | null = null;
+    static get instance() { return this._instance as GUISetting; }
 
-    private _currentScreen: GUISettingScreen | null = null;
+    private _currentScreen: IGUIScreen | null = null;
 
-    private _mainScreenProvider: (() => GUISettingScreen) | null = null;
+    private _mainScreenProvider: (() => IGUIScreen) | null = null;
 
-    get currentScreen(): GUISettingScreen | null {
+    get Current(): IGUIScreen | null {
         return this._currentScreen;
     }
 
-    set currentScreen(subscreen: GUISettingScreen | null) {
+    set Current(subscreen: IGUIScreen | null) {
         if (this._currentScreen) {
             this._currentScreen.Unload();
         }
+
         this._currentScreen = subscreen;
+
+        if (!this._currentScreen) {
+            if (typeof PreferenceSubscreenExtensionsClear === "function")
+                PreferenceSubscreenExtensionsClear();
+            else PreferenceSubscreen = "";
+        }
     }
 
-    static init(mod: ModSDKModAPI, func: () => GUISettingScreen) {
-        GUISetting.instance = new GUISetting(mod, func);
+    private _setScreen(screen: IGUIScreen | null) { this._currentScreen = screen; }
+    static setScreen(screen: IGUIScreen | null) { this._instance?._setScreen(screen); }
+
+    static init(mod: ModSDKModAPI, func: () => IGUIScreen) {
+        GUISetting._instance = new GUISetting(mod, func);
     }
 
-    constructor(mod: ModSDKModAPI, func: () => GUISettingScreen) {
+    constructor(mod: ModSDKModAPI, func: () => IGUIScreen) {
         this._mainScreenProvider = func;
 
         if (typeof PreferenceRegisterExtensionSetting === "function") {
@@ -98,7 +93,7 @@ export class GUISetting {
                 ButtonText: () => GetText("setting_button_text"),
                 load: () => {
                     if (this._mainScreenProvider)
-                        this.currentScreen = this._mainScreenProvider();
+                        this.Current = this._mainScreenProvider();
                 },
                 run: () => {
                     if (this._currentScreen) {
@@ -137,7 +132,7 @@ export class GUISetting {
             return next(args);
         });
 
-        (window as any)[`PreferenceSubscreen${SettingName}Load`] = () => this.currentScreen = this._mainScreenProvider?.() ?? null;
+        (window as any)[`PreferenceSubscreen${SettingName}Load`] = () => this.Current = this._mainScreenProvider?.() ?? null;
 
         (window as any)[`PreferenceSubscreen${SettingName}Run`] = () => {
             if (this._currentScreen) {

@@ -2,7 +2,7 @@
 import { DataManager } from "../Data";
 import { GIT_REPO, Styles } from "../Definition";
 import { GetText } from "../i18n";
-import { GUISettingScreen, setSubscreen } from "./GUI";
+import { GUISetting, IGUIScreen } from "./GUI";
 import { PersonaSetting } from "./Persona/PersonaMenu";
 import { TriggerSetting } from "./Response/ResponseMenu";
 import { AGUIScreen } from "./Widgets/AGUI";
@@ -32,8 +32,8 @@ class MasterSwitch extends Binding<boolean> {
     static instance: MasterSwitch = new MasterSwitch();
 }
 
-export class GUIMainMenu extends AGUIScreen {
-    constructor(readonly prev: GUISettingScreen | null = null) {
+export class MainMenu extends AGUIScreen {
+    constructor(readonly prev: IGUIScreen | null = null) {
         super(prev);
 
         this.items = [
@@ -49,7 +49,7 @@ export class GUIMainMenu extends AGUIScreen {
                 x: MENU_BASE_X,
                 y: MENU_BASE_Y + (ITEM_HEIGHT + ITEM_SPACING) * 1,
                 width: ITEM_WIDTH, height: ITEM_HEIGHT
-            }, GetText("MainMenu::PersonalitySetting"), () => setSubscreen(new PersonaSetting(this))),
+            }, GetText("MainMenu::PersonalitySetting"), () => GUISetting.setScreen(new PersonaSetting(this))),
             new TextRoundButton({
                 x: MENU_BASE_X,
                 y: MENU_BASE_Y + (ITEM_HEIGHT + ITEM_SPACING) * 2,
@@ -57,7 +57,7 @@ export class GUIMainMenu extends AGUIScreen {
             }, GetText("MainMenu::ResponseSetting"), () => {
                 const persona = DataManager.active_personality;
                 if (!persona) return;
-                setSubscreen(new TriggerSetting(this, persona));
+                GUISetting.setScreen(new TriggerSetting(this, persona));
             }),
             new IconRoundButton({
                 x: 1700,

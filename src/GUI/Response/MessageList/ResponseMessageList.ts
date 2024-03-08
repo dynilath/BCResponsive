@@ -1,12 +1,11 @@
-import { GUISettingScreen, setSubscreen } from "../../GUI";
+import { GUISetting } from "../../GUI";
 import { AGUIItem, IPoint, IRect, WithinRect } from "../../Widgets/AGUI";
-import { ADrawCircleRect, ADrawCricleTextButton, ADrawIcon, ADrawRoundRect, ADrawText, ADrawTextButton, ADrawTextFit } from "../../Widgets/Common";
+import { ADrawCircleRect, ADrawCricleTextButton, ADrawIcon, ADrawRoundRect, ADrawTextFit } from "../../Widgets/Common";
 import { MessageSettinPopup } from "./MessageSettingPopup";
 import { ResponseMenuState } from "../ResponseMenuState";
 import { TriggerSetting } from "../ResponseMenu";
 import { GetText } from "../../../i18n";
 import { Styles } from "../../../Definition";
-import { PageDial, PageDialBinding } from "../../Widgets/PageDial";
 import { DataManager } from "../../../Data";
 import { Scrollbar } from "../../Widgets/Scrollbar";
 
@@ -120,7 +119,7 @@ export class ResponseMessageList extends AGUIItem {
                 const targetIndex = this.scrollbar.offset + i;
                 const tmessage = t_item.messages[targetIndex];
                 if (tmessage && WithinRect(mouse, v)) {
-                    setSubscreen(new MessageSettinPopup(this.parent, tmessage, msg => {
+                    GUISetting.setScreen(new MessageSettinPopup(this.parent, tmessage, msg => {
                         t_item.messages[targetIndex] = msg;
                         DataManager.save();
                     }, _ => {
@@ -128,7 +127,7 @@ export class ResponseMessageList extends AGUIItem {
                         DataManager.save();
                     }));
                 } else if (t_item.messages.length === targetIndex && WithinRect(mouse, v)) {
-                    setSubscreen(new MessageSettinPopup(this.parent, { type: "message", content: GetText("Default::ExampleMessage") }, msg => {
+                    GUISetting.setScreen(new MessageSettinPopup(this.parent, { type: "message", content: GetText("Default::ExampleMessage") }, msg => {
                         t_item.messages.push(msg);
                         DataManager.save();
                     }, () => { }));

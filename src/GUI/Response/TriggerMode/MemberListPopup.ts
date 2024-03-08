@@ -1,7 +1,7 @@
 import { DataManager } from "../../../Data";
 import { Styles } from "../../../Definition";
 import { GetText } from "../../../i18n";
-import { GUISettingScreen } from "../../GUI";
+import { IGUIScreen } from "../../GUI";
 import { AGUIItem, IPoint, IRect, WithinRect } from "../../Widgets/AGUI";
 import { TextRoundButton } from "../../Widgets/Button";
 import { ADrawCricleIconButton, ADrawRoundRect, ADrawTextFit } from "../../Widgets/Common";
@@ -146,7 +146,7 @@ export class MemberListPopup extends Popup {
     private readonly source_member_list: number[];
     private readonly editing_member_list: number[];
 
-    constructor(readonly prev: GUISettingScreen | null, readonly title: string, readonly source: number[]) {
+    constructor(readonly prev: IGUIScreen | null, readonly title: string, readonly source: number[]) {
         super(prev);
         this.source_member_list = source;
         this.editing_member_list = [...source];

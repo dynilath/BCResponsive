@@ -1,7 +1,7 @@
 import { DataManager } from "../../../Data";
 import { Styles } from "../../../Definition";
 import { GetText } from "../../../i18n";
-import { GUISettingScreen } from "../../GUI";
+import { IGUIScreen } from "../../GUI";
 import { TextRoundButton } from "../../Widgets/Button";
 import { ChipsPark } from "../../Widgets/ChipsPark";
 import { RoundFramedRect } from "../../Widgets/Rect";
@@ -20,7 +20,7 @@ const TOTAL_CHIPS_WIDTH = 600;
 export class BodypartsPopup extends Popup {
     private readonly editing: Set<string>;
 
-    constructor(readonly prev: GUISettingScreen, readonly source: ResponseMenuState) {
+    constructor(readonly prev: IGUIScreen, readonly source: ResponseMenuState) {
         super(prev);
 
         const bodypart_metrics = ActivityAreaDisplay.Metrics();

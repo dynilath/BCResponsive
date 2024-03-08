@@ -1,5 +1,5 @@
 import { GetText } from "../../../i18n";
-import { GUISettingScreen, setSubscreen } from "../../GUI";
+import { GUISetting, IGUIScreen } from "../../GUI";
 import { AGUIItem, IPoint, IRect } from "../../Widgets/AGUI";
 import { DynamicTextRoundButton } from "../../Widgets/Button";
 import { BasicText } from "../../Widgets/Text";
@@ -26,7 +26,7 @@ export class ActivityModeInfo extends AGUIItem {
 
     private _components: AGUIItem[] = [];
 
-    constructor(readonly parent: GUISettingScreen, readonly state: ResponseMenuState, readonly rect: IRect) {
+    constructor(readonly parent: IGUIScreen, readonly state: ResponseMenuState, readonly rect: IRect) {
         super();
 
         const T_ITEM_HEIGHT = BASE_FONT_SIZE + ITEM_INNER_SPACING + ITEM_HEIGHT;
@@ -57,7 +57,7 @@ export class ActivityModeInfo extends AGUIItem {
                     let result = act.slice(0, 3).map(a => ActivityDictionaryText(`Activity${a}`)).join(", ");
                     if (act.length > 3) result += GetText("TriggerInfo::AndMore", [act.length - 3]);
                     return result;
-                })(v.allow_activities)) ?? "", () => setSubscreen(new ActivityPopup(this.parent, this.state))),
+                })(v.allow_activities)) ?? "", () => GUISetting.setScreen(new ActivityPopup(this.parent, this.state))),
             new DynamicTextRoundButton(this._bodypart_state, () => {
                 return this.state.asActivity(v => (bparts => {
                     if (bparts === undefined)
@@ -68,7 +68,7 @@ export class ActivityModeInfo extends AGUIItem {
                     if (bparts.length > 3) result += GetText("TriggerInfo::AndMore", [bparts.length - 3]);
                     return result;
                 })(v.allow_bodyparts)) ?? "";
-            }, () => setSubscreen(new BodypartsPopup(this.parent, this.state))),
+            }, () => GUISetting.setScreen(new BodypartsPopup(this.parent, this.state))),
             new DynamicTextRoundButton(this._allow_ids_state, () => {
                 return this.state.asActivity(v => (ids => {
                     if (ids === undefined || ids.length === 0)
@@ -77,12 +77,10 @@ export class ActivityModeInfo extends AGUIItem {
                     if (ids.length > 3) result += GetText("TriggerInfo::AndMore", [ids.length - 3]);
                     return result;
                 })(v.allow_ids)) ?? "";
-            }, () => {
-                setSubscreen(new MemberListPopup(this.parent, GetText("MemberListPopup::AllowIDs::Title"), this.state.asActivity(v => {
-                    if (v.allow_ids === undefined) v.allow_ids = [];
-                    return v.allow_ids;
-                }) ?? []));
-            })
+            }, () => GUISetting.setScreen(new MemberListPopup(this.parent, GetText("MemberListPopup::AllowIDs::Title"), this.state.asActivity(v => {
+                if (v.allow_ids === undefined) v.allow_ids = [];
+                return v.allow_ids;
+            }) ?? [])))
         ]
     }
 

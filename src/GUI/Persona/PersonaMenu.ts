@@ -1,13 +1,13 @@
 import { DataManager } from "../../Data";
 import { MaxPersonalities } from "../../Definition";
-import { GUISettingScreen } from "../GUI";
+import { IGUIScreen } from "../GUI";
 import { AGUIItem, AGUIScreen, IRect } from "../Widgets/AGUI";
 import { ExitButton } from "../Widgets/Button";
 import { TitleText } from "../Widgets/Text";
 import { PersonaItem } from "./PersonaItem";
 
 export class PersonaSetting extends AGUIScreen {
-    constructor(readonly prev: GUISettingScreen | null = null) {
+    constructor(readonly prev: IGUIScreen | null = null) {
         const personas = DataManager.instance.data.personalities;
 
         const personaBannerHeight = 600;

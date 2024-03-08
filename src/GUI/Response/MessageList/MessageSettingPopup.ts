@@ -1,5 +1,5 @@
 import { GetText } from "../../../i18n";
-import { GUISettingScreen } from "../../GUI";
+import { IGUIScreen } from "../../GUI";
 import { RoundFramedRect } from "../../Widgets/Rect";
 import { TextButton, TextRoundButton } from "../../Widgets/Button";
 import { BasicText } from "../../Widgets/Text";
@@ -34,7 +34,7 @@ export class MessageSettinPopup extends Popup {
     private _confirm_callback: (message: ResponseMessage) => void;
     private _delete_callback: (message: ResponseMessage) => void;
 
-    constructor(readonly prev: GUISettingScreen | null, readonly target: ResponseMessage, readonly confirm: (message: ResponseMessage) => void, readonly del: (message: ResponseMessage) => void) {
+    constructor(readonly prev: IGUIScreen | null, readonly target: ResponseMessage, readonly confirm: (message: ResponseMessage) => void, readonly del: (message: ResponseMessage) => void) {
         super(prev);
 
         if (target) this._input_state = { ...target };

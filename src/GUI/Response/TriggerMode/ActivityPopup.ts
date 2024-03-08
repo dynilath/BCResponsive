@@ -2,7 +2,7 @@ import { DataManager } from "../../../Data";
 import { DefaultValueV1TriggerActivities } from "../../../Data/V1";
 import { Styles } from "../../../Definition";
 import { GetText } from "../../../i18n";
-import { GUISettingScreen } from "../../GUI";
+import { IGUIScreen } from "../../GUI";
 import { TextRoundButton } from "../../Widgets/Button";
 import { ChipsPark } from "../../Widgets/ChipsPark";
 import { RoundFramedRect } from "../../Widgets/Rect";
@@ -23,7 +23,7 @@ const DIALOG_CONTENT_HEIGHT = 720;
 export class ActivityPopup extends Popup {
     private readonly editing: Set<string>;
 
-    constructor(readonly prev: GUISettingScreen, readonly source: ResponseMenuState) {
+    constructor(readonly prev: IGUIScreen, readonly source: ResponseMenuState) {
         super(prev);
 
         const _title = {

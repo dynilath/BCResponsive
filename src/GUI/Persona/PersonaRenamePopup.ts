@@ -1,6 +1,6 @@
 import { MaxNameLength, Styles } from "../../Definition";
 import { GetText } from "../../i18n";
-import { GUISettingScreen } from "../GUI";
+import { IGUIScreen } from "../GUI";
 import { TextRoundButton } from "../Widgets/Button";
 import { RoundFramedRect } from "../Widgets/Rect";
 import { TextInput } from "../Widgets/InputText";
@@ -14,7 +14,7 @@ const INPUT_WIDTH = 600;
 export class PersonaRemamePopup extends Popup {
     private _input: TextInput;
 
-    constructor(readonly prev: GUISettingScreen | null, readonly target: ResponsivePersonality, readonly confirm: (name: string) => void) {
+    constructor(readonly prev: IGUIScreen | null, readonly target: ResponsivePersonality, readonly confirm: (name: string) => void) {
         super(prev);
 
         const dialog_total_width = Math.max(INPUT_WIDTH, Styles.Dialog.control_button_width * 2 + Styles.Dialog.padding);

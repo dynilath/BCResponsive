@@ -1,10 +1,9 @@
 import { Styles } from "../../../Definition";
 import { GetText } from "../../../i18n";
-import { GUISettingScreen, setSubscreen } from "../../GUI";
+import { GUISetting, IGUIScreen } from "../../GUI";
 import { AGUIItem, IPoint, IRect } from "../../Widgets/AGUI";
-import { DynamicTextRoundButton, TextRoundButton } from "../../Widgets/Button";
+import { DynamicTextRoundButton } from "../../Widgets/Button";
 import { ButtonEdit } from "../../Widgets/ButtonEdit";
-import { ADrawCricleTextButton, ADrawText } from "../../Widgets/Common";
 import { Switch } from "../../Widgets/Switch";
 import { BasicText } from "../../Widgets/Text";
 import { ResponseMenuState } from "../ResponseMenuState";
@@ -26,7 +25,7 @@ export class SpicerModeInfo extends AGUIItem {
     private _editList: AGUIItem[] = [];
     private _components: AGUIItem[] = [];
 
-    constructor(readonly parent: GUISettingScreen, readonly state: ResponseMenuState, readonly rect: IRect) {
+    constructor(readonly parent: IGUIScreen, readonly state: ResponseMenuState, readonly rect: IRect) {
         super();
 
         const itemHeight = 60;
@@ -70,7 +69,7 @@ export class SpicerModeInfo extends AGUIItem {
                 let result = ids.slice(0, 3).join(", ");
                 if (ids.length > 3) result += GetText("TriggerInfo::AndMore", [ids.length - 3]);
                 return result;
-            })(v.allow_ids)) ?? "", () => setSubscreen(new MemberListPopup(this.parent, GetText("MemberListPopup::AllowIDs::Title"), this.state.asSpicer(v => {
+            })(v.allow_ids)) ?? "", () => GUISetting.setScreen(new MemberListPopup(this.parent, GetText("MemberListPopup::AllowIDs::Title"), this.state.asSpicer(v => {
                 if (v.allow_ids === undefined) v.allow_ids = [];
                 return v.allow_ids;
             }) ?? [])))

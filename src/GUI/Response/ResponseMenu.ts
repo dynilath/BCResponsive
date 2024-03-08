@@ -1,4 +1,4 @@
-import { GUISettingScreen, setSubscreen } from "../GUI";
+import { GUISetting, IGUIScreen } from "../GUI";
 import { AGUIScreen } from "../Widgets/AGUI";
 import { ExitButton, TextRoundButton } from "../Widgets/Button";
 import { BasicText, FitText, TitleText } from "../Widgets/Text";
@@ -87,7 +87,7 @@ const TriggerDeleteModeSwitchText = {
 export class TriggerSetting extends AGUIScreen {
     private readonly _state: ResponseMenuState;
     private readonly triggerTab: TriggerTab;
-    constructor(readonly prev: GUISettingScreen | null = null, readonly persona: ResponsivePersonality) {
+    constructor(readonly prev: IGUIScreen | null = null, readonly persona: ResponsivePersonality) {
         super(prev);
         this._state = new ResponseMenuState(persona);
 
@@ -97,7 +97,7 @@ export class TriggerSetting extends AGUIScreen {
             new TitleText(),
             new FitText(PersonaNameRect, () => this.persona.name, { emphasis: true }),
             new TextRoundButton(PersonaBlackListRect, GetText("PersonaInfo::BlackList"), () =>
-                setSubscreen(new MemberListPopup(this, GetText("MemberListPopup::PersonaBlackList::Title"), persona.blackList))),
+                GUISetting.setScreen(new MemberListPopup(this, GetText("MemberListPopup::PersonaBlackList::Title"), persona.blackList))),
             new ResponseMessageList(this, this._state, TriggerMessageRect),
             new ActivityModeInfo(this, this._state, TriggerExtendedInfoRect),
             new SpicerModeInfo(this, this._state, TriggerExtendedInfoRect),

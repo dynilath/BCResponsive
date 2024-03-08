@@ -1,5 +1,5 @@
 import { DataManager } from "../../Data";
-import { GUISettingScreen, hasFocus } from "../GUI";
+import { IGUIScreen, hasFocus } from "../GUI";
 import { RoundFramedRect } from "../Widgets/Rect";
 import { TextRoundButton } from "../Widgets/Button";
 import { DynamicText } from "../Widgets/Text";
@@ -14,7 +14,7 @@ export class PersonaImportScreen extends Popup {
     readonly _bind: { text: string };
     _lastInputInvalid: boolean = false;
 
-    constructor(readonly prev: GUISettingScreen | null = null, readonly index: number) {
+    constructor(readonly prev: IGUIScreen | null = null, readonly index: number) {
         const centerX = 1000;
         const centerY = 500;
 
