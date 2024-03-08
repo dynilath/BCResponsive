@@ -15,7 +15,10 @@ class OrgasmTypeBinding extends Binding<OrgasmTriggerType> {
     constructor(readonly state: ResponseMenuState) { super(); }
 
     get value(): OrgasmTriggerType {
-        return this.state.asOrgasm(v => v.type) ?? "Orgasmed";
+        return this.state.asOrgasm(v => {
+            if (v.type === undefined) v.type = "Orgasmed";
+            return v.type;
+        }) ?? "Orgasmed";
     }
 
     set value(v: OrgasmTriggerType) {

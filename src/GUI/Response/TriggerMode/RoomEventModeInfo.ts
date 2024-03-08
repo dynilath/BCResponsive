@@ -15,7 +15,10 @@ class RoomEventTypeBinding extends Binding<RoomEventTriggerType> {
     constructor(readonly state: ResponseMenuState) { super(); }
 
     get value(): RoomEventTriggerType {
-        return this.state.asRoomEvent(v => v.event) ?? "Join";
+        return this.state.asRoomEvent(v => {
+            if (v.event === undefined) v.event = "Join";
+            return v.event;
+        }) ?? "Join";
     }
 
     set value(v: RoomEventTriggerType) {
