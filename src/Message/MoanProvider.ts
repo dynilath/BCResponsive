@@ -1,4 +1,4 @@
-import { TriggerData, TriggerDataActivity, TriggerDataOrgasm, isTriggerDataActivity, isTriggerDataOrgasm } from "./types";
+import { TriggerData, TriggerDataActivity, TriggerDataOrgasm, TriggerDataRoomEvent, isTriggerDataActivity, isTriggerDataOrgasm, isTriggerDataRoomEvent } from "./types";
 import { DataManager, isTriggerOrgasm } from "../Data";
 import { ChatRoomAutoInterceptMessage } from "./ChatMessages";
 import { ReplaceField } from "./MessageFields";
@@ -13,6 +13,8 @@ export function InvokeResponse(data: TriggerData, player: Character | undefined,
         InvokeResponseForActivity(active_personality, data, player, target);
     } else if (isTriggerDataOrgasm(data)) {
         InvokeResponseForOrgasm(active_personality, data, player);
+    } else if (isTriggerDataRoomEvent(data)) {
+        InvokeResponseForRoomEvent(active_personality, data, player);
     }
 }
 
@@ -26,7 +28,7 @@ function InvokeResponseForActivity(persona: ResponsivePersonality, data: Trigger
             if (trigger.mode !== "activity") return false;
             if (trigger.allow_activities !== undefined && !trigger.allow_activities.includes(data.activity)) return false;
             if (trigger.allow_bodyparts !== undefined && !trigger.allow_bodyparts.includes(data.bodypart)) return false;
-            if (trigger.allow_ids !== undefined && !trigger.allow_ids.includes(data.from)) return false;
+            if (trigger.allow_ids !== undefined && trigger.allow_ids.length !== 0 && !trigger.allow_ids.includes(data.from)) return false;
             return true;
         }).map(i => i.messages).flat();
 
@@ -43,7 +45,7 @@ function InvokeResponseForActivity(persona: ResponsivePersonality, data: Trigger
                 if (trigger.mode !== "spicer") return false;
                 if (trigger.min_arousal !== undefined && data.arousal < trigger.min_arousal) return false;
                 if (trigger.max_arousal !== undefined && data.arousal > trigger.max_arousal) return false;
-                if (trigger.allow_ids !== undefined && !trigger.allow_ids.includes(data.from)) return false;
+                if (trigger.allow_ids !== undefined && trigger.allow_ids.length !== 0 && !trigger.allow_ids.includes(data.from)) return false;
                 return true;
             }).map(i => i.messages).flat().filter(i => i.type === "message");
             if (actived_spicers.length === 0) return undefined;
@@ -79,4 +81,25 @@ function InvokeResponseForOrgasm(persona: ResponsivePersonality, data: TriggerDa
     } else if (selected.type === "action") {
         ChatRoomAction.instance.SendAction(ReplaceField(selected.content, player, undefined));
     }
+}
+
+function InvokeResponseForRoomEvent(active_personality: ResponsivePersonality, data: TriggerDataRoomEvent, player: Character | undefined) {
+    let selected = (() => {
+        let actived_messages = active_personality.responses.filter(i => {
+            if (!i.enabled) return false;
+            const trigger = i.trigger;
+            if (trigger.mode !== "event") return false;
+            if (trigger.event !== data.type) return false;
+            return true;
+        }).reduce((acc, cur) => { return acc.concat(cur.messages); }, [] as ResponseMessage[]);
+
+        if (actived_messages.length === 0) return undefined;
+        return actived_messages[Math.floor(Math.random() * actived_messages.length)];
+    })();
+    if (selected === undefined) return;
+
+    const msg = ReplaceField(selected.content, player, undefined);
+
+    if (selected.type === "message") ChatRoomAction.instance.SendChat(msg);
+    else if (selected.type === "action") ChatRoomAction.instance.SendAction(msg);
 }

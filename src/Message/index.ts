@@ -1,5 +1,1 @@
-import { ActivityHandle, OrgasmHandle } from "./Handlers";
-
-export {
-    ActivityHandle, OrgasmHandle
-}
+export * from "./Handlers";

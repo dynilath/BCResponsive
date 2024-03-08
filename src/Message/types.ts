@@ -11,7 +11,12 @@ export interface TriggerDataOrgasm {
     type: OrgasmTriggerType;
 }
 
-export type TriggerData = TriggerDataActivity | TriggerDataOrgasm;
+export interface TriggerDataRoomEvent {
+    triggerType: "event";
+    type: RoomEventTriggerType;
+}
+
+export type TriggerData = TriggerDataActivity | TriggerDataOrgasm | TriggerDataRoomEvent;
 
 export function isTriggerDataActivity(data: TriggerData): data is TriggerDataActivity {
     return data.triggerType === "activity";
@@ -19,4 +24,8 @@ export function isTriggerDataActivity(data: TriggerData): data is TriggerDataAct
 
 export function isTriggerDataOrgasm(data: TriggerData): data is TriggerDataOrgasm {
     return data.triggerType === "orgasm";
+}
+
+export function isTriggerDataRoomEvent(data: TriggerData): data is TriggerDataRoomEvent {
+    return data.triggerType === "event";
 }

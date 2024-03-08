@@ -1,5 +1,7 @@
 import { DataManager, isTriggerActivity, isTriggerOrgasm, isTriggerSpicer } from "../../Data";
+import { isTriggerRoomEvent } from "../../Data/types";
 import { MaxNameLength } from "../../Definition";
+import { isTriggerDataRoomEvent } from "../../Message/types";
 import { GetText } from "../../i18n";
 import { Binding } from "../Widgets/Binding";
 import { SegmentButtonSetting } from "../Widgets/SegmentButton";
@@ -129,7 +131,8 @@ export class ResponseMenuState {
             text: [
                 { display: GetText(`TriggerMode::activity`), value: "activity" },
                 { display: GetText(`TriggerMode::orgasm`), value: "orgasm" },
-                { display: GetText(`TriggerMode::spicer`), value: "spicer" }
+                { display: GetText(`TriggerMode::spicer`), value: "spicer" },
+                { display: GetText(`TriggerMode::event`), value: "event" }
             ],
             binding: new ModeProperty(this)
         }
@@ -178,6 +181,13 @@ export class ResponseMenuState {
     asBaseTrigger<T>(op: (t: ResponseTrigger) => T, el?: () => void) {
         if (this.targetItem !== null)
             return op(this.targetItem.trigger);
+        else if (el !== undefined)
+            el();
+    }
+
+    asRoomEvent<T>(op: (t: ResponsiveTriggerRoomEvent) => T, el?: () => void) {
+        if (this.targetItem !== null && isTriggerRoomEvent(this.targetItem.trigger))
+            return op(this.targetItem.trigger as ResponsiveTriggerRoomEvent);
         else if (el !== undefined)
             el();
     }

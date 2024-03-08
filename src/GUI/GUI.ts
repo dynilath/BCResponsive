@@ -11,7 +11,7 @@ export abstract class IGUIScreen {
     Run() { }
     Click() { }
     MouseWheel(event: WheelEvent) { }
-    Exit() { GUISetting.instance.Current = null; }
+    Exit() { GUISetting.setScreen(null); }
     Unload() { }
 }
 
@@ -54,12 +54,12 @@ export class GUISetting {
         return this._currentScreen;
     }
 
-    set Current(subscreen: IGUIScreen | null) {
+    private _setScreen(screen: IGUIScreen | null) {
         if (this._currentScreen) {
             this._currentScreen.Unload();
         }
 
-        this._currentScreen = subscreen;
+        this._currentScreen = screen;
 
         if (!this._currentScreen) {
             if (typeof PreferenceSubscreenExtensionsClear === "function")
@@ -68,7 +68,6 @@ export class GUISetting {
         }
     }
 
-    private _setScreen(screen: IGUIScreen | null) { this._currentScreen = screen; }
     static setScreen(screen: IGUIScreen | null) { this._instance?._setScreen(screen); }
 
     static init(mod: ModSDKModAPI, func: () => IGUIScreen) {
@@ -93,7 +92,7 @@ export class GUISetting {
                 ButtonText: () => GetText("setting_button_text"),
                 load: () => {
                     if (this._mainScreenProvider)
-                        this.Current = this._mainScreenProvider();
+                        this._setScreen(this._mainScreenProvider());
                 },
                 run: () => {
                     if (this._currentScreen) {
@@ -132,7 +131,7 @@ export class GUISetting {
             return next(args);
         });
 
-        (window as any)[`PreferenceSubscreen${SettingName}Load`] = () => this.Current = this._mainScreenProvider?.() ?? null;
+        (window as any)[`PreferenceSubscreen${SettingName}Load`] = () => this._setScreen(this._mainScreenProvider?.() ?? null);
 
         (window as any)[`PreferenceSubscreen${SettingName}Run`] = () => {
             if (this._currentScreen) {

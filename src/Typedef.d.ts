@@ -37,7 +37,14 @@ interface ResponsiveTriggerSpicer {
     allow_ids?: number[];
 }
 
-type ResponseTrigger = ResponsiveTriggerActivity | ResponsiveTriggerOrgasm | ResponsiveTriggerSpicer;
+type RoomEventTriggerType = "Join" | "Leave";
+
+interface ResponsiveTriggerRoomEvent {
+    mode: "event";
+    event: RoomEventTriggerType;
+}
+
+type ResponseTrigger = ResponsiveTriggerActivity | ResponsiveTriggerOrgasm | ResponsiveTriggerSpicer | ResponsiveTriggerRoomEvent;
 
 type ResponseTriggerMode = ResponseTrigger["mode"];
 

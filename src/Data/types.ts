@@ -8,6 +8,9 @@ export function isTriggerOrgasm(trigger: ResponseTrigger): trigger is Responsive
 export function isTriggerSpicer(trigger: ResponseTrigger): trigger is ResponsiveTriggerSpicer {
     return trigger.mode === "spicer";
 }
+export function isTriggerRoomEvent(trigger: ResponseTrigger): trigger is ResponsiveTriggerRoomEvent {
+    return trigger.mode === "event";
+}
 export function isNumberArray(data: any): data is number[] {
     return Array.isArray(data) && data.every(_ => typeof _ === 'number');
 }

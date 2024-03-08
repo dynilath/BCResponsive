@@ -77,7 +77,7 @@ export function V2ValidatePersonality(arg: Partial<ResponsivePersonality> | unde
         const enabled = j.enabled === undefined ? true : j.enabled;
 
         const trigger = ((): ResponseTrigger | undefined => {
-            if (!(["activity", "orgasm", "spicer"] as ResponseTriggerMode[]).includes(j.trigger.mode)) return undefined;
+            if (!(["activity", "orgasm", "spicer", "event"] as ResponseTriggerMode[]).includes(j.trigger.mode)) return undefined;
             if (j.trigger.mode === "activity") {
                 let allow_activities = j.trigger.allow_activities;
                 let allow_bodyparts = j.trigger.allow_bodyparts;
@@ -101,6 +101,10 @@ export function V2ValidatePersonality(arg: Partial<ResponsivePersonality> | unde
                 if (apply_favorite !== undefined && typeof apply_favorite !== "boolean") return undefined;
                 if (allow_ids !== undefined && !isNumberArray(allow_ids)) return undefined;
                 return { mode: "spicer", min_arousal, max_arousal, apply_favorite, allow_ids };
+            } else if (j.trigger.mode === "event") {
+                let event = j.trigger.event;
+                if (!["Join", "Leave"].includes(event)) return undefined;
+                return { mode: "event", event };
             }
             return undefined;
         })();

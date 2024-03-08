@@ -45,6 +45,15 @@ describe("getDefaultSettings", () => {
             },
             messages: [{ type: "action", content: "test" }]
         });
+        (data.personalities[0] as ResponsivePersonality).responses.push({
+            name: "test",
+            enabled: false,
+            trigger: {
+                mode: "event",
+                event: "Join",
+            },
+            messages: [{ type: "action", content: "test" }]
+        });
         let json = JSON.stringify(data);
 
         let data_picked = pickV2Setting(JSON.parse(json));

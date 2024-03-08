@@ -32,6 +32,8 @@ type TriggerInfoTextTags = "TriggerInfo::AddNew" | "TriggerInfo::Name" | "Trigge
     | "TriggerInfo::NoActivities" | "TriggerInfo::AllBodyparts" | "TriggerInfo::NoBodyparts" | "TriggerInfo::AllMemberIDs"
     | "TriggerInfo::AndMore" | "TriggerInfo::MinArousal" | "TriggerInfo::MaxArousal" | "TriggerInfo::ApplyFavorite"
     | "TriggerInfo::NewResponses" | "TriggerInfo::Orgasm::Type" | `TriggerInfo::Orgasm::Type::${OrgasmTriggerType}`
+    | "TriggerInfo::RoomEvent::Type"
+    | `TriggerInfo::RoomEvent::Type::${RoomEventTriggerType}`
 
 type MemberListPopupTextTags = "MemberListPopup::AllowIDs::Title" | "MemberListPopup::InputID"
 
