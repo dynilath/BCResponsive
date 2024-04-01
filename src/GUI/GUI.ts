@@ -109,7 +109,7 @@ export class GUISetting {
         )
     }
 
-    private hookGUI(mod: ModSDKModAPI<any>) {
+    private hookGUI(mod: ModSDKModAPI) {
         if (typeof window["PreferenceMouseWheel" as any] !== "function") {
             (window["PreferenceMouseWheel" as any] as any) = (event: WheelEvent) => { };
         }
@@ -145,7 +145,7 @@ export class GUISetting {
         (window as any)[`PreferenceSubscreen${SettingName}Click`] = () => this._currentScreen?.Click();
         (window as any)[`PreferenceSubscreen${SettingName}Exit`] = () => this._currentScreen?.Exit();
 
-        mod.hookFunction("DrawButton", 2, (args: string[], next: (arg0: any) => any) => {
+        mod.hookFunction("DrawButton", 2, (args, next) => {
             if (args[6] == `Icons/${SettingName}.png`) args[6] = Icons.responsive_main;
             return next(args);
         });
