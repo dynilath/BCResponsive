@@ -13,7 +13,7 @@ function ChatRoomInterceptMessage(cur_msg: string, msg: string) {
 function ChatRoomNormalMessage(msg: string) {
     if (!msg) return;
     let backupChatRoomTargetMemberNumber = ChatRoomTargetMemberNumber;
-    ChatRoomTargetMemberNumber = null;
+    ChatRoomTargetMemberNumber = -1;
     let oldmsg = ElementValue("InputChat");
     ElementValue("InputChat", msg);
     ChatRoomSendChat();
@@ -23,7 +23,7 @@ function ChatRoomNormalMessage(msg: string) {
 
 export function ChatRoomAutoInterceptMessage(msg: string) {
     let cur_msg = ElementValue("InputChat");
-    if (IsSimpleChat(cur_msg) && ChatRoomTargetMemberNumber == null) {
+    if (IsSimpleChat(cur_msg) && ChatRoomTargetMemberNumber < 0) {
         ChatRoomInterceptMessage(cur_msg, msg);
     } else {
         ChatRoomNormalMessage(msg);
