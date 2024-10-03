@@ -9,5 +9,9 @@
     "esModuleInterop": true,
     "skipLibCheck": true, 
     "forceConsistentCasingInFileNames": true
-  }
+  }, 
+  "include": [
+    "./**/*.ts",
+    "../node_modules/bc-stubs/bc/**/*.d.ts"
+  ]
 }

@@ -7,6 +7,7 @@ export function PersonaToLZString(persona: ResponsivePersonality) {
 export function LZStringToPersona(src: string): ResponsivePersonality | undefined {
     let d = LZString.decompressFromBase64(src);
     let data: any | undefined;
+    if (!d) return undefined;
     try {
         data = JSON.parse(d);
     } catch (e) {

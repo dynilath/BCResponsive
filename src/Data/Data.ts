@@ -12,6 +12,7 @@ function DeserializeData(str: string | undefined): ResponsiveSettingV2 {
     let data = {};
 
     try {
+        if (!d) throw new Error();
         let decoded = JSON.parse(d);
         data = decoded;
     } catch { }
@@ -29,7 +30,7 @@ export class DataManager {
         if (this._instance === undefined)
             this._instance = new DataManager;
 
-        function LoadAndMessage(C: PlayerCharacter | null | undefined) {
+        function LoadAndMessage(C: Pick<PlayerCharacter, 'OnlineSettings' | 'ExtensionSettings'> | null | undefined) {
             if (C) DataManager.instance.ServerTakeData(C);
             console.log(`${ModName} v${ModVersion} ready.`);
         }
@@ -42,7 +43,7 @@ export class DataManager {
 
         mod.hookFunction('LoginResponse', 0, (args, next) => {
             next(args);
-            LoadAndMessage(args[0] as PlayerCharacter);
+            LoadAndMessage(args[0] as Pick<PlayerCharacter, 'OnlineSettings' | 'ExtensionSettings'>);
         });
 
         if (Player && Player.MemberNumber) {
@@ -90,7 +91,7 @@ export class DataManager {
         }
     }
 
-    ServerTakeData(C: PlayerCharacter) {
+    ServerTakeData(C: Pick<PlayerCharacter, 'OnlineSettings' | 'ExtensionSettings'>) {
         const raw_data = C.ExtensionSettings[DataKeyName]
             || (C.OnlineSettings as any)[DataKeyName]
         this.DecodeDataStr(raw_data);

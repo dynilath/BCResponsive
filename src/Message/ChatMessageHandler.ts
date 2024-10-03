@@ -5,7 +5,7 @@ export class ChatMessageHandler {
 
     Run(player: PlayerCharacter | undefined, data: ServerChatRoomMessage) {
         if (player === undefined || player.MemberNumber === undefined) return;
-        if (player.GhostList && player.GhostList.indexOf(data.Sender) >= 0) return;
+        if (player.GhostList && data.Sender && player.GhostList.indexOf(data.Sender) >= 0) return;
         let sender = ChatRoomCharacter.find(c => c.MemberNumber == data.Sender);
         if (sender === undefined) return;
         let f = this._handles.get(data.Type);

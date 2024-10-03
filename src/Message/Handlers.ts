@@ -1,5 +1,4 @@
-import { DataManager } from "../Data";
-import { ActivityDeconstruct, ChatRoomHandler, Monitor, OrgasmMonitor } from "bc-utilities";
+import { ChatRoomHandler, OrgasmMonitor } from "bc-utilities";
 import { InvokeResponse } from "./MoanProvider";
 
 export function OrgasmHandle(monitor: OrgasmMonitor) {
@@ -18,13 +17,13 @@ export function ChatRoomHandle(handler: ChatRoomHandler) {
     handler.onBeforePlayerLeave((pl) => InvokeResponse({ triggerType: "event", type: "Leave" }, pl));
 
     handler.onReceiveActivity((player, sender, data) => {
-        if (data.TargetCharacter.MemberNumber !== player.MemberNumber) return;
+        if (data.TargetCharacter !== player.MemberNumber) return;
 
         InvokeResponse({
             triggerType: "activity",
             activity: data.ActivityName,
             bodypart: data.ActivityGroup,
-            from: data.SourceCharacter.MemberNumber,
+            from: data.SourceCharacter,
             arousal: player.ArousalSettings?.Progress || 0
         }, player, sender);
     });

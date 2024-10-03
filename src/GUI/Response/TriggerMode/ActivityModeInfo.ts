@@ -64,7 +64,7 @@ export class ActivityModeInfo extends AGUIItem {
                         return GetText("TriggerInfo::AllBodyparts");
                     if (bparts.length === 0)
                         return GetText("TriggerInfo::NoBodyparts");
-                    let result = bparts.slice(0, 3).map(a => AssetGroupMap.get(a)?.Description ?? a).join(", ");
+                    let result = bparts.slice(0, 3).map(a => AssetGroupMap.get(a as AssetGroupName)?.Description ?? a).join(", ");
                     if (bparts.length > 3) result += GetText("TriggerInfo::AndMore", [bparts.length - 3]);
                     return result;
                 })(v.allow_bodyparts)) ?? "";
