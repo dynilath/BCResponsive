@@ -5,6 +5,10 @@ import { V1SettingToV2Setting } from "./V2";
 import { getDefaultSettings } from "./Default";
 import { ModSDKModAPI } from "bondage-club-mod-sdk";
 
+function isAcountData(data: ServerLoginResponse): data is ServerAccountData {
+    return (data as ServerAccountData).MemberNumber !== undefined;
+}
+
 function DeserializeData(str: string | undefined): ResponsiveSettingV2 {
     if (str === undefined) return getDefaultSettings();
 
@@ -43,11 +47,12 @@ export class DataManager {
 
         mod.hookFunction('LoginResponse', 0, (args, next) => {
             next(args);
-            if (!Player || !Player.ExtensionSettings) return;
-            LoadAndMessage(Player as Pick<PlayerCharacter, 'OnlineSettings' | 'ExtensionSettings'>);
+            const [input] = args;
+            if (isAcountData(input))
+                LoadAndMessage(input as Pick<PlayerCharacter, 'OnlineSettings' | 'ExtensionSettings'>);
         });
 
-        if (Player && Player.ExtensionSettings) {
+        if (Player && Player.MemberNumber) {
             LoadAndMessage(Player);
         }
     }
