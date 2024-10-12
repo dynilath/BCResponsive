@@ -42,6 +42,10 @@ function drawTooltip() {
     }
 }
 
+declare global {
+    var PreferenceMouseWheel: ((event: WheelEvent) => void) | undefined;
+}
+
 export class GUISetting {
     private static _instance: GUISetting | null = null;
     static get instance() { return this._instance as GUISetting; }
@@ -77,6 +81,22 @@ export class GUISetting {
     constructor(mod: ModSDKModAPI, func: () => IGUIScreen) {
         this._mainScreenProvider = func;
         this.registerGUI();
+
+        const wheelEvent = (event: WheelEvent) => {
+            if (this._currentScreen) {
+                this._currentScreen.MouseWheel(event);
+                return;
+            }
+        }
+
+        if (typeof window["PreferenceMouseWheel" as any] !== "function") {
+            (window["PreferenceMouseWheel" as any] as any) = wheelEvent;
+        } else {
+            mod.hookFunction("PreferenceMouseWheel", 1, (args, next) => {
+                wheelEvent(args[0]);
+                return next(args);
+            });
+        }
     }
 
     registerGUI() {
