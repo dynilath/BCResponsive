@@ -1,0 +1,16 @@
+:root {
+    --br-hover-color: #80FFFF;
+}
+
+.bondage-react .icon-button {
+    background-color: transparent;
+    border-color: black;
+}
+
+.bondage-react .icon-button:hover {
+    background-color: var(--br-hover-color);
+}
+
+.bondage-react .plain-text {
+    color: black;
+}
