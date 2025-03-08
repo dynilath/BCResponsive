@@ -72,7 +72,8 @@ export function getDefaultPersonaList() {
         FirstOr({
             name: DefaultPersonaName,
             index: DefaultPersonaIndex,
-            responses: default_personality
+            responses: default_personality,
+            blackList: []
         } as ResponsivePersonality, undefined)
     );
 } export function getDefaultSettings(): ResponsiveSettingV2 {
