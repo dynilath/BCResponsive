@@ -4,3 +4,4 @@
 .npmrc
 *.log
 pnpm-lock.yaml
+/.vscode
