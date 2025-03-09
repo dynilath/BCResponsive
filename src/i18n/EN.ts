@@ -37,7 +37,7 @@ export const ENConfig: Record<TextTags, string> = {
     "Default::Message::TickleAction": "{me} squirms from the tickling.",
     "MainMenu::PersonalitySetting": "Personality Setting",
     "MainMenu::ResponseSetting": "Response Setting",
-    "MainMenu::MainSwitch": "Plugin Switch",
+    "MainMenu::MainSwitch": "Main Switch",
     "PersonaMenu::EditName": "Edit Name",
     "PersonaMenu::Import": "Import/Export",
     "PersonaMenu::Delete": "Delete",

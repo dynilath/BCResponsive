@@ -37,7 +37,7 @@ export const CNConfig: Record<TextTags, string> = {
     "Default::Message::TickleAction": "{me}由于瘙痒而扭动。",
     "MainMenu::PersonalitySetting": "人格设置",
     "MainMenu::ResponseSetting": "响应设置",
-    "MainMenu::MainSwitch": "插件开关",
+    "MainMenu::MainSwitch": "主开关",
     "PersonaMenu::EditName": "编辑名称",
     "PersonaMenu::Import": "导入/导出",
     "PersonaMenu::Delete": "删除",

@@ -1,7 +1,17 @@
 import { ModName } from "../Definition";
 import { GetText } from "../i18n";
-import { UI } from "./mainPage";
+import { UI } from "./pageRouter";
 import { Icons } from "./Icons";
+
+const unloadOnce = async () => {
+  while (true) {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    if (CurrentScreen !== "Preference") {
+      UI.unload("responsive-settings");
+      break;
+    }
+  }
+};
 
 export function registerGUI() {
   PreferenceRegisterExtensionSetting({
@@ -10,21 +20,14 @@ export function registerGUI() {
     ButtonText: () => GetText("setting_button_text"),
     load: () => {
       UI.load("responsive-settings");
-
-      (async () => {
-        while (true) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          if (CurrentScreen !== "Preference") {
-            UI.unload("responsive-settings");
-            break;
-          }
-        }
-      })();
+      unloadOnce();
     },
     run: () => {
-      UI.loadIfNotLoaded("responsive-settings");
+      if (UI.loadIfNotLoaded("responsive-settings")) {
+        unloadOnce();
+      }
     },
-    click: () => {},
+    click: () => { },
     unload: () => {
       UI.unload("responsive-settings");
     },
