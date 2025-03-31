@@ -1,10 +1,10 @@
-import bcMod from 'bondage-club-mod-sdk'
-import { ChatRoomHandle, OrgasmHandle } from './Message/Handlers';
+import bcMod from 'bondage-club-mod-sdk';
 import { DataManager } from './Data/Data';
-import { CUSTOM_ACTION_TAG, ModName, ModVersion, GIT_REPO } from './Definition';
+import { ModName, ModVersion, GIT_REPO } from './Definition';
 import { GUISetting } from './GUI/GUI';
 import { MainMenu } from './GUI/MainMenu';
-import { ChatRoomAction, ChatRoomHandler, OrgasmMonitor } from 'bc-utilities';
+import { HookManager } from '@sugarch/bc-mod-hook-manager';
+import { init } from './Message';
 
 (function () {
     if (window.__load_flag__) return;
@@ -12,14 +12,16 @@ import { ChatRoomAction, ChatRoomHandler, OrgasmMonitor } from 'bc-utilities';
 
     let mod = bcMod.registerMod({ name: ModName, fullName: ModName, version: ModVersion, repository: GIT_REPO });
 
-    OrgasmMonitor.init(mod).then(OrgasmHandle);
-    ChatRoomHandler.init(mod).then(ChatRoomHandle);
+    HookManager.initWithMod(mod);
 
-    GUISetting.init(mod, () => { return new MainMenu });
+    GUISetting.init(mod, () => {
+        return new MainMenu();
+    });
     DataManager.init(mod);
-    ChatRoomAction.init(CUSTOM_ACTION_TAG);
+
+    init();
 
     window.__load_flag__ = true;
 
     console.log(`${ModName} v${ModVersion} loaded.`);
-})()
+})();

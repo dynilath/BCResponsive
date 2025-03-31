@@ -1,30 +1,34 @@
-import { ChatRoomHandler, OrgasmMonitor } from "bc-utilities";
-import { InvokeResponse } from "./MoanProvider";
+import { InvokeResponse } from './MoanProvider';
+import { ChatRoomMessageHandlerEvents, OrgasmEvents, ChatRoomEvents } from '@sugarch/bc-event-handler';
 
-export function OrgasmHandle(monitor: OrgasmMonitor) {
-    const eventFunc = (event: OrgasmTriggerType) => ((pl: PlayerCharacter) => {
+const eventFunc =
+    (event: OrgasmTriggerType) =>
+    ({ Player }: { Player: Character }) => {
         if (CurrentScreen !== 'ChatRoom') return;
-        InvokeResponse({ triggerType: "orgasm", type: event }, pl);
-    })
+        InvokeResponse({ triggerType: 'orgasm', type: event }, Player);
+    };
 
-    monitor.onOrgasm(eventFunc("Orgasmed"))
-    monitor.onRuined(eventFunc("Ruined"))
-    monitor.onResist(eventFunc("Resisted"))
-}
+export function init () {
+    ChatRoomEvents.on('PlayerJoin', (player)=>InvokeResponse({ triggerType: 'event', type: 'Join' }, player))
+    ChatRoomEvents.on('PlayerLeave', (player)=>InvokeResponse({ triggerType: 'event', type: 'Join' }, player))
+    
+    OrgasmEvents.on('orgasmed', eventFunc('Orgasmed'));
+    OrgasmEvents.on('ruined', eventFunc('Ruined'));
+    OrgasmEvents.on('resisted', eventFunc('Resisted'));
 
-export function ChatRoomHandle(handler: ChatRoomHandler) {
-    handler.onAfterPlayerJoin((pl) => InvokeResponse({ triggerType: "event", type: "Join" }, pl));
-    handler.onBeforePlayerLeave((pl) => InvokeResponse({ triggerType: "event", type: "Leave" }, pl));
-
-    handler.onReceiveActivity((player, sender, data) => {
-        if (data.TargetCharacter !== player.MemberNumber) return;
-
-        InvokeResponse({
-            triggerType: "activity",
-            activity: data.ActivityName,
-            bodypart: data.ActivityGroup,
-            from: data.SourceCharacter,
-            arousal: player.ArousalSettings?.Progress || 0
-        }, player, sender);
+    ChatRoomMessageHandlerEvents.on('Activity', (data, sender, message, metadata) => {
+        if (metadata?.TargetCharacter !== sender.MemberNumber) return;
+        if (!metadata?.ActivityName || !metadata?.GroupName || !sender.MemberNumber) return;
+        InvokeResponse(
+            {
+                triggerType: 'activity',
+                activity: metadata.ActivityName,
+                bodypart: metadata.GroupName,
+                from: sender.MemberNumber,
+                arousal: sender.ArousalSettings?.Progress || 0,
+            },
+            Player,
+            sender
+        );
     });
 }

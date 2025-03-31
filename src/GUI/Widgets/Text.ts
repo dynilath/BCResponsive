@@ -1,4 +1,4 @@
-import { Calculate, Result } from "bc-utilities";
+import { Calculate, Result } from "../utils";
 import { ModVersion } from "../../Definition";
 import { GetText } from "../../i18n";
 import { AGUIItem, IPoint, IRect } from "./AGUI";
