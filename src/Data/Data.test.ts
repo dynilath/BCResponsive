@@ -9,6 +9,15 @@ describe("getDefaultSettings", () => {
         expect(data.settings).toBeDefined();
         expect(data.active_personality).toBeDefined();
         expect(data.personalities).toBeDefined();
+
+        expect(data.active_personality).toBeGreaterThanOrEqual(0);
+        expect(Array.isArray(data.personalities)).toBe(true);
+        expect(data.personalities.length).toBeGreaterThan(0);
+        expect(data.personalities[0]?.name).toBeDefined();
+        expect(typeof data.personalities[0]?.name).toBe("string");
+        expect(Array.isArray(data.personalities[0]?.blackList)).toBe(true);
+        expect(data.personalities[0]?.responses).toBeDefined();
+        expect(Array.isArray(data.personalities[0]?.responses)).toBe(true);
     });
 
     it("should pass PickV2Settings", () => {
