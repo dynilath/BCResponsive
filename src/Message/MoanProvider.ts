@@ -2,7 +2,6 @@ import { TriggerData, TriggerDataActivity, TriggerDataOrgasm, TriggerDataRoomEve
 import { DataManager, isTriggerOrgasm } from "../Data";
 import { ChatRoomAutoInterceptMessage } from "./ChatMessages";
 import { ReplaceField } from "./MessageFields";
-import { ChatRoomAction } from "bc-utilities";
 import { ChatMessager } from "../messager";
 
 export function InvokeResponse(data: TriggerData, player: Character | undefined, target?: Character) {

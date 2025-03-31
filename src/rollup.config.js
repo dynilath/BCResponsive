@@ -75,7 +75,6 @@ const plugins_debug = deploySite => [
         __mod_name__: modInfo.name,
         __mod_version__: modInfo.version,
         __repo__: modInfo.repo,
-        __load_flag__: loadFlag,
         __script_id__: scriptId,
         preventAssignment: false
     }),

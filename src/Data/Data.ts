@@ -1,15 +1,11 @@
-import { DataKeyName, DebugMode, ModName, ModVersion } from "../Definition";
-import { isV1Setting } from "./V1";
-import { pickV2Setting } from "./V2";
-import { V1SettingToV2Setting } from "./V2";
-import { getDefaultSettings } from "./Default";
-import { ModSDKModAPI } from "bondage-club-mod-sdk";
+import { DataKeyName, DebugMode, ModInfo } from '../Definition';
+import { isV1Setting } from './V1';
+import { pickV2Setting } from './V2';
+import { V1SettingToV2Setting } from './V2';
+import { getDefaultSettings } from './Default';
+import { HookManager } from '@sugarch/bc-mod-hook-manager';
 
-function isAcountData(data: ServerLoginResponse): data is ServerAccountData {
-    return (data as ServerAccountData).MemberNumber !== undefined;
-}
-
-function DeserializeData(str: string | undefined): ResponsiveSettingV2 {
+function DeserializeData (str: string | undefined): ResponsiveSettingV2 {
     if (str === undefined) return getDefaultSettings();
 
     let d = LZString.decompressFromBase64(str);
@@ -19,7 +15,7 @@ function DeserializeData(str: string | undefined): ResponsiveSettingV2 {
         if (!d) throw new Error();
         let decoded = JSON.parse(d);
         data = decoded;
-    } catch { }
+    } catch {}
 
     if (isV1Setting(data)) {
         return V1SettingToV2Setting(data);
@@ -30,58 +26,46 @@ function DeserializeData(str: string | undefined): ResponsiveSettingV2 {
 
 export class DataManager {
     private static _instance: DataManager | undefined;
-    static init(mod: ModSDKModAPI) {
-        if (this._instance === undefined)
-            this._instance = new DataManager;
-
-        function LoadAndMessage(C: Pick<PlayerCharacter, 'OnlineSettings' | 'ExtensionSettings'> | null | undefined) {
-            if (C) DataManager.instance.ServerTakeData(C);
-            console.log(`${ModName} v${ModVersion} ready.`);
-        }
+    static init () {
+        if (this._instance === undefined) this._instance = new DataManager();
 
         if (DebugMode) {
-            (window as any)["ShowResponsiveData"] = () => {
+            (window as any)['ShowResponsiveData'] = () => {
                 return DataManager.instance.modData;
-            }
+            };
         }
 
-        mod.hookFunction('LoginResponse', 0, (args, next) => {
-            next(args);
-            const [input] = args;
-            if (isAcountData(input))
-                LoadAndMessage(input as Pick<PlayerCharacter, 'OnlineSettings' | 'ExtensionSettings'>);
+        HookManager.afterPlayerLogin(() => {
+            DataManager.instance.ServerTakeData(Player);
+            console.log(`${ModInfo.name} v${ModInfo.version} ready.`);
         });
-
-        if (Player && Player.MemberNumber) {
-            LoadAndMessage(Player);
-        }
     }
 
-    static get instance() {
+    static get instance () {
         return DataManager._instance as DataManager;
     }
 
-    static save() {
+    static save () {
         this.instance.ServerStoreData();
     }
 
-    static get active_personality() {
+    static get active_personality () {
         const data = this.instance.data;
         if (data.active_personality === null) return undefined;
         return data.personalities[data.active_personality];
     }
 
-    static set active_personality(newValue: ResponsivePersonality | undefined) {
+    static set active_personality (newValue: ResponsivePersonality | undefined) {
         this.instance.data.active_personality = newValue?.index ?? null;
     }
 
     modData: Partial<ResponsiveSolidSetting> = {};
 
-    private EncodeDataStr(): string {
+    private EncodeDataStr (): string {
         return LZString.compressToBase64(JSON.stringify(this.modData));
     }
 
-    private DecodeDataStr(str: string | undefined) {
+    private DecodeDataStr (str: string | undefined) {
         if (str === undefined) {
             Object.assign(this.modData, getDefaultSettings());
             return;
@@ -90,25 +74,23 @@ export class DataManager {
         Object.assign(this.modData, DeserializeData(str));
     }
 
-    ServerStoreData() {
+    ServerStoreData () {
         if (Player && Player.ExtensionSettings) {
             Player.ExtensionSettings[DataKeyName] = this.EncodeDataStr();
             ServerPlayerExtensionSettingsSync(DataKeyName);
         }
     }
 
-    ServerTakeData(C: Pick<PlayerCharacter, 'OnlineSettings' | 'ExtensionSettings'>) {
-        const raw_data = C.ExtensionSettings[DataKeyName]
-            || (C.OnlineSettings as any)[DataKeyName]
+    ServerTakeData (C: Pick<PlayerCharacter, 'OnlineSettings' | 'ExtensionSettings'>) {
+        const raw_data = C.ExtensionSettings[DataKeyName] || (C.OnlineSettings as any)[DataKeyName];
         this.DecodeDataStr(raw_data);
     }
 
-    get data() {
+    get data () {
         return this.modData as ResponsiveSettingV2;
     }
 
-    set data(d: ResponsiveSettingV2) {
+    set data (d: ResponsiveSettingV2) {
         this.modData = d;
     }
 }
-

@@ -1,5 +1,5 @@
 import { Calculate, Result } from "../utils";
-import { ModVersion } from "../../Definition";
+import { ModInfo } from "../../Definition";
 import { GetText } from "../../i18n";
 import { AGUIItem, IPoint, IRect } from "./AGUI";
 import { ADrawText, ADrawTextFit } from "./Common";
@@ -9,8 +9,8 @@ export class TitleText extends AGUIItem {
 
     Draw() {
         const text = GetText("responsive_setting_title");
-        ADrawText({ x: 201, y: 126 }, `${text} v${ModVersion}`, { color: "Gray" });
-        ADrawText({ x: 200, y: 125 }, `${text} v${ModVersion}`);
+        ADrawText({ x: 201, y: 126 }, `${text} v${ModInfo.version}`, { color: "Gray" });
+        ADrawText({ x: 200, y: 125 }, `${text} v${ModInfo.version}`);
     }
 }
 

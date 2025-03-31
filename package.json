@@ -1,7 +1,7 @@
 {
   "name": "bc-responsive",
   "displayName": "BondageClub Responsive",
-  "version": "1.1.5",
+  "version": "1.2.0",
   "description": "A auto response script for bondage-club",
   "buildSettings": {
     "input": "Responsive.ts",
@@ -14,6 +14,7 @@
   "author": "Saki Saotome",
   "license": "MIT",
   "scripts": {
+    "test": "jest --passWithNoTests",
     "build": "rollup -c src/rollup.config.js",
     "dev": "rollup -c src/rollup.config.js --configDebug --configDeploy http://localhost:3042",
     "serve": "http-server ./public -p 3042 --cors"
@@ -29,8 +30,7 @@
     "@types/core-js": "^2.5.8",
     "@types/jest": "^29.5.14",
     "@types/node": "^20.17.28",
-    "bc-stubs": "^108.0.0",
-    "bc-utilities": "workspace:^",
+    "bc-stubs": "^114.0.0",
     "bondage-club-mod-sdk": "^1.2.0",
     "jest": "^29.7.0",
     "rollup": "^4.38.0",

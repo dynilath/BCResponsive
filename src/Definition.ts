@@ -2,6 +2,13 @@ export const ModVersion = __mod_version__;
 export const ModName = __mod_name__;
 export const GIT_REPO = __repo__;
 
+export const ModInfo = {
+    name: __mod_name__,
+    fullName: __mod_name__,
+    version: __mod_version__,
+    repository: __repo__,
+}
+
 export const HTMLIDPrefix = "BCR_";
 
 export const DebugMode = false;

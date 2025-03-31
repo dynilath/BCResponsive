@@ -7,7 +7,7 @@ const textmap: Record<string, Record<TextTags, string>> = {
 };
 
 export function GetText(srcTag: TextTags, FormatArgs?: any[]) {
-    let target = (textmap[TranslationLanguage] || textmap["EN"])[srcTag];
+    let target = (textmap[globalThis["TranslationLanguage"]] || textmap["EN"])[srcTag];
     if (FormatArgs) {
         target = target.replace(/\{(\d+)\}/g, (m, i) => FormatArgs[i]);
     }
