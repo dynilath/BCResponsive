@@ -6,7 +6,7 @@ import { DynamicText } from "../Widgets/Text";
 import { TextAreaItem } from "../Widgets/InputText";
 import { Popup } from "../Widgets/Popup";
 import { LZStringToPersona, PersonaToLZString } from "./PersonaCompress";
-import { GetText } from "../../i18n";
+import { i18n } from "../../i18n";
 import { Styles } from "../../Definition";
 
 
@@ -55,14 +55,14 @@ export class PersonaImportScreen extends Popup {
                 if (this._lastInputInvalid) {
                     return {
                         where: { x: centerX, y: centerY - totalHeight / 2 + FontSize / 2 },
-                        text: GetText("PersonaImport::InvalidInput"),
+                        text: i18n("PersonaImport::InvalidInput"),
                         align: "center",
                         color: "Red"
                     }
                 }
                 return {
                     where: { x: centerX, y: centerY - totalHeight / 2 + FontSize / 2 },
-                    text: GetText("PersonaImport::Title"),
+                    text: i18n("PersonaImport::Title"),
                     align: "center",
                     color: "Black"
                 }
@@ -73,7 +73,7 @@ export class PersonaImportScreen extends Popup {
                 y: centerY + totalHeight / 2 - buttonHeight,
                 width: buttonWidth,
                 height: buttonHeight
-            }, GetText("General::Confirm"), () => {
+            }, i18n("General::Confirm"), () => {
                 const newPersonsa = LZStringToPersona(this._bind.text);
                 if (newPersonsa) {
                     newPersonsa.index = index;
@@ -87,7 +87,7 @@ export class PersonaImportScreen extends Popup {
                 y: centerY + totalHeight / 2 - buttonHeight,
                 width: buttonWidth,
                 height: buttonHeight
-            }, GetText("General::Cancel"), () => this.Exit())
+            }, i18n("General::Cancel"), () => this.Exit())
         ]
     }
 

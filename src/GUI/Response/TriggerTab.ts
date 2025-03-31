@@ -1,6 +1,6 @@
 import { DataManager } from "../../Data";
 import { Styles } from "../../Definition";
-import { GetText } from "../../i18n";
+import { i18n } from "../../i18n";
 import { AGUIItem, IPoint, IRect, WithinRect } from "../Widgets/AGUI";
 import { Binding } from "../Widgets/Binding";
 import { ADrawCircleRect, ADrawCricleIconButton, ADrawRoundRect, ADrawTextFit } from "../Widgets/Common";
@@ -110,7 +110,7 @@ export class TriggerTab extends AGUIItem {
             }
 
             if (targetIdx == this.parent.targetPersona.responses.length) {
-                ADrawTextFit(rect, GetText("TriggerInfo::AddNew"), { color: Styles.Text.Lesser });
+                ADrawTextFit(rect, i18n("TriggerInfo::AddNew"), { color: Styles.Text.Lesser });
             } else if (targetIdx < this.parent.targetPersona.responses.length) {
                 ADrawTextFit(rect, this.parent.targetPersona.responses[targetIdx].name);
             }
@@ -134,7 +134,7 @@ export class TriggerTab extends AGUIItem {
             const targetIdx = index + this.scroll.offset;
             if (WithinRect(mouse, rect)) {
                 if (targetIdx == this.parent.targetPersona.responses.length) {
-                    this.parent.targetPersona.responses.push({ name: GetText("Default::NewResponseName"), enabled: false, trigger: { mode: "activity", allow_activities: [] }, messages: [] });
+                    this.parent.targetPersona.responses.push({ name: i18n("Default::NewResponseName"), enabled: false, trigger: { mode: "activity", allow_activities: [] }, messages: [] });
                     this.parent.targetItem = this.parent.targetPersona.responses[targetIdx];
                     DataManager.save();
                 } else if (targetIdx < this.parent.targetPersona.responses.length) {

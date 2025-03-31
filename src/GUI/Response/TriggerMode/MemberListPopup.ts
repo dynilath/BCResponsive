@@ -1,6 +1,6 @@
 import { DataManager } from "../../../Data";
 import { Styles } from "../../../Definition";
-import { GetText } from "../../../i18n";
+import { i18n } from "../../../i18n";
 import { IGUIScreen } from "../../GUI";
 import { AGUIItem, IPoint, IRect, WithinRect } from "../../Widgets/AGUI";
 import { TextRoundButton } from "../../Widgets/Button";
@@ -82,14 +82,14 @@ class MemberList extends AGUIItem {
             y: this._table.y,
             width: MEMBER_TABLE_COLUMN_WIDTH,
             height: MEMBER_TABLE_TITLE_HEIGHT
-        }, GetText("CharaInfo::MemberID"));
+        }, i18n("CharaInfo::MemberID"));
 
         ADrawTextFit({
             x: this._table.x + TABLE_INNER_SPACING + MEMBER_TABLE_COLUMN_WIDTH,
             y: this._table.y,
             width: MEMBER_TABLE_COLUMN_WIDTH,
             height: MEMBER_TABLE_TITLE_HEIGHT
-        }, GetText("CharaInfo::Name"));
+        }, i18n("CharaInfo::Name"));
 
         Array.from({ length: MEMBER_TABLE_ROWS_PER_PAGE }, (_, i) => i).forEach(i => {
             const targetIdx = this.scrollbar.offset + i;
@@ -196,13 +196,13 @@ export class MemberListPopup extends Popup {
             height: Styles.Dialog.control_button_height
         };
 
-        const text_input = new TextInput(_input, "MemberNumberInput", "", GetText("MemberListPopup::InputID"));
+        const text_input = new TextInput(_input, "MemberNumberInput", "", i18n("MemberListPopup::InputID"));
 
         this.items = [
             new RoundFramedRect(_dialog, Styles.Dialog.roundRadius, "White"),
             new BasicText(_title, title, { align: "center", emphasis: true }),
             text_input,
-            new TextRoundButton(_input_confirm, GetText("General::Add"), () => {
+            new TextRoundButton(_input_confirm, i18n("General::Add"), () => {
                 const member_number = parseInt(text_input.text);
                 if (!isNaN(member_number) && member_number > 0 && !this.editing_member_list.includes(member_number)) {
                     this.editing_member_list.push(member_number);
@@ -213,8 +213,8 @@ export class MemberListPopup extends Popup {
                 return !isNaN(v) && v > 0 && !this.editing_member_list.includes(v);
             }),
             new MemberList(_pageTable, this.editing_member_list),
-            new TextRoundButton(_cancel_button, GetText("General::Cancel"), () => this.Exit()),
-            new TextRoundButton(_confirm_button, GetText("General::Confirm"), () => {
+            new TextRoundButton(_cancel_button, i18n("General::Cancel"), () => this.Exit()),
+            new TextRoundButton(_confirm_button, i18n("General::Confirm"), () => {
                 this.source_member_list.splice(0, this.source_member_list.length, ...this.editing_member_list);
                 DataManager.save();
                 this.Exit();

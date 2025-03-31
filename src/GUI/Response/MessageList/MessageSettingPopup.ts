@@ -1,4 +1,4 @@
-import { GetText } from "../../../i18n";
+import { i18n } from "../../../i18n";
 import { IGUIScreen } from "../../GUI";
 import { RoundFramedRect } from "../../Widgets/Rect";
 import { TextButton, TextRoundButton } from "../../Widgets/Button";
@@ -38,7 +38,7 @@ export class MessageSettinPopup extends Popup {
         super(prev);
 
         if (target) this._input_state = { ...target };
-        else this._input_state = { type: "message", content: GetText("Default::ExampleMessage") };
+        else this._input_state = { type: "message", content: i18n("Default::ExampleMessage") };
 
         this._confirm_callback = confirm;
         this._delete_callback = del;
@@ -102,31 +102,31 @@ export class MessageSettinPopup extends Popup {
 
         this.items = [
             new RoundFramedRect(_dialog, Styles.Dialog.roundRadius, "White"),
-            new BasicText(_title, GetText("MessagePopup::EditMessage"), { align: "center", emphasis: true }),
+            new BasicText(_title, i18n("MessagePopup::EditMessage"), { align: "center", emphasis: true }),
             this._text_input,
             new SegmentButton<ResponseMessageType>({
                 text: [
-                    { display: GetText("MessagePopup::Type::message"), value: "message" },
-                    { display: GetText("MessagePopup::Type::action"), value: "action" }
+                    { display: i18n("MessagePopup::Type::message"), value: "message" },
+                    { display: i18n("MessagePopup::Type::action"), value: "action" }
                 ],
                 binding: new MessageTypeBinding(this._input_state)
             }, _type_segbutton),
-            new TextRoundButton(_insert_me_button, GetText("MessagePopup::InsertMe"), () => {
+            new TextRoundButton(_insert_me_button, i18n("MessagePopup::InsertMe"), () => {
                 this._text_input.InsertAtCursor("{me}");
             }),
-            new TextRoundButton(_insert_other_button, GetText("MessagePopup::InsertOther"), () => {
+            new TextRoundButton(_insert_other_button, i18n("MessagePopup::InsertOther"), () => {
                 this._text_input.InsertAtCursor("{other}");
             }),
-            new TextRoundButton(_delete_button, GetText("General::Delete"), () => {
+            new TextRoundButton(_delete_button, i18n("General::Delete"), () => {
                 this.Exit();
                 this._delete_callback(this._input_state);
             }),
-            new TextRoundButton(_confirm_button, GetText("General::Confirm"), () => {
+            new TextRoundButton(_confirm_button, i18n("General::Confirm"), () => {
                 this._input_state.content = this._text_input.text;
                 this._confirm_callback(this._input_state);
                 this.Exit();
             }),
-            new TextRoundButton(_cancel_button, GetText("General::Cancel"), () => this.Exit())
+            new TextRoundButton(_cancel_button, i18n("General::Cancel"), () => this.Exit())
         ]
     }
 }

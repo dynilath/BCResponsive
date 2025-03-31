@@ -1,7 +1,7 @@
 import { DataManager } from "../../../Data";
 import { DefaultValueV1TriggerActivities } from "../../../Data/V1";
 import { Styles } from "../../../Definition";
-import { GetText } from "../../../i18n";
+import { i18n } from "../../../i18n";
 import { IGUIScreen } from "../../GUI";
 import { TextRoundButton } from "../../Widgets/Button";
 import { ChipsPark } from "../../Widgets/ChipsPark";
@@ -135,15 +135,15 @@ export class ActivityPopup extends Popup {
 
         this.items = [
             new RoundFramedRect(_dialog, Styles.Dialog.roundRadius, "White"),
-            new BasicText(_title, GetText("ActivityPopup::Title"), { align: "center", emphasis: true }),
+            new BasicText(_title, i18n("ActivityPopup::Title"), { align: "center", emphasis: true }),
             new ChipsPark(this.editing, _chips_value, _chips_park, flip),
-            new TextRoundButton(_filter_clear, GetText("General::Clear"), () => this.editing.clear()),
-            new TextRoundButton(_filter_all, GetText("General::AllSet"), () => _chips_value.forEach(v => this.editing.add(v.value))),
-            new TextRoundButton(_filter_pain, GetText("ActivityPopup::Pain"), () => flipList(DefaultValueV1TriggerActivities.pain)),
-            new TextRoundButton(_filter_tickle, GetText("ActivityPopup::Tickle"), () => flipList(DefaultValueV1TriggerActivities.tickle)),
-            new TextRoundButton(_filter_masturbate, GetText("ActivityPopup::Masturbate"), () => flipList(DefaultValueV1TriggerActivities.masturbate)),
-            new TextRoundButton(_filter_feet, GetText("ActivityPopup::Feet"), () => flipList(["MassageFeet", "Step", "Kick", "MasturbateFoot"])),
-            new TextRoundButton(_dialog_confirm, GetText("General::Confirm"), () => {
+            new TextRoundButton(_filter_clear, i18n("General::Clear"), () => this.editing.clear()),
+            new TextRoundButton(_filter_all, i18n("General::AllSet"), () => _chips_value.forEach(v => this.editing.add(v.value))),
+            new TextRoundButton(_filter_pain, i18n("ActivityPopup::Pain"), () => flipList(DefaultValueV1TriggerActivities.pain)),
+            new TextRoundButton(_filter_tickle, i18n("ActivityPopup::Tickle"), () => flipList(DefaultValueV1TriggerActivities.tickle)),
+            new TextRoundButton(_filter_masturbate, i18n("ActivityPopup::Masturbate"), () => flipList(DefaultValueV1TriggerActivities.masturbate)),
+            new TextRoundButton(_filter_feet, i18n("ActivityPopup::Feet"), () => flipList(["MassageFeet", "Step", "Kick", "MasturbateFoot"])),
+            new TextRoundButton(_dialog_confirm, i18n("General::Confirm"), () => {
                 this.source.asActivity(v => {
                     if (this.editing.size === _chips_value.length) v.allow_activities = undefined;
                     else v.allow_activities = [...this.editing]
@@ -151,7 +151,7 @@ export class ActivityPopup extends Popup {
                 DataManager.save();
                 this.Exit();
             }),
-            new TextRoundButton(_dialog_cancel, GetText("General::Cancel"), () => this.Exit()),
+            new TextRoundButton(_dialog_cancel, i18n("General::Cancel"), () => this.Exit()),
         ]
     }
 }

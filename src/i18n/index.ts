@@ -6,7 +6,7 @@ const textmap: Record<string, Record<TextTags, string>> = {
     "CN": CNConfig,
 };
 
-export function GetText(srcTag: TextTags, FormatArgs?: any[]) {
+export function i18n(srcTag: TextTags, FormatArgs?: any[]) {
     let target = (textmap[globalThis["TranslationLanguage"]] || textmap["EN"])[srcTag];
     if (FormatArgs) {
         target = target.replace(/\{(\d+)\}/g, (m, i) => FormatArgs[i]);

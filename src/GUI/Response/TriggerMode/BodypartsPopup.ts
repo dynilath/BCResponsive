@@ -1,6 +1,6 @@
 import { DataManager } from "../../../Data";
 import { Styles } from "../../../Definition";
-import { GetText } from "../../../i18n";
+import { i18n } from "../../../i18n";
 import { IGUIScreen } from "../../GUI";
 import { TextRoundButton } from "../../Widgets/Button";
 import { ChipsPark } from "../../Widgets/ChipsPark";
@@ -99,12 +99,12 @@ export class BodypartsPopup extends Popup {
 
         this.items = [
             new RoundFramedRect(_dialog, Styles.Dialog.roundRadius, "White"),
-            new BasicText(_dialog_title, GetText("BodypartsPopup::Title"), { align: "center", emphasis: true }),
+            new BasicText(_dialog_title, i18n("BodypartsPopup::Title"), { align: "center", emphasis: true }),
             new ActivityAreaDisplay(this.editing, _bodypart_selector, flip),
             new ChipsPark(this.editing, _chips_value, _chips_park, flip),
-            new TextRoundButton(_chip_clear, GetText("General::Clear"), () => this.editing.clear()),
-            new TextRoundButton(_chip_all, GetText("General::AllSet"), () => _chips_value.forEach(v => this.editing.add(v.value))),
-            new TextRoundButton(_confirm_button, GetText("General::Confirm"), () => {
+            new TextRoundButton(_chip_clear, i18n("General::Clear"), () => this.editing.clear()),
+            new TextRoundButton(_chip_all, i18n("General::AllSet"), () => _chips_value.forEach(v => this.editing.add(v.value))),
+            new TextRoundButton(_confirm_button, i18n("General::Confirm"), () => {
                 this.source.asActivity(v => {
                     if (this.editing.size === _chips_value.length) v.allow_bodyparts = undefined;
                     else v.allow_bodyparts = [...this.editing]
@@ -112,7 +112,7 @@ export class BodypartsPopup extends Popup {
                 DataManager.save();
                 this.Exit();
             }),
-            new TextRoundButton(_cancel_button, GetText("General::Cancel"), () => this.Exit())
+            new TextRoundButton(_cancel_button, i18n("General::Cancel"), () => this.Exit())
         ]
     }
 }

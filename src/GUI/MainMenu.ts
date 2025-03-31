@@ -1,7 +1,7 @@
 
 import { DataManager } from "../Data";
 import { GIT_REPO, Styles } from "../Definition";
-import { GetText } from "../i18n";
+import { i18n } from "../i18n";
 import { GUISetting, IGUIScreen } from "./GUI";
 import { PersonaSetting } from "./Persona/PersonaMenu";
 import { TriggerSetting } from "./Response/ResponseMenu";
@@ -39,7 +39,7 @@ export class MainMenu extends AGUIScreen {
         this.items = [
             new ExitButton(() => this.Exit()),
             new TitleText(),
-            new BasicText({ x: MENU_BASE_X + ITEM_SPACING + ITEM_HEIGHT * 2, y: MENU_BASE_Y + ITEM_HEIGHT / 2 }, GetText("MainMenu::MainSwitch")),
+            new BasicText({ x: MENU_BASE_X + ITEM_SPACING + ITEM_HEIGHT * 2, y: MENU_BASE_Y + ITEM_HEIGHT / 2 }, i18n("MainMenu::MainSwitch")),
             new Switch(MasterSwitch.instance, {
                 x: MENU_BASE_X,
                 y: MENU_BASE_Y + ITEM_HEIGHT / 2 - SWITCH_HEIGHT / 2,
@@ -49,12 +49,12 @@ export class MainMenu extends AGUIScreen {
                 x: MENU_BASE_X,
                 y: MENU_BASE_Y + (ITEM_HEIGHT + ITEM_SPACING) * 1,
                 width: ITEM_WIDTH, height: ITEM_HEIGHT
-            }, GetText("MainMenu::PersonalitySetting"), () => GUISetting.setScreen(new PersonaSetting(this))),
+            }, i18n("MainMenu::PersonalitySetting"), () => GUISetting.setScreen(new PersonaSetting(this))),
             new TextRoundButton({
                 x: MENU_BASE_X,
                 y: MENU_BASE_Y + (ITEM_HEIGHT + ITEM_SPACING) * 2,
                 width: ITEM_WIDTH, height: ITEM_HEIGHT
-            }, GetText("MainMenu::ResponseSetting"), () => {
+            }, i18n("MainMenu::ResponseSetting"), () => {
                 const persona = DataManager.active_personality;
                 if (!persona) return;
                 GUISetting.setScreen(new TriggerSetting(this, persona));

@@ -1,5 +1,5 @@
 import { Styles } from "../../../Definition";
-import { GetText } from "../../../i18n";
+import { i18n } from "../../../i18n";
 import { GUISetting, IGUIScreen } from "../../GUI";
 import { AGUIItem, IPoint, IRect } from "../../Widgets/AGUI";
 import { DynamicTextRoundButton } from "../../Widgets/Button";
@@ -57,19 +57,19 @@ export class SpicerModeInfo extends AGUIItem {
         ];
 
         this._components = [
-            new BasicText(this._min_arousal_text, GetText("TriggerInfo::MinArousal")),
-            new BasicText(this._max_arousal_text, GetText("TriggerInfo::MaxArousal")),
+            new BasicText(this._min_arousal_text, i18n("TriggerInfo::MinArousal")),
+            new BasicText(this._max_arousal_text, i18n("TriggerInfo::MaxArousal")),
             ...this._editList,
-            new BasicText(this._apply_fav_text, GetText("TriggerInfo::ApplyFavorite")),
+            new BasicText(this._apply_fav_text, i18n("TriggerInfo::ApplyFavorite")),
             new Switch(this.state.SpicerApplyFavorite(), this._apply_fav_switch),
-            new BasicText(this._allow_ids_text, GetText("TriggerInfo::OnMembers")),
+            new BasicText(this._allow_ids_text, i18n("TriggerInfo::OnMembers")),
             new DynamicTextRoundButton(this._allow_ids_state, () => this.state.asSpicer(v => (ids => {
                 if (ids === undefined || ids.length === 0)
-                    return GetText("TriggerInfo::AllMemberIDs");
+                    return i18n("TriggerInfo::AllMemberIDs");
                 let result = ids.slice(0, 3).join(", ");
-                if (ids.length > 3) result += GetText("TriggerInfo::AndMore", [ids.length - 3]);
+                if (ids.length > 3) result += i18n("TriggerInfo::AndMore", [ids.length - 3]);
                 return result;
-            })(v.allow_ids)) ?? "", () => GUISetting.setScreen(new MemberListPopup(this.parent, GetText("MemberListPopup::AllowIDs::Title"), this.state.asSpicer(v => {
+            })(v.allow_ids)) ?? "", () => GUISetting.setScreen(new MemberListPopup(this.parent, i18n("MemberListPopup::AllowIDs::Title"), this.state.asSpicer(v => {
                 if (v.allow_ids === undefined) v.allow_ids = [];
                 return v.allow_ids;
             }) ?? [])))

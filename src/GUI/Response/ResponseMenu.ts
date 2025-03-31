@@ -9,7 +9,7 @@ import { SpicerModeInfo } from "./TriggerMode/SpicerModeInfo";
 import { TriggerTab } from "./TriggerTab";
 import { TriggerBaseInfo } from "./TriggerBaseInfo";
 import { Switch } from "../Widgets/Switch";
-import { GetText } from "../../i18n";
+import { i18n } from "../../i18n";
 import { OrgasmModeInfo } from "./TriggerMode/OrgasmModeInfo";
 import { MemberListPopup } from "./TriggerMode/MemberListPopup";
 import { RoomEventModeInfo } from "./TriggerMode/RoomEventModeInfo";
@@ -97,8 +97,8 @@ export class TriggerSetting extends AGUIScreen {
         this.items = [
             new TitleText(),
             new FitText(PersonaNameRect, () => this.persona.name, { emphasis: true }),
-            new TextRoundButton(PersonaBlackListRect, GetText("PersonaInfo::BlackList"), () =>
-                GUISetting.setScreen(new MemberListPopup(this, GetText("MemberListPopup::PersonaBlackList::Title"), persona.blackList))),
+            new TextRoundButton(PersonaBlackListRect, i18n("PersonaInfo::BlackList"), () =>
+                GUISetting.setScreen(new MemberListPopup(this, i18n("MemberListPopup::PersonaBlackList::Title"), persona.blackList))),
             new ResponseMessageList(this, this._state, TriggerMessageRect),
             new ActivityModeInfo(this, this._state, TriggerExtendedInfoRect),
             new SpicerModeInfo(this, this._state, TriggerExtendedInfoRect),
@@ -106,7 +106,7 @@ export class TriggerSetting extends AGUIScreen {
             new RoomEventModeInfo(this, this._state, TriggerExtendedInfoRect),
             new TriggerBaseInfo(this._state, TriggerBaseInfoRect),
             this.triggerTab,
-            new BasicText(TriggerDeleteModeSwitchText, GetText("PersonaMenu::DeleteMode"), { align: "right" }),
+            new BasicText(TriggerDeleteModeSwitchText, i18n("PersonaMenu::DeleteMode"), { align: "right" }),
             new Switch(this.triggerTab.binding, TriggerDeleteModeSwitchRect),
             new ExitButton(() => this.Exit()),
         ];

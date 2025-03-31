@@ -1,4 +1,4 @@
-import { GetText } from "../../i18n";
+import { i18n } from "../../i18n";
 import { AGUIItem, IPoint, IRect, ISize } from "../Widgets/AGUI";
 import { ButtonEdit } from "../Widgets/ButtonEdit";
 import { SegmentButton } from "../Widgets/SegmentButton";
@@ -34,11 +34,11 @@ export class TriggerBaseInfo extends AGUIItem {
         };
 
         this.components = [
-            new BasicText(_name_text, GetText("TriggerInfo::Name")),
+            new BasicText(_name_text, i18n("TriggerInfo::Name")),
             new ButtonEdit(this.state.TriggerName(), "InputTriggerName", _name_input),
-            new BasicText(_enabled_text, GetText("TriggerInfo::OnOff")),
+            new BasicText(_enabled_text, i18n("TriggerInfo::OnOff")),
             new Switch(this.state.TriggerEnabled(), _enabled_input),
-            new BasicText(_mode_text, GetText("TriggerInfo::Mode")),
+            new BasicText(_mode_text, i18n("TriggerInfo::Mode")),
             new SegmentButton(this.state.TriggerMode(), _mode_input)
         ]
     }

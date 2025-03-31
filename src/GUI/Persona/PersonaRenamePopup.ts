@@ -1,5 +1,5 @@
 import { MaxNameLength, Styles } from "../../Definition";
-import { GetText } from "../../i18n";
+import { i18n } from "../../i18n";
 import { IGUIScreen } from "../GUI";
 import { TextRoundButton } from "../Widgets/Button";
 import { RoundFramedRect } from "../Widgets/Rect";
@@ -57,13 +57,13 @@ export class PersonaRemamePopup extends Popup {
 
         this.items = [
             new RoundFramedRect(_dialog, Styles.Dialog.roundRadius, "White"),
-            new BasicText(_title, GetText("RenamePopup::PersonaName::Title"), { align: "center" }),
+            new BasicText(_title, i18n("RenamePopup::PersonaName::Title"), { align: "center" }),
             this._input,
-            new TextRoundButton(_confirm_button, GetText("General::Confirm"), () => {
+            new TextRoundButton(_confirm_button, i18n("General::Confirm"), () => {
                 confirm(this._input.text.substring(0, MaxNameLength));
                 this.Exit();
             }),
-            new TextRoundButton(_cancel_button, GetText("General::Cancel"), () => {
+            new TextRoundButton(_cancel_button, i18n("General::Cancel"), () => {
                 this.Exit();
             }),
         ];

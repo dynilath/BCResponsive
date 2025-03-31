@@ -1,6 +1,6 @@
 import { DebugMode, HTMLIDPrefix, ModName } from '../Definition';
 import { Icons } from './Icons';
-import { GetText } from '../i18n';
+import { i18n } from '../i18n';
 import { HookManager } from '@sugarch/bc-mod-hook-manager';
 
 export function HTMLID (id: string): string {
@@ -108,7 +108,7 @@ export class GUISetting {
         PreferenceRegisterExtensionSetting({
             Identifier: ModName,
             Image: Icons.responsive_main,
-            ButtonText: () => GetText('setting_button_text'),
+            ButtonText: () => i18n('setting_button_text'),
             load: () => {
                 if (this._mainScreenProvider) this._setScreen(this._mainScreenProvider());
             },

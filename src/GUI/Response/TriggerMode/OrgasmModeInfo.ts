@@ -1,5 +1,5 @@
 import { DataManager } from "../../../Data";
-import { GetText } from "../../../i18n";
+import { i18n } from "../../../i18n";
 import { IGUIScreen } from "../../GUI";
 import { AGUIItem, IPoint, IRect } from "../../Widgets/AGUI";
 import { Binding } from "../../Widgets/Binding";
@@ -37,16 +37,16 @@ export class OrgasmModeInfo extends AGUIItem {
 
         const segSetting: SegmentButtonSetting<OrgasmTriggerType> = {
             text: [
-                { display: GetText("TriggerInfo::Orgasm::Type::Orgasmed"), value: "Orgasmed" },
-                { display: GetText("TriggerInfo::Orgasm::Type::Ruined"), value: "Ruined" },
-                { display: GetText("TriggerInfo::Orgasm::Type::Resisted"), value: "Resisted" },
-                { display: GetText("TriggerInfo::Orgasm::Type::Any"), value: "Any" },
+                { display: i18n("TriggerInfo::Orgasm::Type::Orgasmed"), value: "Orgasmed" },
+                { display: i18n("TriggerInfo::Orgasm::Type::Ruined"), value: "Ruined" },
+                { display: i18n("TriggerInfo::Orgasm::Type::Resisted"), value: "Resisted" },
+                { display: i18n("TriggerInfo::Orgasm::Type::Any"), value: "Any" },
             ],
             binding: new OrgasmTypeBinding(state),
         }
 
         this._components = [
-            new BasicText(type_text, GetText("TriggerInfo::Orgasm::Type")),
+            new BasicText(type_text, i18n("TriggerInfo::Orgasm::Type")),
             new SegmentButton(segSetting, type_state),
         ]
     }

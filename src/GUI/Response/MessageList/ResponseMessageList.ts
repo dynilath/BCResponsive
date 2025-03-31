@@ -4,7 +4,7 @@ import { ADrawCircleRect, ADrawCricleTextButton, ADrawIcon, ADrawRoundRect, ADra
 import { MessageSettinPopup } from "./MessageSettingPopup";
 import { ResponseMenuState } from "../ResponseMenuState";
 import { TriggerSetting } from "../ResponseMenu";
-import { GetText } from "../../../i18n";
+import { i18n } from "../../../i18n";
 import { Styles } from "../../../Definition";
 import { DataManager } from "../../../Data";
 import { Scrollbar } from "../../Widgets/Scrollbar";
@@ -103,7 +103,7 @@ export class ResponseMessageList extends AGUIItem {
             if (tmessage) {
                 DrawMessageItem(tmessage, hasFocus, mouse, v);
             } else if (t_item.messages.length === targetIndex) {
-                ADrawCricleTextButton(v, GetText("TriggerInfo::NewResponses"), hasFocus, { stroke: "DarkGrey" });
+                ADrawCricleTextButton(v, i18n("TriggerInfo::NewResponses"), hasFocus, { stroke: "DarkGrey" });
             }
         });
 
@@ -127,7 +127,7 @@ export class ResponseMessageList extends AGUIItem {
                         DataManager.save();
                     }));
                 } else if (t_item.messages.length === targetIndex && WithinRect(mouse, v)) {
-                    GUISetting.setScreen(new MessageSettinPopup(this.parent, { type: "message", content: GetText("Default::ExampleMessage") }, msg => {
+                    GUISetting.setScreen(new MessageSettinPopup(this.parent, { type: "message", content: i18n("Default::ExampleMessage") }, msg => {
                         t_item.messages.push(msg);
                         DataManager.save();
                     }, () => { }));

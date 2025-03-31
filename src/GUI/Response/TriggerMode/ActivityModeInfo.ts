@@ -1,4 +1,4 @@
-import { GetText } from "../../../i18n";
+import { i18n } from "../../../i18n";
 import { GUISetting, IGUIScreen } from "../../GUI";
 import { AGUIItem, IPoint, IRect } from "../../Widgets/AGUI";
 import { DynamicTextRoundButton } from "../../Widgets/Button";
@@ -45,39 +45,39 @@ export class ActivityModeInfo extends AGUIItem {
         this._allow_ids_state = { x: rect.x, y: baseY + BASE_FONT_SIZE + ITEM_INNER_SPACING, width: rect.width, height: ITEM_HEIGHT };
 
         this._components = [
-            new BasicText(this._activity_text, GetText("TriggerInfo::OnActivity")),
-            new BasicText(this._bodypart_text, GetText("TriggerInfo::OnBodyparts")),
-            new BasicText(this._allow_ids_text, GetText("TriggerInfo::OnMembers")),
+            new BasicText(this._activity_text, i18n("TriggerInfo::OnActivity")),
+            new BasicText(this._bodypart_text, i18n("TriggerInfo::OnBodyparts")),
+            new BasicText(this._allow_ids_text, i18n("TriggerInfo::OnMembers")),
             new DynamicTextRoundButton(this._activity_state, () =>
                 this.state.asActivity(v => (act => {
                     if (act === undefined)
-                        return GetText("TriggerInfo::AllActivities");
+                        return i18n("TriggerInfo::AllActivities");
                     if (act.length === 0)
-                        return GetText("TriggerInfo::NoActivities");
+                        return i18n("TriggerInfo::NoActivities");
                     let result = act.slice(0, 3).map(a => ActivityDictionaryText(`Activity${a}`)).join(", ");
-                    if (act.length > 3) result += GetText("TriggerInfo::AndMore", [act.length - 3]);
+                    if (act.length > 3) result += i18n("TriggerInfo::AndMore", [act.length - 3]);
                     return result;
                 })(v.allow_activities)) ?? "", () => GUISetting.setScreen(new ActivityPopup(this.parent, this.state))),
             new DynamicTextRoundButton(this._bodypart_state, () => {
                 return this.state.asActivity(v => (bparts => {
                     if (bparts === undefined)
-                        return GetText("TriggerInfo::AllBodyparts");
+                        return i18n("TriggerInfo::AllBodyparts");
                     if (bparts.length === 0)
-                        return GetText("TriggerInfo::NoBodyparts");
+                        return i18n("TriggerInfo::NoBodyparts");
                     let result = bparts.slice(0, 3).map(a => AssetGroupMap.get(a as AssetGroupName)?.Description ?? a).join(", ");
-                    if (bparts.length > 3) result += GetText("TriggerInfo::AndMore", [bparts.length - 3]);
+                    if (bparts.length > 3) result += i18n("TriggerInfo::AndMore", [bparts.length - 3]);
                     return result;
                 })(v.allow_bodyparts)) ?? "";
             }, () => GUISetting.setScreen(new BodypartsPopup(this.parent, this.state))),
             new DynamicTextRoundButton(this._allow_ids_state, () => {
                 return this.state.asActivity(v => (ids => {
                     if (ids === undefined || ids.length === 0)
-                        return GetText("TriggerInfo::AllMemberIDs");
+                        return i18n("TriggerInfo::AllMemberIDs");
                     let result = ids.slice(0, 3).join(", ");
-                    if (ids.length > 3) result += GetText("TriggerInfo::AndMore", [ids.length - 3]);
+                    if (ids.length > 3) result += i18n("TriggerInfo::AndMore", [ids.length - 3]);
                     return result;
                 })(v.allow_ids)) ?? "";
-            }, () => GUISetting.setScreen(new MemberListPopup(this.parent, GetText("MemberListPopup::AllowIDs::Title"), this.state.asActivity(v => {
+            }, () => GUISetting.setScreen(new MemberListPopup(this.parent, i18n("MemberListPopup::AllowIDs::Title"), this.state.asActivity(v => {
                 if (v.allow_ids === undefined) v.allow_ids = [];
                 return v.allow_ids;
             }) ?? [])))

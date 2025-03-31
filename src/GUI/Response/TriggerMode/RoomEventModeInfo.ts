@@ -1,5 +1,5 @@
 import { DataManager } from "../../../Data";
-import { GetText } from "../../../i18n";
+import { i18n } from "../../../i18n";
 import { IGUIScreen } from "../../GUI";
 import { AGUIItem, IPoint, IRect } from "../../Widgets/AGUI";
 import { Binding } from "../../Widgets/Binding";
@@ -37,14 +37,14 @@ export class RoomEventModeInfo extends AGUIItem {
 
         const segSetting: SegmentButtonSetting<RoomEventTriggerType> = {
             text: [
-                { display: GetText("TriggerInfo::RoomEvent::Type::Join"), value: "Join" },
-                { display: GetText("TriggerInfo::RoomEvent::Type::Leave"), value: "Leave" },
+                { display: i18n("TriggerInfo::RoomEvent::Type::Join"), value: "Join" },
+                { display: i18n("TriggerInfo::RoomEvent::Type::Leave"), value: "Leave" },
             ],
             binding: new RoomEventTypeBinding(state),
         }
 
         this._components = [
-            new BasicText(type_text, GetText("TriggerInfo::RoomEvent::Type")),
+            new BasicText(type_text, i18n("TriggerInfo::RoomEvent::Type")),
             new SegmentButton(segSetting, type_state),
         ]
     }

@@ -1,6 +1,6 @@
 import { DataManager } from "../../Data";
 import { Styles } from "../../Definition";
-import { GetText } from "../../i18n";
+import { i18n } from "../../i18n";
 import { GUISetting, IGUIScreen } from "../GUI";
 import { AGUIItem, IPoint, IRect, WithinRect } from "../Widgets/AGUI";
 import { ADrawCricleTextButton, ADrawRoundRect, ADrawTextFit } from "../Widgets/Common";
@@ -126,17 +126,17 @@ export class PersonaItem extends AGUIItem {
                 ADrawRoundRect(adjusted_rect, Styles.Dialog.roundRadius);
 
             ADrawTextFit(this._name_rect, persona.name);
-            ADrawCricleTextButton(this._rename_rect, GetText("PersonaMenu::EditName"), hasFocus);
-            ADrawCricleTextButton(this._import_rect, GetText("PersonaMenu::Import"), hasFocus);
+            ADrawCricleTextButton(this._rename_rect, i18n("PersonaMenu::EditName"), hasFocus);
+            ADrawCricleTextButton(this._import_rect, i18n("PersonaMenu::Import"), hasFocus);
 
             if (DataManager.active_personality !== persona) {
-                if (this.deleteState === 0) ADrawCricleTextButton(this._delete_rect, GetText("PersonaMenu::Delete"), hasFocus);
-                else ADrawCricleTextButton(this._delete_rect, GetText("PersonaMenu::Confirm?"), hasFocus, { idle: 'Pink', hover: 'Red' });
+                if (this.deleteState === 0) ADrawCricleTextButton(this._delete_rect, i18n("PersonaMenu::Delete"), hasFocus);
+                else ADrawCricleTextButton(this._delete_rect, i18n("PersonaMenu::Confirm?"), hasFocus, { idle: 'Pink', hover: 'Red' });
             }
         } else {
             if (this._focusState.state === 'focused') ADrawRoundRect(adjusted_rect, Styles.Dialog.roundRadius, { fill: Styles.SegmentButton.hover, stroke: 'DarkGrey' });
             else ADrawRoundRect(adjusted_rect, Styles.Dialog.roundRadius, { stroke: 'DarkGrey' });
-            ADrawTextFit(this._new_rect, GetText("PersonaMenu::CreateNew"));
+            ADrawTextFit(this._new_rect, i18n("PersonaMenu::CreateNew"));
         }
     }
 
@@ -180,7 +180,7 @@ export class PersonaItem extends AGUIItem {
         } else {
             if (WithinRect(mouse, adjusted_rect)) {
                 DataManager.instance.data.personalities[this.index] = {
-                    name: GetText("Default::NewPersonality"),
+                    name: i18n("Default::NewPersonality"),
                     index: this.index,
                     responses: [],
                     blackList: [],

@@ -2,7 +2,7 @@ import { DataManager, isTriggerActivity, isTriggerOrgasm, isTriggerSpicer } from
 import { isTriggerRoomEvent } from "../../Data/types";
 import { MaxNameLength } from "../../Definition";
 import { isTriggerDataRoomEvent } from "../../Message/types";
-import { GetText } from "../../i18n";
+import { i18n } from "../../i18n";
 import { Binding } from "../Widgets/Binding";
 import { SegmentButtonSetting } from "../Widgets/SegmentButton";
 
@@ -129,10 +129,10 @@ export class ResponseMenuState {
     TriggerMode(): SegmentButtonSetting<ResponseTriggerMode> {
         return {
             text: [
-                { display: GetText(`TriggerMode::activity`), value: "activity" },
-                { display: GetText(`TriggerMode::orgasm`), value: "orgasm" },
-                { display: GetText(`TriggerMode::spicer`), value: "spicer" },
-                { display: GetText(`TriggerMode::event`), value: "event" }
+                { display: i18n(`TriggerMode::activity`), value: "activity" },
+                { display: i18n(`TriggerMode::orgasm`), value: "orgasm" },
+                { display: i18n(`TriggerMode::spicer`), value: "spicer" },
+                { display: i18n(`TriggerMode::event`), value: "event" }
             ],
             binding: new ModeProperty(this)
         }
