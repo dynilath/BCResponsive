@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name __NAME__
 // @namespace https://www.bondageprojects.com/
-// @version 1.7
+// @version 1.8
 // @description __DESCRIPTION__
 // @author __AUTHOR__
-// @include /^https:\/\/(www\.)?bondageprojects\.elementfx\.com\/R\d+\/(BondageClub|\d+)$/
-// @include /^https:\/\/(www\.)?bondage-europe\.com\/R\d+\/(BondageClub|\d+)$/
+// @include /^https:\/\/(www\.)?bondageprojects\.elementfx\.com\/R\d+\/(BondageClub|\d+)\/(\d+\.html)?$/
+// @include /^https:\/\/(www\.)?bondage-europe\.com\/R\d+\/(BondageClub|\d+)\/(\d+\.html)?$/
 // @include /^https:\/\/(www\.)?bondageprojects\.com\/R\d+\/$/
 // @icon  https://dynilath.gitlab.io/SaotomeToyStore/favicon.ico
 // @grant none
