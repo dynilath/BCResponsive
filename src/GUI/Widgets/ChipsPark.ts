@@ -1,7 +1,7 @@
-import { Styles } from "../../Definition";
-import { AGUIItem, IRect, WithinRect, IPoint } from "./AGUI";
-import { ADrawCircleRect, ADrawIcon, ADrawRoundRect, ADrawTextFit, ADrawVerticalCircleRect } from "./Common";
-import { Scrollbar } from "./Scrollbar";
+import { Styles } from '../../Definition';
+import { AGUIItem, IRect, WithinRect, IPoint } from './AGUI';
+import { ADrawCircleRect, ADrawRoundRect, ADrawTextFit } from './Common';
+import { Scrollbar } from './Scrollbar';
 
 const CHIPS_HEIGHT = 50;
 const CHIPS_SPACING = 10;
@@ -22,12 +22,14 @@ export class ChipsPark extends AGUIItem {
     private row_count: number = 0;
     private display_row_count: number = 0;
 
-    CalculateChips(values: ChipsValue[], rect: IRect) {
+    CalculateChips (values: ChipsValue[], rect: IRect) {
         let cummulativeWidth = 0;
         this.display_row_count = (rect.height - CHIPS_SPACING) / (CHIPS_HEIGHT + CHIPS_SPACING);
         this.row_count = 0;
         return values.map((v, i) => {
-            const width = Math.max(CHIPS_HEIGHT, MainCanvas.measureText(v.text).width + Styles.Text.padding * 2) + CHIPS_SPACING * 2;
+            const width =
+                Math.max(CHIPS_HEIGHT, MainCanvas.measureText(v.text).width + Styles.Text.padding * 2) +
+                CHIPS_SPACING * 2;
             if (cummulativeWidth + CHIPS_SPACING + width > rect.width) {
                 cummulativeWidth = width + CHIPS_SPACING;
                 this.row_count++;
@@ -40,15 +42,15 @@ export class ChipsPark extends AGUIItem {
                     x: rect.x + cummulativeWidth - width,
                     y: rect.y + CHIPS_SPACING + this.row_count * (CHIPS_HEIGHT + CHIPS_SPACING),
                     width: width,
-                    height: CHIPS_HEIGHT
-                }
+                    height: CHIPS_HEIGHT,
+                },
             };
         });
     }
 
     private scrollbar: Scrollbar | undefined;
 
-    constructor(source: Set<string>, values: ChipsValue[], rect: IRect, callback: (v: string) => void) {
+    constructor (source: Set<string>, values: ChipsValue[], rect: IRect, callback: (v: string) => void) {
         super();
         this.source = source;
         this._callback = callback;
@@ -66,22 +68,28 @@ export class ChipsPark extends AGUIItem {
             const n_last_chip = this._chips[this._chips.length - 1];
             const n_first_chip = this._chips[0];
 
-            const content_rows = Math.round((n_last_chip.rect.y + n_last_chip.rect.height - n_first_chip.rect.y + CHIPS_SPACING) / (CHIPS_HEIGHT + CHIPS_SPACING)) + 1;
+            const content_rows =
+                Math.round(
+                    (n_last_chip.rect.y + n_last_chip.rect.height - n_first_chip.rect.y + CHIPS_SPACING) /
+                        (CHIPS_HEIGHT + CHIPS_SPACING)
+                ) + 1;
             const container_rows = Math.floor((rect.height + CHIPS_SPACING) / CHIPS_HEIGHT);
-
 
             const scrollbar_rect = {
                 x: rect.x + rect.width - Styles.Scrollbar.width,
                 y: rect.y,
                 width: Styles.Scrollbar.width,
-                height: rect.height
+                height: rect.height,
             };
 
-            this.scrollbar = new Scrollbar({ content_rows, container_rows }, scrollbar_rect)
+            this.scrollbar = new Scrollbar(
+                { content_rows: content_rows, container_rows: container_rows },
+                scrollbar_rect
+            );
         }
     }
 
-    Draw(hasFocus: boolean): void {
+    Draw (hasFocus: boolean): void {
         const mouse = { x: MouseX, y: MouseY };
         ADrawRoundRect(this._chips_park, CHIPS_HEIGHT / 2 + CHIPS_SPACING);
         const step_yOffset = this.scrollbar?.offset ?? 0;
@@ -91,7 +99,7 @@ export class ChipsPark extends AGUIItem {
                 x: v.rect.x,
                 y: v.rect.y - step_yOffset * (CHIPS_HEIGHT + CHIPS_SPACING),
                 width: v.rect.width,
-                height: v.rect.height
+                height: v.rect.height,
             };
 
             if (expect_rect.y < this._chips_park.y) return;
@@ -99,20 +107,23 @@ export class ChipsPark extends AGUIItem {
 
             const isActive = this.source.has(v.value);
             const isHover = hasFocus && WithinRect(mouse, expect_rect);
-            ADrawCircleRect(expect_rect, { fill: isActive ? Styles.SegmentButton.active : "White" });
-            if (isHover) ADrawCircleRect(expect_rect, { fill: Styles.SegmentButton.hover, stroke: "none" });
-            ADrawTextFit({
-                x: expect_rect.x + CHIPS_SPACING,
-                y: expect_rect.y,
-                width: expect_rect.width - CHIPS_SPACING * 2,
-                height: expect_rect.height
-            }, v.text);
+            ADrawCircleRect(expect_rect, { fill: isActive ? Styles.SegmentButton.active : 'White' });
+            if (isHover) ADrawCircleRect(expect_rect, { fill: Styles.SegmentButton.hover, stroke: 'none' });
+            ADrawTextFit(
+                {
+                    x: expect_rect.x + CHIPS_SPACING,
+                    y: expect_rect.y,
+                    width: expect_rect.width - CHIPS_SPACING * 2,
+                    height: expect_rect.height,
+                },
+                v.text
+            );
         });
 
         this.scrollbar?.Draw(hasFocus);
     }
 
-    Click(mouse: IPoint): void {
+    Click (mouse: IPoint): void {
         const step_yOffset = this.scrollbar?.offset ?? 0;
         if (WithinRect(mouse, this._chips_park)) {
             this._chips.forEach(v => {
@@ -120,7 +131,7 @@ export class ChipsPark extends AGUIItem {
                     x: v.rect.x,
                     y: v.rect.y - step_yOffset * (CHIPS_HEIGHT + CHIPS_SPACING),
                     width: v.rect.width,
-                    height: v.rect.height
+                    height: v.rect.height,
                 };
                 if (expect_rect.y < this._chips_park.y) return;
                 if (expect_rect.y + expect_rect.height > this._chips_park.y + this._chips_park.height) return;
@@ -131,7 +142,7 @@ export class ChipsPark extends AGUIItem {
         this.scrollbar?.Click(mouse);
     }
 
-    MouseWheel(event: WheelEvent): void {
+    MouseWheel (event: WheelEvent): void {
         this.scrollbar?.MouseWheel(event);
         if (this.scrollbar && WithinRect({ x: MouseX, y: MouseY }, this._chips_park)) {
             this.scrollbar.RawMouseWheel(event);
