@@ -10,7 +10,7 @@ const eventFunc =
 
 export function init () {
     ChatRoomEvents.on('PlayerJoin', (player)=>InvokeResponse({ triggerType: 'event', type: 'Join' }, player))
-    ChatRoomEvents.on('PlayerLeave', (player)=>InvokeResponse({ triggerType: 'event', type: 'Join' }, player))
+    ChatRoomEvents.on('PlayerLeave', (player)=>InvokeResponse({ triggerType: 'event', type: 'Leave' }, player))
     
     OrgasmEvents.on('orgasmed', eventFunc('Orgasmed'));
     OrgasmEvents.on('ruined', eventFunc('Ruined'));
