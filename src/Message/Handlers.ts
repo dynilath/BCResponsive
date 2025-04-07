@@ -17,7 +17,7 @@ export function init () {
     OrgasmEvents.on('resisted', eventFunc('Resisted'));
 
     ChatRoomMessageHandlerEvents.on('Activity', (data, sender, message, metadata) => {
-        if (metadata?.TargetCharacter !== sender.MemberNumber) return;
+        if (metadata?.TargetCharacter?.MemberNumber !== Player.MemberNumber) return;
         if (!metadata?.ActivityName || !metadata?.GroupName || !sender.MemberNumber) return;
         InvokeResponse(
             {
