@@ -1,7 +1,7 @@
 {
   "name": "bc-responsive",
   "displayName": "BondageClub Responsive",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "A auto response script for bondage-club",
   "buildSettings": {
     "input": "Responsive.ts",

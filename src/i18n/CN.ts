@@ -1,8 +1,8 @@
 export const CNConfig: Record<TextTags, string> = {
-    "setting_button_text": "Responsive",
-    "responsive_setting_title": "- BC Responsive 设置 -",
-    "setting_button_popup": "BC Responsive 设置",
-    "setting_enable": "启用 Responsive",
+    "setting_button_text": "热情呻吟",
+    "responsive_setting_title": "- BC 热情呻吟 设置 -",
+    "setting_button_popup": "BC 热情呻吟 设置",
+    "setting_enable": "启用热情呻吟",
     "setting_title_low": "低性奋",
     "setting_title_light": "微弱性奋",
     "setting_title_medium": "中等性奋",
