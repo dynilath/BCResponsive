@@ -88,6 +88,8 @@ export class ChipsPark extends AGUIItem {
                 { content_rows: content_rows, container_rows: container_rows },
                 scrollbar_rect
             );
+        } else {
+            this.scrollbar = undefined;
         }
     }
 
