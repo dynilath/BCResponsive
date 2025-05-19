@@ -17,10 +17,6 @@ function DeserializeData (str: string | undefined): ResponsiveSettingV2 {
         data = decoded;
     } catch {}
 
-    if (isV1Setting(data)) {
-        return V1SettingToV2Setting(data);
-    }
-
     return pickV2Setting(data);
 }
 
@@ -51,7 +47,7 @@ export class DataManager {
 
     static get active_personality () {
         const data = this.instance.data;
-        if (data.active_personality === null) return undefined;
+        if (typeof data.active_personality !== "number" || !data.personalities) return undefined;
         return data.personalities[data.active_personality];
     }
 
