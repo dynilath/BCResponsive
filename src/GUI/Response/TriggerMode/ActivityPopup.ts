@@ -7,8 +7,9 @@ import { TextRoundButton } from "../../Widgets/Button";
 import { ChipsPark } from "../../Widgets/ChipsPark";
 import { RoundFramedRect } from "../../Widgets/Rect";
 import { Popup } from "../../Widgets/Popup";
-import { BasicText } from "../../Widgets/Text";
+import { BasicText, FitText } from "../../Widgets/Text";
 import { ResponseMenuState } from "../ResponseMenuState";
+import { Switch } from "../../Widgets/Switch";
 
 const TITLE_FONT_SIZE = 36;
 
@@ -123,6 +124,21 @@ export class ActivityPopup extends Popup {
             height: FILTER_BUTTONS_HEIGHT
         };
 
+        filter_button_y = nfb(filter_button_y);
+
+        const _switch_filter_text = {
+            x: _filter_button_base.x,
+            y: filter_button_y + FILTER_BUTTONS_SPACING,
+            width: FILTER_BUTTONS_WIDTH,
+            height: FILTER_BUTTONS_HEIGHT
+        }
+        const _switch_filter = {
+            x: _filter_button_base.x,
+            y: _switch_filter_text.y + FILTER_BUTTONS_HEIGHT,
+            width: FILTER_BUTTONS_WIDTH,
+            height: FILTER_BUTTONS_HEIGHT
+        }
+
         const flip = (v: string) => {
             if (this.editing.has(v)) this.editing.delete(v);
             else this.editing.add(v);
@@ -133,16 +149,45 @@ export class ActivityPopup extends Popup {
             else vs.forEach(a => this.editing.add(a));
         }
 
+        const chips_park = 
+            new ChipsPark(this.editing, _chips_value, _chips_park, flip);
+
+        const _this = this;
+        const filter_switch_binding = { 
+            _value: false,
+            get value() { return this._value;},
+            set value(v: boolean) {
+                this._value = v;
+                const allow_bodyparts = _this.source.asActivity(v => v.allow_bodyparts);
+                if (v && allow_bodyparts) {
+                    const n_chip_value = []
+                    for(const v of ActivityFemale3DCG) {
+                        if(!v.Target.some(a=>allow_bodyparts.includes(a)) && 
+                          (!v.TargetSelf || v.TargetSelf === true || !v.TargetSelf.some(a=>allow_bodyparts.includes(a)))) continue;
+
+                        const desc = ActivityDictionaryText(`Activity${v.Name}`);
+                        if (desc.length > 25) continue;
+                        n_chip_value.push({ text: desc, value: v.Name});
+                    }
+                    chips_park.recalculateChips(n_chip_value);
+                } else {
+                    chips_park.recalculateChips(_chips_value);
+                }
+            },
+        };
+
         this.items = [
             new RoundFramedRect(_dialog, Styles.Dialog.roundRadius, "White"),
             new BasicText(_title, i18n("ActivityPopup::Title"), { align: "center", emphasis: true }),
-            new ChipsPark(this.editing, _chips_value, _chips_park, flip),
+            chips_park,
             new TextRoundButton(_filter_clear, i18n("General::Clear"), () => this.editing.clear()),
             new TextRoundButton(_filter_all, i18n("General::AllSet"), () => _chips_value.forEach(v => this.editing.add(v.value))),
             new TextRoundButton(_filter_pain, i18n("ActivityPopup::Pain"), () => flipList(DefaultValueV1TriggerActivities.pain)),
             new TextRoundButton(_filter_tickle, i18n("ActivityPopup::Tickle"), () => flipList(DefaultValueV1TriggerActivities.tickle)),
             new TextRoundButton(_filter_masturbate, i18n("ActivityPopup::Masturbate"), () => flipList(DefaultValueV1TriggerActivities.masturbate)),
             new TextRoundButton(_filter_feet, i18n("ActivityPopup::Feet"), () => flipList(["MassageFeet", "Step", "Kick", "MasturbateFoot"])),
+            new FitText(_switch_filter_text, i18n("ActivityPopup::FilterSwitch")),
+            new Switch(filter_switch_binding, _switch_filter),
             new TextRoundButton(_dialog_confirm, i18n("General::Confirm"), () => {
                 this.source.asActivity(v => {
                     if (this.editing.size === _chips_value.length) v.allow_activities = undefined;

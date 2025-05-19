@@ -13,7 +13,7 @@ interface ChipsValue {
 
 export class ChipsPark extends AGUIItem {
     private readonly source: Set<string>;
-    private readonly _chips_park: IRect;
+    private _chips_park: IRect;
 
     private _chips: (ChipsValue & { rect: IRect })[];
 
@@ -50,18 +50,20 @@ export class ChipsPark extends AGUIItem {
 
     private scrollbar: Scrollbar | undefined;
 
-    constructor (source: Set<string>, values: ChipsValue[], rect: IRect, callback: (v: string) => void) {
+    constructor (source: Set<string>, values: ChipsValue[], readonly rect: IRect, callback: (v: string) => void) {
         super();
         this.source = source;
         this._callback = callback;
 
         this._chips_park = { ...rect };
-
         this._chips = this.CalculateChips(values, this._chips_park);
+        this.refreshScrollbar(values);
+    }
 
+    private refreshScrollbar (values: ChipsValue[]): void {
         const last_chip = this._chips[this._chips.length - 1];
 
-        if (last_chip.rect.y + last_chip.rect.height + CHIPS_SPACING > rect.y + rect.height) {
+        if (last_chip.rect.y + last_chip.rect.height + CHIPS_SPACING > this.rect.y + this.rect.height) {
             this._chips_park.width -= Styles.Scrollbar.width + Styles.Scrollbar.spacing;
             this._chips = this.CalculateChips(values, this._chips_park);
 
@@ -73,13 +75,13 @@ export class ChipsPark extends AGUIItem {
                     (n_last_chip.rect.y + n_last_chip.rect.height - n_first_chip.rect.y + CHIPS_SPACING) /
                         (CHIPS_HEIGHT + CHIPS_SPACING)
                 ) + 1;
-            const container_rows = Math.floor((rect.height + CHIPS_SPACING) / CHIPS_HEIGHT);
+            const container_rows = Math.floor((this.rect.height + CHIPS_SPACING) / CHIPS_HEIGHT);
 
             const scrollbar_rect = {
-                x: rect.x + rect.width - Styles.Scrollbar.width,
-                y: rect.y,
+                x: this.rect.x + this.rect.width - Styles.Scrollbar.width,
+                y: this.rect.y,
                 width: Styles.Scrollbar.width,
-                height: rect.height,
+                height: this.rect.height,
             };
 
             this.scrollbar = new Scrollbar(
@@ -87,6 +89,12 @@ export class ChipsPark extends AGUIItem {
                 scrollbar_rect
             );
         }
+    }
+
+    recalculateChips(values: ChipsValue[]): void {
+        this._chips_park = { ...this.rect };
+        this._chips = this.CalculateChips(values, this._chips_park);
+        this.refreshScrollbar(values);
     }
 
     Draw (hasFocus: boolean): void {

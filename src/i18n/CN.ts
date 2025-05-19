@@ -86,6 +86,7 @@ export const CNConfig: Record<TextTags, string> = {
     "ActivityPopup::Tickle": "瘙痒",
     "ActivityPopup::Masturbate": "抚慰",
     "ActivityPopup::Feet": "恋足",
+    "ActivityPopup::FilterSwitch": "过滤身体部位",
     "MessagePopup::EditMessage": "编辑消息",
     "MessagePopup::Type::message": "消息",
     "MessagePopup::Type::action": "动作",

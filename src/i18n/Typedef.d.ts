@@ -40,7 +40,7 @@ type MemberListPopupTextTags = "MemberListPopup::AllowIDs::Title" | "MemberListP
 type BodypartsPopupTextTags = "BodypartsPopup::Title"
 
 type ActivityPopupTextTags = "ActivityPopup::Title" | "ActivityPopup::Pain" | "ActivityPopup::Tickle"
-    | "ActivityPopup::Masturbate" | "ActivityPopup::Feet"
+    | "ActivityPopup::Masturbate" | "ActivityPopup::Feet" | "ActivityPopup::FilterSwitch"
 
 type MessagePopupTextTags = "MessagePopup::EditMessage" | `MessagePopup::Type::${ResponseMessageType}`
     | "MessagePopup::InsertMe" | "MessagePopup::InsertOther"
